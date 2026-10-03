@@ -1,0 +1,36 @@
+{
+  "name": "sakellarios.dev",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "\"%USERPROFILE%\\.foundry\\bin\\forge.exe\" test",
+    "test:forge": "\"%USERPROFILE%\\.foundry\\bin\\forge.exe\" test -vvv",
+    "test:agent": "node test/agentIntegration.test.js",
+    "build:contracts": "\"%USERPROFILE%\\.foundry\\bin\\forge.exe\" build",
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mathan-dotcom/sakellarios.dev.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Mathan-dotcom/sakellarios.dev/issues"
+  },
+  "homepage": "https://github.com/Mathan-dotcom/sakellarios.dev#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.6.1",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.5",
+    "ethers": "^6.17.0",
+    "express": "^5.2.1"
+  }
+}
