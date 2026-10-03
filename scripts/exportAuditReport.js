@@ -21,8 +21,9 @@ function generateReport() {
     console.log("=================================================");
     console.log("📋 EUTHYNA CONTINUOUS TREASURY AUDIT REPORT");
     console.log("=================================================\n");
+    const entryCount = (beancount.match(/\d{4}-\d{2}-\d{2}\s+\*/g) || []).length;
     console.log(`Total Cryptographically Signed Receipts: ${receipts.length}`);
-    console.log(`Beancount Accounting Log Entries: ${beancount.split("\n*").length - 1}\n`);
+    console.log(`Beancount Accounting Log Entries: ${entryCount}\n`);
 
     console.log("Recent Transactions:");
     receipts.slice(-5).forEach((r, idx) => {
