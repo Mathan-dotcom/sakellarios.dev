@@ -1,0 +1,79 @@
+; Vestiarion AI - Euthyna Immutable Audit Ledger
+; Standard: Beancount v2 Double-Entry Accounting
+; Operating Chain: Arc L1 (Circle Native)
+; Settlement Token: USDC
+
+option "title" "Vestiarion AI Continuous Treasury Ledger"
+option "operating_currency" "USDC"
+
+2026-01-01 open Assets:Arc:PolicyWallet:USDC USDC
+2026-01-01 open Assets:Arc:USYCVault:USYC USYC
+2026-01-01 open Expenses:Infrastructure:Hosting USDC
+2026-01-01 open Expenses:Payroll:Stipends USDC
+2026-01-01 open Expenses:SaaS:APIs USDC
+2026-01-01 open Expenses:Vendor:Services USDC
+2026-01-01 open Income:Yield:USYC USDC
+
+
+2026-10-03 * "Circle Paymaster / Vendor Settlement" "Paid INFRASTRUCTURE Invoice #INV-INFRA-101"
+  meta-agent-id: "0x2222222222222222222222222222222222222222"
+  meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
+  meta-sanctions-check: "CLEAN"
+  meta-tx-hash: "0x456ff3554a294c99a650c3d8245491fb70e7db56ea201ccf709f16cd328b29f9"
+  meta-timestamp: "2026-10-03T20:40:21.830Z"
+  Assets:Arc:PolicyWallet:USDC                   -150.00 USDC
+  Expenses:Infrastructure:Hosting            150.00 USDC
+
+2026-10-03 * "Circle Paymaster / Vendor Settlement" "Paid INFRASTRUCTURE Invoice #INV-INFRA-101"
+  meta-agent-id: "0x2222222222222222222222222222222222222222"
+  meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
+  meta-sanctions-check: "CLEAN"
+  meta-tx-hash: "0x72f1093f29dfd42e8c3628cad81fc296d7f291b3e15aa0f768cd7bc437390ff3"
+  meta-timestamp: "2026-10-03T20:40:51.068Z"
+  Assets:Arc:PolicyWallet:USDC                   -150.00 USDC
+  Expenses:Infrastructure:Hosting            150.00 USDC
+
+2026-10-03 * "Circle Paymaster / Vendor Settlement" "Paid PAYROLL Invoice #INV-PAY-202"
+  meta-agent-id: "0x2222222222222222222222222222222222222222"
+  meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
+  meta-sanctions-check: "CLEAN"
+  meta-tx-hash: "0xc9ba02f165a4722080ec1ca782306899b11365cdd92650ff396db2249a614b75"
+  meta-timestamp: "2026-10-03T20:40:51.736Z"
+  Assets:Arc:PolicyWallet:USDC                   -600.00 USDC
+  Expenses:Payroll:Stipends            600.00 USDC
+
+2026-10-03 * "Circle Paymaster / Vendor Settlement" "Paid INFRASTRUCTURE Invoice #INV-INFRA-101"
+  meta-agent-id: "0x2222222222222222222222222222222222222222"
+  meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
+  meta-sanctions-check: "CLEAN"
+  meta-tx-hash: "0x3a0031c9f6c04fc1fb773f41c46fd39415c94636a120432037f87b515d8bfef3"
+  meta-timestamp: "2026-10-03T20:42:16.668Z"
+  Assets:Arc:PolicyWallet:USDC                   -150.00 USDC
+  Expenses:Infrastructure:Hosting            150.00 USDC
+
+2026-10-03 * "Circle Paymaster / Vendor Settlement" "Paid PAYROLL Invoice #INV-PAY-202"
+  meta-agent-id: "0x2222222222222222222222222222222222222222"
+  meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
+  meta-sanctions-check: "CLEAN"
+  meta-tx-hash: "0x5e1c1cfbced70ec78b2f8aacba7034ea294bb415ce7cf6019176c34f4c643534"
+  meta-timestamp: "2026-10-03T20:42:17.112Z"
+  Assets:Arc:PolicyWallet:USDC                   -600.00 USDC
+  Expenses:Payroll:Stipends            600.00 USDC
+
+2026-10-03 * "Circle Paymaster / Vendor Settlement" "Paid INFRASTRUCTURE Invoice #INV-INFRA-101"
+  meta-agent-id: "0x2222222222222222222222222222222222222222"
+  meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
+  meta-sanctions-check: "CLEAN"
+  meta-tx-hash: "0x592cb715439cdd9323dcef011daa494ced0ebdf5d51062f6045e630d820ea202"
+  meta-timestamp: "2026-10-03T20:43:12.716Z"
+  Assets:Arc:PolicyWallet:USDC                   -150.00 USDC
+  Expenses:Infrastructure:Hosting            150.00 USDC
+
+2026-10-03 * "Circle Paymaster / Vendor Settlement" "Paid PAYROLL Invoice #INV-PAY-202"
+  meta-agent-id: "0x2222222222222222222222222222222222222222"
+  meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
+  meta-sanctions-check: "CLEAN"
+  meta-tx-hash: "0x7f71462e1ef59ca14652bfca844464f4cc8ccd64456ca17b2f42a4746f9e4d5f"
+  meta-timestamp: "2026-10-03T20:43:13.167Z"
+  Assets:Arc:PolicyWallet:USDC                   -600.00 USDC
+  Expenses:Payroll:Stipends            600.00 USDC
