@@ -201,5 +201,63 @@
       "liquidUsdcAvailable": 9250
     },
     "txHash": "0x7f71462e1ef59ca14652bfca844464f4cc8ccd64456ca17b2f42a4746f9e4d5f"
+  },
+  {
+    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-03T20:50:03.646Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 85,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-AWS-3902",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-03T20:50:02.823Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 915,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 0
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9915
+    },
+    "txHash": "0xefebb3aedd9ed19dae9def0ceb116fafb68f5355c01e09492bc4bdbe4632ecac"
+  },
+  {
+    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-03T20:50:04.198Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x7777777777777777777777777777777777777777",
+    "amountUsdc": 150,
+    "category": "SAAS",
+    "invoiceRef": "INV-ANTHROPIC-482",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-03T20:50:03.647Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 765,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 0
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9765
+    },
+    "txHash": "0x92eb203e3db5f6d4c28ed8b72a5f2d5f05d3c1b25514bc41fa97075b1a7ef2f6"
   }
 ]
