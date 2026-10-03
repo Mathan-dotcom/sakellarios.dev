@@ -24,7 +24,13 @@ npm run test:forge
 npm run test:agent
 ```
 
-### 4. Start the Backend API Server (for Frontend Integration)
+### 4. Seed Simulated Bills & View Euthyna Audit Report
+```bash
+npm run seed
+npm run report
+```
+
+### 5. Start the Backend API Server (for Frontend Integration)
 ```bash
 npm start
 # Server listens on http://localhost:4000
