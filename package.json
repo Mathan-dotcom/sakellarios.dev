@@ -11,6 +11,9 @@
     "test:forge": "\"%USERPROFILE%\\.foundry\\bin\\forge.exe\" test -vvv",
     "test:agent": "node test/agentIntegration.test.js",
     "build:contracts": "\"%USERPROFILE%\\.foundry\\bin\\forge.exe\" build",
+    "seed": "node scripts/seedInvoices.js",
+    "report": "node scripts/exportAuditReport.js",
+    "deploy:arc": "node scripts/deploy.js",
     "start": "node server.js",
     "dev": "node server.js"
   },
