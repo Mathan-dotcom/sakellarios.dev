@@ -389,9 +389,9 @@ Full-block inversion blink for critical panels — the only allowed "glow" subst
 - **Colors:** status is stamped — black-on-white `OK`, ink-on-amber `WARN`, blinking `criticalBlink` on `ABORT`. Hashes and timestamps in `--ledger-muted`.
 - **Header:** A black steel bar (`background: var(--steel)`) with an uppercase white title, live block-cursor blink (`▮`), and a section index number.
 
-### 6.3 Confidence & Autonomy Gauge (`ConfidenceGate`)
-- **Visual:** Replaces the circular SVG meter with a **segmented horizontal block bar** inside a `.bru-panel` — ten solid cells, each 2px-separated, filling left to right toward the Bayesian Autonomy Gate (≥ 0.70 threshold).
-- **Threshold marker:** A vertical ink line at the 70% position with a rotated micro-label: `▲ AUTONOMY GATE — 0.70`.
+### 6.3 Confidence & Autonomy Gauge (`PolicyWalletGate`)
+- **Visual:** Replaces the circular SVG meter with a **segmented horizontal block bar** inside a `.bru-panel` — ten solid cells, each 2px-separated, filling left to right toward the PolicyWallet Autonomy & Daily Cap Gate (≤ $250 auto, $1,000 daily budget).
+- **Threshold marker:** A vertical ink line at the 70% position with a rotated micro-label: `▲ POLICY GATE — $250 CAP`.
 - **Color Progression:** concrete → ink-hard → blueprint blue as confidence crosses the gate; below 0.40 the filled cells are hazard-amber. The 10th segment, when filled, stamps `AUTO` in `--recovered-mark`.
 
 ---

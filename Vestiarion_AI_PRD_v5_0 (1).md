@@ -734,7 +734,7 @@ Three Google Fonts loaded with `display: swap`:
 2. **2D Canvas Transaction Flow Matrix (`flowCanvas`):** Screen-printed orthogonal circuit blueprint connecting 6 core nodes (`ARC L1 RPC`, `SAKELLARIOUS.DEV`, `OPENSANCTIONS`, `POLICYWALLET`, `CIRCLE PAYMASTER`, `USYC VAULT`, `EUTHYNA LEDGER`) with live multi-colored packet streams.
 3. **Six Architectural Drops (`.k-card`):** Feature physical misregistration offset backing blocks, sticker tags (`.k-sticker` with $\pm 1\text{--}3^\circ$ tilt), and punchy colored hover reveals (`.card-hover--color`).
 4. **War Room & Physical Till Receipt Console (`OrderReceipt`):**
-   * *Autonomy Gate Gauge:* 10-segment block indicator tracking Bayesian autonomy probability past the 0.70 threshold.
+   * *PolicyWallet Daily Cap & Guardrail Gauge:* 10-segment block indicator tracking real-time daily budget consumption against the 1,000 USDC limit (880 USDC remaining, <= $250 auto-settlement threshold).
    * *Interactive Dispatch Buttons:* Micro-invoice, cap breach escalation, OFAC sanctions blocking, and USYC yield sweep.
    * *Physical Monospace Till Receipt Tape:* Zebra-striped run-sheet displaying live timestamps and status stamps (`[PAID]`, `[ESCALATED]`, `[REVERTED]`).
    * *Kinetic Motion:* Cards and badges drop with `@keyframes slam` and flinch on errors with `@keyframes shake`.

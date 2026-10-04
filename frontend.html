@@ -980,28 +980,28 @@ a:focus-visible {
           <span id="dispatchStatusBadge" class="k-sticker k-sticker--lime">READY // ARMED</span>
         </div>
 
-        <!-- Autonomy Gate segmented indicator -->
+        <!-- PolicyWallet On-Chain Guardrail & Daily Cap Indicator -->
         <div class="k-well" style="margin-bottom: 20px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-family: var(--font-display); font-size: 0.85rem;">
-            <span>BAYESIAN AUTONOMY GATE</span>
-            <span style="color: var(--ink); background: var(--yellow); padding: 1px 6px; border: 1px solid var(--ink);">94.8% (AUTO-DISPATCH)</span>
+            <span>POLICYWALLET GUARDRAIL GATE</span>
+            <span id="policyGateBadge" style="color: var(--ink); background: var(--yellow); padding: 1px 6px; border: 1px solid var(--ink);">880 / 1,000 USDC REMAINING</span>
           </div>
-          <div style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; height: 20px; border: var(--bw-thin) solid var(--ink); padding: 2px; background: var(--paper);">
-            <div style="background: var(--cyan);"></div>
-            <div style="background: var(--cyan);"></div>
-            <div style="background: var(--cyan);"></div>
-            <div style="background: var(--cyan);"></div>
-            <div style="background: var(--cyan);"></div>
-            <div style="background: var(--cyan);"></div>
-            <div style="background: var(--cyan);"></div>
-            <div style="background: var(--lime);"></div>
-            <div style="background: var(--lime);"></div>
-            <div style="background: transparent;"></div>
+          <div id="policyGateSegments" style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; height: 20px; border: var(--bw-thin) solid var(--ink); padding: 2px; background: var(--paper);">
+            <div style="background: var(--lime);" title="Spent Today: 120 USDC"></div>
+            <div style="background: var(--cyan);" title="Available: 880 USDC Remaining"></div>
+            <div style="background: var(--cyan);" title="Available: 880 USDC Remaining"></div>
+            <div style="background: var(--cyan);" title="Available: 880 USDC Remaining"></div>
+            <div style="background: var(--cyan);" title="Available: 880 USDC Remaining"></div>
+            <div style="background: var(--cyan);" title="Available: 880 USDC Remaining"></div>
+            <div style="background: var(--cyan);" title="Available: 880 USDC Remaining"></div>
+            <div style="background: var(--cyan);" title="Available: 880 USDC Remaining"></div>
+            <div style="background: var(--cyan);" title="Available: 880 USDC Remaining"></div>
+            <div style="background: transparent;" title="Buffer Margin"></div>
           </div>
           <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.7rem; margin-top: 6px;">
-            <span>HUMAN GATE (&lt; 0.70)</span>
-            <span>▲ THRESHOLD: 0.70</span>
-            <span style="color: var(--ink); font-weight: 700;">AUTONOMOUS (0.70+)</span>
+            <span>AUTONOMOUS (&le; $250 CAP)</span>
+            <span>▲ DAILY CAP: 1,000 USDC</span>
+            <span style="color: var(--ink); font-weight: 700;">ESCALATES (&gt; $250)</span>
           </div>
         </div>
 
