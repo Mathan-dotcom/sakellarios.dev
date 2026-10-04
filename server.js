@@ -16,9 +16,17 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
 
-// Serve Flagship Landing Page
+// Serve Flagship 3D Codex UI (frontend.html)
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'landing.html'));
+    res.sendFile(path.join(__dirname, 'frontend.html'));
+});
+
+app.get('/frontend', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend.html'));
+});
+
+app.get('/codex', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend.html'));
 });
 
 app.get('/landing', (req, res) => {
