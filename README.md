@@ -41,14 +41,14 @@ npm start
 
 ---
 
-## 🏛️ Kiln Neo-Brutalist Storefront UI (`frontend.html` / `index.html`)
+## 🏛️ Byzantine Cyber-Imperial Command Center UI (`frontend.html` / `index.html`)
 
-The primary frontend is built strictly following the **Kiln Neo-Brutalism Styleguide** (`STYLEGUIDE-Brutalism-Kiln.md`), featuring:
-- **"Fired, Not Finished" Loud Poster Brutalism:** Flat screen-print ink fills (`--yellow: #ffe14d`, `--pink: #ff6fae`, `--cyan: #4dd8ff`, `--lime: #b6f23d`), 3px solid ink outlines, and zero border radius (`0px !important`).
-- **Tactile Paper Substrate:** Warm raw paper substrate (`#fff6e0`) with an authentic 20px dot grid and zero soft gradients or glassmorphism.
-- **Tri-Font Hierarchy:** Chunky uppercase headlines in `Bricolage Grotesque`, friendly UI controls in `DM Sans`, and raw cryptographic receipts in `JetBrains Mono`.
-- **2D Canvas Circuit Blueprint:** Orthogonal circuit matrix mapping packet flows across Arc L1 RPC, sakellarious.dev agent, OpenSanctions, PolicyWallet, Paymaster, USYC Vault, and Euthyna Ledger.
-- **War Room & Physical Till Tape Console:** Live interactive console allowing real-time invoice dispatch, sanctions check, policy evaluation, and physical monospace till run-sheet recording.
+The primary frontend is built strictly following the **Byzantine Cyber-Imperial Design System** (`STYLEGUIDE-Byzantine-Cyber-Imperial.md`), featuring:
+- **Prestige Sovereign Monolith:** Deep void obsidian substrate (`#07090E`), illuminated Byzantine imperial gold (`#E5B443`), Tyrian purple accents (`#7928CA`), and precision metallic wireframe borders.
+- **Tri-Font Monumental Hierarchy:** Regal monumental inscriptions in `Cinzel`, modern fintech interface controls in `DM Sans`, and raw cryptographic receipts in `JetBrains Mono`.
+- **Holographic 2D Canvas Flow Blueprint:** 7-node orthogonal circuit matrix mapping live radiant packet flows between Arc L1 RPC, sakellarious.dev, OpenSanctions, PolicyWallet, Paymaster, USYC Vault, and Euthyna Ledger.
+- **Sovereign War Room & Policy Guardrail Gate:** Live interactive command plate tracking on-chain $1,000 daily budget limits, $\le \$250$ auto-settlements, multi-sig escalations, and real-time Beancount run-sheets.
+- **Tactile Web Audio Synthesizer:** Integrated procedural audio cues for settlement chimes, escalation bells, and sanctions alerts.
 
 ---
 
