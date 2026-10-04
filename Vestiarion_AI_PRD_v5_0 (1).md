@@ -685,60 +685,52 @@ Every decision made by sakellarious.dev writes an append-only, double-entry fina
 
 ---
 
-### 9. Frontend & Visual Architecture Specification (Kiln Neo-Brutalism Design System)
+### 9. Frontend & Visual Architecture Specification (Byzantine Cyber-Imperial Design System)
 
-The user interface for sakellarious.dev conforms strictly to the **Kiln Design System (`data-theme="kiln"`)**, implementing a **Loud Poster Neo-Brutalist** aesthetic centered on the theme of *"Fired, Not Finished."* The design completely discards glassmorphism, soft gradients, and rounded pill containers in favor of flat screen-print inks, heavy ink outlines, tactile paper substrates, and hard zero-blur offset shadows.
+The user interface for sakellarious.dev conforms strictly to the **Byzantine Cyber-Imperial Design System (`data-theme="byzantine"`)**, implementing a **Prestige Sovereign Monolithic Command Center** aesthetic. The design synthesizes ancient Byzantine imperial fiscal custody (*Sakellarios & Vestiarion*) with classical Athenian magistrate audits (*Euthyna*) and Circle's cutting-edge Arc L1 crypto infrastructure, discarding generic cartoonish brutalism in favor of deep obsidian depth, illuminated Byzantine imperial gold, Tyrian purple accents, and precision holographic circuit telemetry.
 
 #### 9.1 Substrate & Color Tokens
 
 ```css
-:root, [data-theme="kiln"] {
-  /* Substrates — Warm Tactile Paper */
-  --paper:        #fff6e0;   /* Primary page background — warm raw paper */
-  --paper-dark:   #f0e4c3;   /* Recessed areas, zebra rows, input wells */
-  --paper-white:  #ffffff;   /* Cards that must pop off the page */
+:root, [data-theme="byzantine"] {
+  /* Substrates & Depth */
+  --bg-obsidian:       #07090e;  /* Deep void abyss */
+  --bg-surface:        #0c1018;  /* Recessed command foundation */
+  --bg-card:           rgba(15, 20, 31, 0.88);  /* Monolithic glass plate */
+  --bg-well:           #090d14;  /* Inset terminal wells */
 
-  /* Ink & Structure */
-  --ink:          #14110f;   /* Primary warm black ink for text, borders, shadows */
-  --ink-soft:     #4a443d;   /* Secondary text */
-  --ink-faint:    rgba(20, 17, 15, 0.18);  /* 20px dot grid & hairlines */
+  /* Imperial Sovereign Accents */
+  --gold-primary:      #e5b443;  /* Byzantine Imperial Gold */
+  --gold-light:        #ffe28a;  /* Illuminated Leaf Gold */
+  --gold-dark:         #9a7426;  /* Burnished Solid Coin Gold */
+  --gold-glow:         rgba(229, 180, 67, 0.24);
+  --gold-border:       rgba(229, 180, 67, 0.32);
 
-  /* Hard Offset Shadow — Zero Blur, Zero Spread */
-  --shadow:       #14110f;
-
-  /* Saturated Screen-Print Role Colors */
-  --yellow:       #ffe14d;   /* PRIMARY — brand highlights, hero blocks, "new" */
-  --pink:         #ff6fae;   /* SALE / LIVE — active drop badges, hot alerts */
-  --cyan:         #4dd8ff;   /* INFO — links, tips, Arc L1 RPC metrics, focus outline */
-  --lime:         #b6f23d;   /* SUCCESS — gasless settlements, verified invariants */
-  --violet:       #a78bff;   /* CREATOR — Euthyna audit identity & memberships */
-  --orange:       #ff8a3d;   /* WARNING — escalation queue, pending multi-sig caps */
-  --red:          #ff4d4d;   /* ERROR — OFAC SDN sanctions reverts, execution halts */
-
-  /* Strict Brutalist Geometry */
-  --radius:       0px;       /* Zero rounded corners across all components */
-  --bw:           3px;       /* Standard object border */
-  --bw-heavy:     4px;       /* Raised / hero objects */
-  --bw-thin:      2px;       /* Chips, table cells, dashed dividers */
+  /* Imperial Role Accents */
+  --tyrian-purple:     #7928ca;  /* Byzantine Tyrian Imperial Violet */
+  --arc-cyan:          #00e5ff;  /* Circle Arc L1 Electric Cyan */
+  --emerald-pass:      #05ffa1;  /* Athenian Euthyna Verified Audit */
+  --crimson-revert:    #ff2e55;  /* OFAC SDN Sanctions Revert */
+  --amber-warn:        #ffb020;  /* Escalation Threshold Multi-Sig */
 }
 ```
 
 #### 9.2 Typography System (Tri-Font Hierarchy)
 Three Google Fonts loaded with `display: swap`:
-* **Chunky Display (`--font-display`):** `Bricolage Grotesque` (800 ExtraBold, tight leading, uppercase). Accompanied by marker-swipe highlighter bars (`.hl` in yellow, `.hl--pink`, `.hl--cyan`).
-* **Friendly UI (`--font-ui`):** `DM Sans` (400, 500, 700) for readable body text, section navigation, and form labels.
-* **Data & Receipts (`--font-mono`):** `JetBrains Mono` (400, 500, 700) for transaction hashes, gas metrics, and Beancount accounting records.
+* **Imperial Monumental Display (`--font-serif`):** `Cinzel` (600, 700, 800, 900) for authoritative Byzantine headings, regal coin monograms, and brand crests.
+* **Modern High-Fintech UI (`--font-ui`):** `DM Sans` (300, 400, 500, 600, 700) for readable command text, section navigation, and interactive form labels.
+* **Cryptographic & Financial Telemetry (`--font-mono`):** `JetBrains Mono` (400, 500, 600, 700) for transaction hashes, gas metrics, and Beancount accounting records.
 
 #### 9.3 Signature Visual & Interactive Components
-1. **Mechanical Top Marquee Ticker (`.k-marquee`):** Real-time high-contrast sliding banner streaming live protocol metrics (Arc L1 block height, Paymaster status, USYC rate, OpenSanctions radar status).
-2. **2D Canvas Transaction Flow Matrix (`flowCanvas`):** Screen-printed orthogonal circuit blueprint connecting 6 core nodes (`ARC L1 RPC`, `SAKELLARIOUS.DEV`, `OPENSANCTIONS`, `POLICYWALLET`, `CIRCLE PAYMASTER`, `USYC VAULT`, `EUTHYNA LEDGER`) with live multi-colored packet streams.
-3. **Six Architectural Drops (`.k-card`):** Feature physical misregistration offset backing blocks, sticker tags (`.k-sticker` with $\pm 1\text{--}3^\circ$ tilt), and punchy colored hover reveals (`.card-hover--color`).
-4. **War Room & Physical Till Receipt Console (`OrderReceipt`):**
-   * *PolicyWallet Daily Cap & Guardrail Gauge:* 10-segment block indicator tracking real-time daily budget consumption against the 1,000 USDC limit (880 USDC remaining, <= $250 auto-settlement threshold).
+1. **Streaming Imperial Status Marquee:** Real-time sliding banner streaming live protocol metrics (Arc L1 block height, Circle Paymaster status, USYC rate, OpenSanctions radar status).
+2. **2D Canvas Transaction Flow Matrix (`flowCanvas`):** Obsidian & gold orthogonal circuit blueprint connecting 7 core nodes (`ARC L1 RPC`, `SAKELLARIOUS.DEV`, `OPENSANCTIONS`, `POLICYWALLET`, `CIRCLE PAYMASTER`, `USYC VAULT`, `EUTHYNA LEDGER`) with live radiant cyan particle pulses.
+3. **Six Imperial Vault Pillars:** Monolithic cards with subtle gold borders, deep obsidian backing, and corner brackets.
+4. **War Room & Physical Till Receipt Console:**
+   * *PolicyWallet Daily Cap & Guardrail Gauge:* 10-segment crystal indicator tracking real-time daily budget consumption against the 1,000 USDC limit (880 USDC remaining, <= $250 auto-settlement threshold).
    * *Interactive Dispatch Buttons:* Micro-invoice, cap breach escalation, OFAC sanctions blocking, and USYC yield sweep.
-   * *Physical Monospace Till Receipt Tape:* Zebra-striped run-sheet displaying live timestamps and status stamps (`[PAID]`, `[ESCALATED]`, `[REVERTED]`).
-   * *Kinetic Motion:* Cards and badges drop with `@keyframes slam` and flinch on errors with `@keyframes shake`.
-5. **Foundry Formal Verification Matrix:** Industrial test matrix displaying all 21 passing invariants with lime `[PAID] PASS` stickers.
+   * *Euthyna Immutable Audit Run-Sheet:* Monospace terminal stream with cryptographic status stamps (`[PAID]`, `[ESCALATED]`, `[REVERTED]`).
+   * *Imperial Sound Synthesizer:* Web Audio API feedback for tactile settlement chimes and alert cues.
+5. **Foundry Formal Verification Matrix:** Industrial table displaying all 21 passing invariants with green passing badges.
 6. **Toast Notifications (`Toast`):** Slams into the viewport corner on transaction execution and auto-clears.
 
 ---
