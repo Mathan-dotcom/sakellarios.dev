@@ -30,18 +30,30 @@ npm run seed
 npm run report
 ```
 
-### 5. Start the Backend API Server & Interactive 3D UI
+### 5. Start the Backend API Server & Interactive UI
 ```bash
 npm start
 # Server listens on http://localhost:4000
-# Open http://localhost:4000/ to experience the interactive 3D particle scrollytelling UI
+# Root (http://localhost:4000/) serves the 3D Interactive Codex (frontend.html)
+# Landing Page: http://localhost:4000/landing
+# 3D Supernova Universe: http://localhost:4000/supernova
 ```
 
 ---
 
-## 🌌 Interactive 3D Particle Scrollytelling UI (`supernova_explotion_2.html`)
+## 🏛️ Interactive 3D Imperial Codex UI (`frontend.html`)
 
-The frontend features a 60–120 FPS lightweight Three.js particle system whose formations morph dynamically in alignment with the project narrative as you scroll:
+The primary frontend is a physical 3D parchment codex featuring:
+- **3D Curled Leaf Mechanics:** Physical paper kinematics where 18 linked segments turn dynamically with realistic tangent arcs, light specular reflection, and ambient contact shadows.
+- **Magnifying Loupe Glass:** Interactive brass-ringed loupe with 2.3x optical magnification that can be grabbed and dragged across parchment folios to inspect architectural details.
+- **Nine Architectural Folios:** Complete interactive codex tracing the Vestiarion continuous treasury from Arc L1 sovereign core, automated USYC yield sweeping, and `PolicyWallet.sol` spending caps to double-entry Beancount auditability.
+- **Live Operator Terminal:** Interactive dispatch console to simulate micro-invoices, compliance sanctions enforcement, threshold escalation queues, and yield sweeps.
+
+---
+
+## 🌌 Interactive 3D Particle Scrollytelling UI (`supernova_explotion_2.html` / `/supernova`)
+
+The project also features a 60–120 FPS lightweight Three.js particle system whose formations morph dynamically in alignment with the project narrative as you scroll:
 
 1. **Imperial Core:** Celestial twin binary stars representing the sovereign Arc L1 treasury core.
 2. **Yield Stream:** Helical liquidity flow visualizing continuous 30-day runway forecasting & USYC yield sweeping.
