@@ -108,7 +108,7 @@ async function runIntegrationTests() {
     assert(beancount.includes("Circle Paymaster / Vendor Settlement"), "Beancount must include settlements");
     const receipts = agent.auditLedger.getReceipts();
     assert(receipts.length >= 2, "Must have generated JSON-LD receipts");
-    assert.strictEqual(receipts[0]["@context"], "https://vestiarion.ai/schemas/audit-v5.jsonld");
+    assert.strictEqual(receipts[0]["@context"], "https://sakellarious.dev/schemas/audit-v5.jsonld");
     console.log(`  ✓ Beancount double-entry ledger generated successfully (${beancount.split('\n').length} lines)`);
     console.log(`  ✓ JSON-LD audit receipts generated: ${receipts.length} verified receipts`);
     console.log(`  ✓ First receipt schema verified: ${receipts[0]["@context"]}\n`);
@@ -122,3 +122,4 @@ runIntegrationTests().catch(err => {
     console.error("Test failure:", err);
     process.exit(1);
 });
+

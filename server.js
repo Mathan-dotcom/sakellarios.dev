@@ -45,7 +45,7 @@ const agent = new VestiarionAgent();
 // Day-1 Traction Seed Data (PRD Section 11)
 // ----------------------------------------------------
 async function seedInitialState() {
-    console.log("[Vestiarion AI] Initializing Day-1 Traction Seed Operations...");
+    console.log("[sakellarious.dev] Initializing Day-1 Traction Seed Operations...");
     
     // User #1 (Internal Builder Team): Cloud server bill (120 USDC - Standard Payout via Paymaster)
     await agent.processIncomingInvoice({
@@ -65,7 +65,7 @@ async function seedInitialState() {
         reasoning: "External open-source maintainer stipend for Circom ZK-proof optimization."
     });
 
-    console.log("[Vestiarion AI] Seed operations complete. Ready for live operations.");
+    console.log("[sakellarious.dev] Seed operations complete. Ready for live operations.");
 }
 
 // ----------------------------------------------------
@@ -218,7 +218,7 @@ if (require.main === module) {
     seedInitialState().then(() => {
         app.listen(PORT, () => {
             console.log(`\n========================================================`);
-            console.log(`🚀 Vestiarion AI Backend Server running on port ${PORT}`);
+            console.log(`🚀 sakellarious.dev Backend Server running on port ${PORT}`);
             console.log(`   Arc L1 Policy Wallet: ${agent.walletAddress}`);
             console.log(`   API endpoints available at http://localhost:${PORT}/api/`);
             console.log(`========================================================\n`);

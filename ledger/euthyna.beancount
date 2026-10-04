@@ -1,9 +1,9 @@
-; Vestiarion AI - Euthyna Immutable Audit Ledger
+; sakellarious.dev - Euthyna Immutable Audit Ledger
 ; Standard: Beancount v2 Double-Entry Accounting
 ; Operating Chain: Arc L1 (Circle Native)
 ; Settlement Token: USDC
 
-option "title" "Vestiarion AI Continuous Treasury Ledger"
+option "title" "sakellarious.dev Continuous Treasury Ledger"
 option "operating_currency" "USDC"
 
 2026-01-01 open Assets:Arc:PolicyWallet:USDC USDC
@@ -140,3 +140,22 @@ option "operating_currency" "USDC"
   meta-timestamp: "2026-10-04T14:38:54.704Z"
   Assets:Arc:PolicyWallet:USDC                   -120.00 USDC
   Expenses:Infrastructure:Hosting            120.00 USDC
+
+
+2026-10-04 * "Circle Paymaster / Vendor Settlement" "Paid INFRASTRUCTURE Invoice #INV-INFRA-101"
+  meta-agent-id: "0x2222222222222222222222222222222222222222"
+  meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
+  meta-sanctions-check: "CLEAN"
+  meta-tx-hash: "0x72683d8ed7f0e3915daef71b698881c2aa889bba96b2a9a0a4b0f535b2f1a0a9"
+  meta-timestamp: "2026-10-04T15:06:55.983Z"
+  Assets:Arc:PolicyWallet:USDC                   -150.00 USDC
+  Expenses:Infrastructure:Hosting            150.00 USDC
+
+2026-10-04 * "Circle Paymaster / Vendor Settlement" "Paid PAYROLL Invoice #INV-PAY-202"
+  meta-agent-id: "0x2222222222222222222222222222222222222222"
+  meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
+  meta-sanctions-check: "CLEAN"
+  meta-tx-hash: "0xba677f97c47b3cea7c6ed31487bff7df1962797a0a484f96568f6152e3e5cb62"
+  meta-timestamp: "2026-10-04T15:06:57.068Z"
+  Assets:Arc:PolicyWallet:USDC                   -600.00 USDC
+  Expenses:Payroll:Stipends            600.00 USDC
