@@ -30,11 +30,25 @@ npm run seed
 npm run report
 ```
 
-### 5. Start the Backend API Server (for Frontend Integration)
+### 5. Start the Backend API Server & Interactive 3D UI
 ```bash
 npm start
 # Server listens on http://localhost:4000
+# Open http://localhost:4000/ to experience the interactive 3D particle scrollytelling UI
 ```
+
+---
+
+## 🌌 Interactive 3D Particle Scrollytelling UI (`supernova_explotion_2.html`)
+
+The frontend features a 60–120 FPS lightweight Three.js particle system whose formations morph dynamically in alignment with the project narrative as you scroll:
+
+1. **Imperial Core:** Celestial twin binary stars representing the sovereign Arc L1 treasury core.
+2. **Yield Stream:** Helical liquidity flow visualizing continuous 30-day runway forecasting & USYC yield sweeping.
+3. **Policy Shield:** Geodesic polyhedral cage demonstrating non-bypassable on-chain guardrails in `PolicyWallet.sol`.
+4. **Compliance Radar:** Real-time concentric radar scanning against global OpenSanctions lists.
+5. **Euthyna Ledger:** Dual-column balanced matrix displaying double-entry Beancount bookkeeping.
+6. **Mission Control:** Live interactive console allowing real-time invoice dispatch, policy evaluation, and audio synthesizer feedback.
 
 ---
 
