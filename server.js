@@ -16,8 +16,17 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
 
-// Serve primary UI
+// Serve Flagship Landing Page
 app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'landing.html'));
+});
+
+app.get('/landing', (req, res) => {
+    res.sendFile(path.join(__dirname, 'landing.html'));
+});
+
+// Serve 3D Supernova Integrated Scrollytelling Experience
+app.get('/supernova', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 

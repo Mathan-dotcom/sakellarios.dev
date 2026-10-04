@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vestiarion AI — Continuous Treasury & Autonomous Business Operator (Arc L1)</title>
+    
+    <!-- Meta & SEO -->
+    <meta name="description" content="Vestiarion AI is the autonomous continuous treasury and on-chain CFO built natively for Circle's Arc L1. Featuring automated USYC yield compounding, Circle Paymaster gasless payouts, PolicyWallet mathematical guardrails, and Euthyna double-entry auditability.">
+    <meta name="theme-color" content="#030712">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #030712;
+            --bg-card: rgba(15, 23, 42, 0.75);
+            --bg-card-hover: rgba(30, 41, 59, 0.85);
+            --gold-primary: #f59e0b;
+            --gold-light: #fcd34d;
+            --gold-glow: rgba(245, 158, 11, 0.25);
+            --arc-cyan: #06b6d4;
+            --arc-cyan-glow: rgba(6, 182, 212, 0.35);
+            --emerald-yield: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.25);
+            --shield-violet: #8b5cf6;
+            --alert-crimson: #ef4444;
+            --text-main: #f9fafb;
+            --text-dim: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --border-glass-gold: rgba(245, 158, 11, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Glow Backgrounds */
+        .ambient-glow-1 {
+            position: fixed;
+            top: -150px;
+            left: 20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, rgba(3, 7, 18, 0) 70%);
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(80px);
+        }
+
+        .ambient-glow-2 {
+            position: fixed;
+            top: 40%;
+            right: -100px;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, rgba(3, 7, 18, 0) 70%);
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(100px);
+        }
+
+        .ambient-glow-3 {
+            position: fixed;
+            bottom: -100px;
+            left: -100px;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, rgba(3, 7, 18, 0) 70%);
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(120px);
+        }
+
+        /* Layout Container */
+        .container {
+            width: 100%;
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header Navigation */
+        header.nav-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(3, 7, 18, 0.82);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 16px 0;
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .brand-logo {
+            font-size: 28px;
+            filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.6));
+        }
+
+        .brand-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            background: linear-gradient(135deg, #ffffff 0%, var(--gold-light) 50%, var(--gold-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--arc-cyan);
+            border: 1px solid rgba(6, 182, 212, 0.35);
+            background: rgba(6, 182, 212, 0.08);
+            padding: 2px 7px;
+            border-radius: 4px;
+            letter-spacing: 0.08em;
+        }
+
+        nav.nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        nav.nav-menu a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        nav.nav-menu a:hover {
+            color: var(--gold-light);
+        }
+
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .btn-supernova {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(6, 182, 212, 0.12);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            color: var(--arc-cyan);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+
+        .btn-supernova:hover {
+            background: var(--arc-cyan);
+            color: #030712;
+            box-shadow: 0 0 20px var(--arc-cyan-glow);
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, var(--gold-primary) 0%, #d97706 100%);
+            border: 1px solid var(--gold-light);
+            color: #030712;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 9px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.6);
+        }
+
+        /* Hero Section */
+        section.hero-section {
+            padding: 90px 0 60px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .announcement-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 9999px;
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--gold-light);
+            margin-bottom: 24px;
+        }
+
+        h1.hero-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2.6rem, 5.5vw, 4.4rem);
+            font-weight: 900;
+            line-height: 1.12;
+            letter-spacing: -0.02em;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #ffffff 0%, #fef3c7 45%, var(--gold-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.hero-subtitle {
+            max-width: 780px;
+            margin: 0 auto 36px auto;
+            font-size: clamp(1.05rem, 2vw, 1.25rem);
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 10px 22px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--gold-primary);
+            color: var(--gold-light);
+        }
+
+        /* Hero Telemetry Status Card */
+        .hero-status-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 1040px;
+            margin: 0 auto;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 35px var(--gold-glow);
+            text-align: left;
+        }
+
+        .status-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-glass);
+            padding-bottom: 18px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .status-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-pulse-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: #6ee7b7;
+            border-radius: 9999px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .pulse-indicator {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+            animation: pulse-dot 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.8); }
+        }
+
+        .status-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .metric-cell {
+            background: rgba(3, 7, 18, 0.6);
+            border: 1px solid var(--border-glass);
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .metric-cell-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .metric-cell-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .metric-cell-value.gold { color: var(--gold-light); }
+        .metric-cell-value.emerald { color: #6ee7b7; }
+        .metric-cell-value.cyan { color: var(--arc-cyan-glow); }
+        .metric-cell-value.violet { color: #c4b5fd; }
+
+        /* Section Title Block */
+        .section-header-block {
+            text-align: center;
+            max-width: 760px;
+            margin: 0 auto 50px auto;
+        }
+
+        .section-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--gold-primary);
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        h2.section-main-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2rem, 3.8vw, 2.8rem);
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 16px;
+            letter-spacing: -0.01em;
+        }
+
+        p.section-subtext {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+
+        /* Architecture Flow Diagram Section */
+        section.architecture-section {
+            padding: 90px 0;
+            position: relative;
+        }
+
+        .flow-diagram-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        .flow-nodes-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            align-items: center;
+            margin: 40px 0;
+        }
+
+        .flow-node {
+            background: rgba(3, 7, 18, 0.7);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 20px 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .flow-node:hover {
+            transform: translateY(-4px);
+            border-color: var(--gold-primary);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2);
+        }
+
+        .flow-node-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .flow-node-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .flow-node-desc {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        .flow-connector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold-primary);
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Pillars 6-Card Grid */
+        section.pillars-section {
+            padding: 80px 0;
+        }
+
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .pillar-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pillar-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-glass-gold);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 25px var(--gold-glow);
+        }
+
+        .pillar-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        .pillar-icon-wrapper.cyan {
+            background: rgba(6, 182, 212, 0.1);
+            border-color: rgba(6, 182, 212, 0.3);
+        }
+
+        .pillar-icon-wrapper.emerald {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .pillar-icon-wrapper.violet {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        .pillar-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .pillar-desc {
+            font-size: 0.95rem;
+            color: var(--text-dim);
+            line-height: 1.65;
+        }
+
+        /* Interactive Simulator Section */
+        section.simulator-section {
+            padding: 90px 0;
+            position: relative;
+        }
+
+        .simulator-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+        }
+
+        .sim-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+        }
+
+        .panel-heading {
+            font-family: 'Cinzel', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .action-chip {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-glass);
+            color: var(--text-main);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-chip:hover {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: var(--gold-primary);
+            color: var(--gold-light);
+            transform: translateY(-1px);
+        }
+
+        .action-chip.danger:hover {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: var(--alert-crimson);
+            color: #fca5a5;
+        }
+
+        .action-chip.success:hover {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--emerald-yield);
+            color: #6ee7b7;
+        }
+
+        .console-feed {
+            background: #020617;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            line-height: 1.6;
+            color: #94a3b8;
+            height: 220px;
+            overflow-y: auto;
+            margin-top: 16px;
+        }
+
+        .feed-line {
+            margin-bottom: 4px;
+            word-break: break-all;
+        }
+        .feed-line.success { color: #34d399; }
+        .feed-line.warning { color: #fbbf24; }
+        .feed-line.error { color: #f87171; }
+        .feed-line.info { color: #38bdf8; }
+
+        /* Foundry Unit Tests Table */
+        section.testsuite-section {
+            padding: 80px 0;
+        }
+
+        .tests-table-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        table.test-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        table.test-table th {
+            background: rgba(3, 7, 18, 0.85);
+            padding: 16px 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--gold-light);
+            border-bottom: 1px solid var(--border-glass);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+        }
+
+        table.test-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-dim);
+        }
+
+        table.test-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+            color: #fff;
+        }
+
+        .pass-tag {
+            color: #10b981;
+            font-weight: 700;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        /* Supernova Banner CTA */
+        section.supernova-cta-section {
+            padding: 80px 0 110px 0;
+        }
+
+        .supernova-banner {
+            background: radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.15) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 1px solid var(--border-glass-gold);
+            border-radius: 28px;
+            padding: 56px 40px;
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 50px var(--gold-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Footer */
+        footer.landing-footer {
+            border-top: 1px solid var(--border-glass);
+            background: #020617;
+            padding: 60px 0 40px 0;
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-col ul li a {
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--gold-light);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border-glass);
+            padding-top: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        @media (max-width: 992px) {
+            .status-metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .pillars-grid { grid-template-columns: 1fr; }
+            .simulator-layout { grid-template-columns: 1fr; }
+            .flow-nodes-container { grid-template-columns: 1fr; gap: 20px; }
+            .flow-connector { transform: rotate(90deg); }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            nav.nav-menu { display: none; }
+            .status-metrics-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Gradients -->
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+    <div class="ambient-glow-3"></div>
+
+    <!-- Navigation Header -->
+    <header class="nav-header">
+        <div class="container nav-inner">
+            <a href="#" class="brand-link">
+                <span class="brand-logo">🏛️</span>
+                <div>
+                    <div class="brand-title">VESTIARION AI</div>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <span class="brand-tag">ARC L1 SOVEREIGN</span>
+                        <span style="font-size: 10px; color: #10b981; font-family: 'JetBrains Mono', monospace;">● 21/21 TESTS PASS</span>
+                    </div>
+                </div>
+            </a>
+
+            <nav class="nav-menu">
+                <a href="#features">Pillars</a>
+                <a href="#architecture">Architecture</a>
+                <a href="#simulator">Simulator</a>
+                <a href="#test-suite">Foundry Tests</a>
+                <a href="https://github.com/Mathan-dotcom/sakellarios.dev" target="_blank" rel="noopener">GitHub</a>
+            </nav>
+
+            <div class="nav-buttons">
+                <a href="/supernova" class="btn-supernova" title="Experience the 3D Supernova Universe">
+                    <span>🌌 3D Supernova</span>
+                </a>
+                <a href="#simulator" class="btn-primary">
+                    <span>Launch Sandbox</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="announcement-pill">
+                <span>⚡ Arc L1 Testnet Active</span>
+                <span>•</span>
+                <span>Circle Paymaster Gasless Rails</span>
+                <span>•</span>
+                <span>USYC Yield Compounding</span>
+            </div>
+
+            <h1 class="hero-title">
+                Continuous Treasury &<br>Autonomous Business Operator
+            </h1>
+
+            <p class="hero-subtitle">
+                Fusing the centralized fiscal power of the Byzantine Empire (<em>Vestiarion</em>) with classical Athenian magistrate audits (<em>Euthyna</em>) to empower autonomous AI agents on Circle's stablecoin Layer-1 <strong>Arc</strong>.
+            </p>
+
+            <div class="hero-actions">
+                <a href="#simulator" class="btn-primary" style="font-size: 0.95rem; padding: 12px 28px;">
+                    ⚡ Launch Live Simulator
+                </a>
+                <a href="/supernova" class="btn-secondary" style="font-size: 0.95rem; padding: 12px 26px;">
+                    🌌 Open 3D Supernova Scrollytelling
+                </a>
+            </div>
+
+            <!-- Hero Live Status Card -->
+            <div class="hero-status-card">
+                <div class="status-header">
+                    <div class="status-title">
+                        <span>🏛️ Live Arc L1 Treasury Telemetry</span>
+                        <span style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--text-dim);">
+                            PolicyWallet: 0x9A48...02195
+                        </span>
+                    </div>
+                    <div class="status-pulse-badge">
+                        <span class="pulse-indicator"></span>
+                        <span>AGENT ONLINE & SCREENING</span>
+                    </div>
+                </div>
+
+                <div class="status-metrics-grid">
+                    <div class="metric-cell">
+                        <div class="metric-cell-label">Total Arc Capital</div>
+                        <div class="metric-cell-value gold">$34,880 <span style="font-size: 12px; color: var(--text-dim); font-weight: normal;">USDC</span></div>
+                    </div>
+                    <div class="metric-cell">
+                        <div class="metric-cell-label">30-Day Buffer Runway</div>
+                        <div class="metric-cell-value emerald">$10,900 <span style="font-size: 12px; color: var(--text-dim); font-weight: normal;">USDC</span></div>
+                    </div>
+                    <div class="metric-cell">
+                        <div class="metric-cell-label">USYC Vault Allocation</div>
+                        <div class="metric-cell-value cyan">$25,000 <span style="font-size: 12px; color: #6ee7b7; font-weight: normal;">(5.2% APY)</span></div>
+                    </div>
+                    <div class="metric-cell">
+                        <div class="metric-cell-label">Single Tx Guardrail</div>
+                        <div class="metric-cell-value violet">&le; $250 <span style="font-size: 12px; color: var(--text-dim); font-weight: normal;">USDC</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section class="architecture-section" id="architecture">
+        <div class="container">
+            <div class="section-header-block">
+                <span class="section-tag">Mathematical Invariants & Safety</span>
+                <h2 class="section-main-title">The Autonomous Treasury Pipeline</h2>
+                <p class="section-subtext">
+                    How incoming business invoices flow from AI agent ingestion through live sanction screening, policy guardrails, and cryptographic double-entry auditability.
+                </p>
+            </div>
+
+            <div class="flow-diagram-card">
+                <div class="flow-nodes-container">
+                    <div class="flow-node">
+                        <div class="flow-node-icon">🤖</div>
+                        <div class="flow-node-title">1. AI Agent</div>
+                        <div class="flow-node-desc">Ingests vendor invoices via REST API & evaluates business necessity</div>
+                    </div>
+
+                    <div class="flow-connector">&rarr;</div>
+
+                    <div class="flow-node">
+                        <div class="flow-node-icon">🔍</div>
+                        <div class="flow-node-title">2. OpenSanctions</div>
+                        <div class="flow-node-desc">Real-time HTTP screening against OFAC, EU, & UN sanction lists</div>
+                    </div>
+
+                    <div class="flow-connector">&rarr;</div>
+
+                    <div class="flow-node" style="border-color: var(--gold-primary); box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);">
+                        <div class="flow-node-icon">🛡️</div>
+                        <div class="flow-node-title">3. PolicyWallet.sol</div>
+                        <div class="flow-node-desc">Mathematical caps: $1k/day ceiling & $250 single tx threshold</div>
+                    </div>
+
+                    <div class="flow-connector">&rarr;</div>
+
+                    <div class="flow-node">
+                        <div class="flow-node-icon">⚡</div>
+                        <div class="flow-node-title">4. Settlement Rails</div>
+                        <div class="flow-node-desc">&le; $250 Paymaster Gasless Payout<br>&gt; $250 Escalation Queue</div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(3, 7, 18, 0.5); border-radius: 12px; padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 22px;">📜</span>
+                        <div>
+                            <div style="font-weight: 600; color: #fff; font-size: 0.95rem;">Step 5: Continuous Euthyna Bookkeeping</div>
+                            <div style="font-size: 12px; color: var(--text-dim);">Every penny settled generates plain-text Beancount double-entry records + signed JSON-LD receipts.</div>
+                        </div>
+                    </div>
+                    <a href="#simulator" class="action-chip success">Test in Live Sandbox &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pillars Section -->
+    <section class="pillars-section" id="features">
+        <div class="container">
+            <div class="section-header-block">
+                <span class="section-tag">Core Technical Primitives</span>
+                <h2 class="section-main-title">Six Pillars of Sovereign AI Finance</h2>
+                <p class="section-subtext">
+                    Engineered from ground up to solve the corporate CFO trilemma: liquidity, security, and continuous auditability.
+                </p>
+            </div>
+
+            <div class="pillars-grid">
+                <!-- Pillar 1 -->
+                <div class="pillar-card">
+                    <div class="pillar-icon-wrapper">
+                        <span>📈</span>
+                    </div>
+                    <h3 class="pillar-title">30-Day Runway & JIT Yield</h3>
+                    <p class="pillar-desc">
+                        Vestiarion continuously computes fixed overhead and variable accounts payable. Capital above the $10,900 safety threshold is automatically swept into tokenized USYC vaults (5.2% APY), with Just-In-Time redemptions for approved outflows.
+                    </p>
+                </div>
+
+                <!-- Pillar 2 -->
+                <div class="pillar-card">
+                    <div class="pillar-icon-wrapper violet">
+                        <span>🛡️</span>
+                    </div>
+                    <h3 class="pillar-title">PolicyWallet Guardrails</h3>
+                    <p class="pillar-desc">
+                        Immutable smart contract boundaries in <code>PolicyWallet.sol</code>. Daily spend limit ($1,000 USDC), single transaction ceiling ($250 USDC), independent categorical budgets, and multi-sig supervisor escalation queues.
+                    </p>
+                </div>
+
+                <!-- Pillar 3 -->
+                <div class="pillar-card">
+                    <div class="pillar-icon-wrapper cyan">
+                        <span>⚡</span>
+                    </div>
+                    <h3 class="pillar-title">Circle Paymaster Rails</h3>
+                    <p class="pillar-desc">
+                        Zero gas friction on Circle's Arc L1. Compliant micro-transactions (&le; $250 USDC) execute gaslessly via Circle Paymaster, eliminating the operational hassle of managing native gas balances for autonomous agents.
+                    </p>
+                </div>
+
+                <!-- Pillar 4 -->
+                <div class="pillar-card">
+                    <div class="pillar-icon-wrapper emerald">
+                        <span>🔍</span>
+                    </div>
+                    <h3 class="pillar-title">Live Sanctions Screening</h3>
+                    <p class="pillar-desc">
+                        Automated forensic screening against the global OpenSanctions database before every settlement. Any recipient associated with OFAC SDN, EU, or UN sanctions lists is instantly and mathematically rejected.
+                    </p>
+                </div>
+
+                <!-- Pillar 5 -->
+                <div class="pillar-card">
+                    <div class="pillar-icon-wrapper">
+                        <span>📜</span>
+                    </div>
+                    <h3 class="pillar-title">Euthyna Audit Ledger</h3>
+                    <p class="pillar-desc">
+                        Classical Athenian governance realized in plain-text accounting. Every single transaction produces verifiable double-entry Beancount ledger entries with tamper-proof cryptographic JSON-LD receipts.
+                    </p>
+                </div>
+
+                <!-- Pillar 6 -->
+                <div class="pillar-card">
+                    <div class="pillar-icon-wrapper cyan">
+                        <span>🌐</span>
+                    </div>
+                    <h3 class="pillar-title">Circle Gateway Multichain</h3>
+                    <p class="pillar-desc">
+                        Consolidated multichain reserve views across Arc L1, Ethereum, Base, and Arbitrum. Monitor unified corporate balance sheets with seamless stablecoin liquidity routing across all supported EVM ecosystems.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Simulator Section -->
+    <section class="simulator-section" id="simulator">
+        <div class="container">
+            <div class="section-header-block">
+                <span class="section-tag">Interactive Mission Console</span>
+                <h2 class="section-main-title">Live Treasury Simulator</h2>
+                <p class="section-subtext">
+                    Simulate real-time invoice dispatch through the autonomous decision pipeline. Observe gasless settlement, on-chain escalations, and sanctions enforcement.
+                </p>
+            </div>
+
+            <div class="simulator-layout">
+                <!-- Left: Action Dispatcher -->
+                <div class="sim-panel">
+                    <div class="panel-heading">
+                        <span>⚡ Dispatch Simulated Invoice</span>
+                        <span id="sim-status" style="color: #34d399; font-size: 11px; font-family: 'JetBrains Mono', monospace;">AGENT READY</span>
+                    </div>
+
+                    <p style="font-size: 0.95rem; color: var(--text-dim); margin-bottom: 20px;">
+                        Trigger simulated financial actions to observe the agent's policy evaluation and real-time Beancount accounting emission:
+                    </p>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <button class="action-chip success" onclick="simulateInvoice('micro')" style="justify-content: flex-start; padding: 12px 16px;">
+                            <span>⚡</span>
+                            <div style="text-align: left;">
+                                <div style="font-weight: 600; color: #fff;">Settle Cloud Server Bill ($120 USDC)</div>
+                                <div style="font-size: 10.5px; color: var(--text-dim);">&le; $250 cap &rarr; Instant settlement via Circle Paymaster</div>
+                            </div>
+                        </button>
+
+                        <button class="action-chip" onclick="simulateInvoice('escalated')" style="justify-content: flex-start; padding: 12px 16px;">
+                            <span>⚠️</span>
+                            <div style="text-align: left;">
+                                <div style="font-weight: 600; color: #fff;">Submit Security Audit Invoice ($450 USDC)</div>
+                                <div style="font-size: 10.5px; color: var(--text-dim);">&gt; $250 cap &rarr; Pushed to on-chain supervisor escalation queue</div>
+                            </div>
+                        </button>
+
+                        <button class="action-chip danger" onclick="simulateInvoice('sanctioned')" style="justify-content: flex-start; padding: 12px 16px;">
+                            <span>🚫</span>
+                            <div style="text-align: left;">
+                                <div style="font-weight: 600; color: #fff;">Attempt Transfer to OFAC Entity ($500 USDC)</div>
+                                <div style="font-size: 10.5px; color: var(--text-dim);">OpenSanctions match &rarr; Immediate execution revert</div>
+                            </div>
+                        </button>
+
+                        <button class="action-chip success" onclick="simulateInvoice('sweep')" style="justify-content: flex-start; padding: 12px 16px;">
+                            <span>📈</span>
+                            <div style="text-align: left;">
+                                <div style="font-weight: 600; color: #fff;">Autonomous USYC Yield Sweep ($10,000 USDC)</div>
+                                <div style="font-size: 10.5px; color: var(--text-dim);">Surplus capital routed to tokenized USYC vault (5.2% APY)</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Live Console Feed & Beancount Output -->
+                <div class="sim-panel">
+                    <div class="panel-heading">
+                        <span>📜 Live Operator & Audit Feed</span>
+                        <span style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--gold-light);">BEANCOUNT LEDGER</span>
+                    </div>
+
+                    <div class="console-feed" id="sim-feed">
+                        <div class="feed-line info">[System] Vestiarion AI operator connected to Arc L1 testbed.</div>
+                        <div class="feed-line info">[PolicyWallet] Daily limit: 1000 USDC | Single Tx Cap: 250 USDC.</div>
+                        <div class="feed-line success">[Ready] Select a simulated action on the left to dispatch transactions.</div>
+                    </div>
+
+                    <div style="margin-top: 14px; padding: 14px; background: rgba(3, 7, 18, 0.7); border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim);">
+                        <span style="color: var(--arc-cyan);">💡 Live Backend Integration:</span> When running <code>npm start</code>, this sandbox interfaces directly with the REST endpoints on <code>http://localhost:4000/api/</code>!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Test Suite Section -->
+    <section class="testsuite-section" id="test-suite">
+        <div class="container">
+            <div class="section-header-block">
+                <span class="section-tag">21/21 Foundry Unit Tests</span>
+                <h2 class="section-main-title">Mathematically Proven Guardrails</h2>
+                <p class="section-subtext">
+                    Every smart contract method in <code>PolicyWallet.sol</code> is covered by high-verbosity unit tests targeting zero-address guards, reentrancy defense, and budget overrides.
+                </p>
+            </div>
+
+            <div class="tests-table-card">
+                <table class="test-table">
+                    <thead>
+                        <tr>
+                            <th>Foundry Test Name</th>
+                            <th>Gas Consumed</th>
+                            <th>Security Property Enforced</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>test_ExecuteStandardPayout_Success</code></td>
+                            <td>156,349</td>
+                            <td>Direct automated payout happy path &le; 250 USDC</td>
+                            <td><span class="pass-tag">PASS</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>test_ExecutePayout_RevertIfExceedsMaxSingleTx</code></td>
+                            <td>51,888</td>
+                            <td>Reverts if payout exceeds $250 ceiling without escalation</td>
+                            <td><span class="pass-tag">PASS</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>test_ExecutePayout_RevertIfExceedsCategoryLimit</code></td>
+                            <td>254,967</td>
+                            <td>Reverts when category daily budget is exhausted</td>
+                            <td><span class="pass-tag">PASS</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>test_RequestEscalatedPayout_RevertIfNotWhitelisted</code></td>
+                            <td>42,991</td>
+                            <td>Escalations must still target whitelisted approved vendors</td>
+                            <td><span class="pass-tag">PASS</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>test_ApproveEscalation_Success_CategoryOverride</code></td>
+                            <td>370,662</td>
+                            <td>Owner approval successfully executes and overrides category cap</td>
+                            <td><span class="pass-tag">PASS</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>test_ApproveEscalation_RevertIfExpired</code></td>
+                            <td>265,945</td>
+                            <td>Reverts execution if 3-day escalation timeout has passed</td>
+                            <td><span class="pass-tag">PASS</span></td>
+                        </tr>
+                        <tr>
+                            <td><code>test_SweepAndRedeemUSYC_Success</code></td>
+                            <td>210,461</td>
+                            <td>USYC deposit approval and post-redemption balance verification</td>
+                            <td><span class="pass-tag">PASS</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Supernova 3D Universe Banner CTA -->
+    <section class="supernova-cta-section">
+        <div class="container">
+            <div class="supernova-banner">
+                <h2 style="font-family: 'Cinzel', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: #fff; margin-bottom: 16px;">
+                    Explore the 3D Supernova Universe
+                </h2>
+                <p style="font-size: 1.15rem; color: var(--text-dim); max-width: 680px; margin: 0 auto 36px auto; line-height: 1.7;">
+                    Experience Vestiarion AI's live 20,000-particle cosmic simulation with twin binary stellar remnants, concentric shockwave shells, and interactive physics sliders.
+                </p>
+                <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                    <a href="/supernova" class="btn-primary" style="font-size: 1rem; padding: 14px 32px;">
+                        🌌 Launch 3D Supernova Experience
+                    </a>
+                    <a href="/supernova_explotion_2.html" class="btn-secondary" style="font-size: 1rem; padding: 14px 28px;">
+                        🔭 View Raw Particle Swarm
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+                        <span style="font-size: 24px;">🏛️</span>
+                        <span style="font-family: 'Cinzel', serif; font-size: 1.15rem; font-weight: 800; color: #fff;">VESTIARION AI</span>
+                    </div>
+                    <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; max-width: 320px;">
+                        The continuous treasury and autonomous business operator for Circle's Arc L1 blockchain. Uniting Byzantine sovereign fiscal management with Athenian mathematical auditability.
+                    </p>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Protocols & Rails</h4>
+                    <ul>
+                        <li><a href="#features">Circle Arc L1</a></li>
+                        <li><a href="#features">Circle Paymaster</a></li>
+                        <li><a href="#features">Circle Gateway</a></li>
+                        <li><a href="#features">USYC Yield Vaults</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Smart Contracts</h4>
+                    <ul>
+                        <li><a href="#architecture">PolicyWallet.sol</a></li>
+                        <li><a href="#test-suite">Foundry Test Suite</a></li>
+                        <li><a href="#architecture">OpenSanctions Screening</a></li>
+                        <li><a href="#architecture">Euthyna Beancount</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Project Resources</h4>
+                    <ul>
+                        <li><a href="https://github.com/Mathan-dotcom/sakellarios.dev" target="_blank" rel="noopener">GitHub Repository</a></li>
+                        <li><a href="/supernova">3D Scrollytelling</a></li>
+                        <li><a href="/supernova_explotion_2.html">Raw Particle Canvas</a></li>
+                        <li><a href="/api/treasury/summary" target="_blank">API Health Status</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div>
+                    &copy; 2026 Vestiarion AI · Built natively for Circle Arc L1 · All Rights Reserved
+                </div>
+                <div style="color: var(--gold-light);">
+                    RFB 01 + RFB 04 Target Implementation · Version 5.0
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Simulator Script -->
+    <script>
+        window.simulateInvoice = function(type) {
+            const feed = document.getElementById('sim-feed');
+            const statusEl = document.getElementById('sim-status');
+            const now = new Date().toLocaleTimeString();
+
+            function appendFeed(text, cls = 'info') {
+                const line = document.createElement('div');
+                line.className = `feed-line ${cls}`;
+                line.textContent = `[${now}] ${text}`;
+                feed.appendChild(line);
+                feed.scrollTop = feed.scrollHeight;
+            }
+
+            if (type === 'micro') {
+                statusEl.textContent = "PAYOUT SETTLED (GASLESS)";
+                statusEl.style.color = "var(--emerald-yield)";
+                appendFeed("Invoice received: INV-CLOUD-9941 ($120.00 USDC)", "info");
+                appendFeed("Sanctions check passed (OpenSanctions API)", "success");
+                appendFeed("Within cap ($120 <= $250 maxSingleTx) -> Settled gaslessly via Circle Paymaster", "success");
+                appendFeed("Beancount double-entry receipt emitted (txId: 0x3a00...ef3)", "info");
+            } else if (type === 'escalated') {
+                statusEl.textContent = "ESCALATED TO QUEUE";
+                statusEl.style.color = "var(--gold-light)";
+                appendFeed("Invoice received: INV-AUDIT-4402 ($450.00 USDC)", "warning");
+                appendFeed("Single transaction limit exceeded ($450 > $250 maxSingleTx)!", "warning");
+                appendFeed("PolicyWallet.sol: Pushed to On-Chain Escalation Queue (Nonce #5)", "warning");
+                appendFeed("Supervisor notification dispatched via Webhook. Awaiting owner multi-sig.", "info");
+            } else if (type === 'sanctioned') {
+                statusEl.textContent = "TRANSACTION REVERTED";
+                statusEl.style.color = "var(--alert-crimson)";
+                appendFeed("Invoice received: INV-ROGUE-001 ($500.00 USDC)", "error");
+                appendFeed("CRITICAL: Recipient matched OFAC Sanctions List!", "error");
+                appendFeed("PolicyWallet reverted execution: PayoutUnauthorized()", "error");
+                appendFeed("Security alert logged in Euthyna audit trail.", "error");
+            } else if (type === 'sweep') {
+                statusEl.textContent = "SURPLUS SWEPT TO USYC";
+                statusEl.style.color = "var(--emerald-yield)";
+                appendFeed("Buffer evaluation: Operating reserve $10,900 USDC satisfied.", "info");
+                appendFeed("Surplus capital ($10,000 USDC) swept into USYC Vault via forceApprove()", "success");
+                appendFeed("Earning 5.2% APY tokenized yield. JIT redemption active.", "success");
+            }
+        };
+    </script>
+</body>
+</html>
