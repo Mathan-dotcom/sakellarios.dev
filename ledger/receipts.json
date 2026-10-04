@@ -491,5 +491,63 @@
       "liquidUsdcAvailable": 9880
     },
     "txHash": "0xc7c9ba63265a3d35cb0dc4f21b7dfb2777ec00b79c42c48b97101fa463512d52"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-04T15:23:51.880Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 150,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-INFRA-101",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-04T15:23:49.975Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 850,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 0
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9850
+    },
+    "txHash": "0x0816fa2372505c40924f1d1a750dab736ace66847f43d7b1d249a921b3b13335"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-04T15:23:52.369Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x4444444444444444444444444444444444444444",
+    "amountUsdc": 600,
+    "category": "PAYROLL",
+    "invoiceRef": "INV-PAY-202",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-04T15:23:52.369Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 250,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 1
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9250
+    },
+    "txHash": "0xc6407328c53392c0eaf0e1a1038a717e8ec1229dc19dd4da887f940d3146656f"
   }
 ]
