@@ -90,3 +90,15 @@ The **Byzantine Cyber-Imperial** design system moves completely beyond generic f
 - **Escalation Triggered:** Multi-sig sine bell.
 - **Sanctions Reverted:** Low-frequency sawtooth alert buzz.
 - **USYC Swept:** Frequency ascent rebalance harmonic.
+
+### 4.6 Curso-Dynamic Spotlight & Reticle Aurora
+- **Movement & Scroll Fade-In:** As the user moves the cursor or scrolls via mouse wheel/touch, a 520px ethereal Byzantine aura (`#cursorAurora`) smoothly **fades in** (`opacity: 1`, scale 1.0 &rarr; 1.2 during scroll pulses) with illuminated gold, tyrian violet, and electric cyan gradients.
+- **Idle Fade-Out:** When scrolling stops and the cursor rests for >1.2s, the aurora and precision crosshair reticle gracefully **fade out** (`opacity: 0`, scale 0.65).
+- **Surface Proximity Glow:** Hovered monolithic cards compute relative mouse coordinates (`--mouse-x`, `--mouse-y`) to cast a localized, soft gold radial highlight that follows cursor trajectory.
+
+### 4.7 Scroll-Driven Entry & Exit Fade Architecture
+- **Modern CSS View Timeline:** Utilizes `@supports ((animation-timeline: view()) and (animation-range: entry))` with `@keyframes imperialScrollEntry` and `@keyframes imperialScrollExit` for hardware-accelerated compositor-driven fades.
+- **Progressive Fallback:** Universal `IntersectionObserver` detects element scroll position, applying `.in-view` (fade in to 100%) and `.out-view-top` (soft fade out to 18%) to sustain focus on the active focal reading zone.
+- **Boundary Vignettes:** Top and bottom 52px gradient masks (`.viewport-fade-top`, `.viewport-fade-bottom`) seamlessly dissolve content as it enters from the bottom and exits into the obsidian void above.
+- **Scroll Rail Meter:** A golden 3px vertical track (`#scrollRail`) that dynamically fades in while scrolling and fades out on idle.
+

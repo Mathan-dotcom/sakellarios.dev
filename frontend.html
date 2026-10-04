@@ -1034,10 +1034,237 @@ body {
 .shake {
   animation: shakeError 0.45s ease;
 }
+
+/* =====================================================================
+   CURSO-DYNAMIC ILLUMINATION & SCROLL FADE ARCHITECTURE
+   ===================================================================== */
+/* 1. Ethereal Cursor Spotlight Aurora */
+.cursor-aurora {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99990;
+  background: radial-gradient(
+    circle at center,
+    rgba(229, 180, 67, 0.18) 0%,
+    rgba(121, 40, 202, 0.13) 36%,
+    rgba(0, 229, 255, 0.06) 62%,
+    transparent 75%
+  );
+  filter: blur(42px);
+  transform: translate(-50%, -50%) scale(0.65);
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.cursor-aurora.active {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.cursor-aurora.scrolling {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.2);
+  background: radial-gradient(
+    circle at center,
+    rgba(229, 180, 67, 0.26) 0%,
+    rgba(121, 40, 202, 0.19) 38%,
+    rgba(0, 229, 255, 0.10) 65%,
+    transparent 80%
+  );
+}
+
+/* 2. Precision Byzantine Cursor Reticle */
+.cursor-reticle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(229, 180, 67, 0.65);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99995;
+  transform: translate(-50%, -50%) scale(0.5);
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 0 14px rgba(229, 180, 67, 0.35);
+  will-change: transform, opacity;
+}
+
+.cursor-reticle::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: var(--gold-light);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px var(--gold-primary);
+}
+
+.cursor-reticle.active {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.cursor-reticle.scrolling {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.25);
+  border-color: var(--arc-cyan);
+  box-shadow: 0 0 20px var(--arc-cyan);
+}
+
+/* 3. Viewport Boundary Vignettes (Top & Bottom Content Fade Masks) */
+.viewport-fade-mask {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  height: 52px;
+  pointer-events: none;
+  z-index: 85;
+}
+
+.viewport-fade-top {
+  top: 0;
+  background: linear-gradient(to bottom, rgba(7, 9, 14, 0.95) 0%, rgba(7, 9, 14, 0) 100%);
+}
+
+.viewport-fade-bottom {
+  bottom: 0;
+  background: linear-gradient(to top, rgba(7, 9, 14, 0.95) 0%, rgba(7, 9, 14, 0) 100%);
+}
+
+/* 4. Elegant Scroll Depth Rail */
+.scroll-rail {
+  position: fixed;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 200px;
+  background: rgba(229, 180, 67, 0.12);
+  border-radius: 3px;
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.scroll-rail.visible {
+  opacity: 1;
+}
+
+.scroll-rail-thumb {
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(180deg, var(--gold-light), var(--gold-primary));
+  border-radius: 3px;
+  box-shadow: 0 0 12px var(--gold-primary);
+  transform: translateY(0);
+  transition: transform 0.08s linear;
+}
+
+/* 5. Interactive Card Proximity Illumination */
+.kpi-card, .command-plate, .blueprint-card, .till-receipt-box, .pillar-monolith, .proofs-table-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-card::after, .command-plate::after, .pillar-monolith::after {
+  content: '';
+  position: absolute;
+  top: var(--mouse-y, -1000px);
+  left: var(--mouse-x, -1000px);
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(229, 180, 67, 0.14) 0%, rgba(121, 40, 202, 0.08) 45%, transparent 70%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 1;
+}
+
+.kpi-card:hover::after, .command-plate:hover::after, .pillar-monolith:hover::after {
+  opacity: 1;
+}
+
+/* 6. Scroll-Driven Entry & Exit Fade Effects */
+.scroll-fade-node {
+  opacity: 0;
+  transform: translateY(28px) scale(0.985);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-fade-node.in-view {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.scroll-fade-node.out-view-top {
+  opacity: 0.18;
+  transform: translateY(-22px) scale(0.985);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports ((animation-timeline: view()) and (animation-range: entry)) {
+    @keyframes imperialScrollEntry {
+      from {
+        opacity: 0;
+        transform: translateY(34px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    @keyframes imperialScrollExit {
+      from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      to {
+        opacity: 0.2;
+        transform: translateY(-26px) scale(0.985);
+      }
+    }
+
+    .scroll-fade-node {
+      animation:
+        imperialScrollEntry auto linear backwards,
+        imperialScrollExit auto linear forwards;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%, exit 0% exit 100%;
+    }
+  }
+}
 </style>
 </head>
 
 <body>
+
+<!-- Ambient Cursor Aura & Crosshair (Smooth Fade In/Out on Move & Scroll) -->
+<div id="cursorAurora" class="cursor-aurora" aria-hidden="true"></div>
+<div id="cursorReticle" class="cursor-reticle" aria-hidden="true"></div>
+
+<!-- Viewport Top/Bottom Vignette Edge Fade -->
+<div class="viewport-fade-mask viewport-fade-top" aria-hidden="true"></div>
+<div class="viewport-fade-mask viewport-fade-bottom" aria-hidden="true"></div>
+
+<!-- Scroll Rail Depth Meter (Fades in while scrolling, fades out when idle) -->
+<div id="scrollRail" class="scroll-rail" aria-hidden="true">
+  <div id="scrollRailThumb" class="scroll-rail-thumb"></div>
+</div>
 
 <!-- 1. STREAMING IMPERIAL STATUS MARQUEE -->
 <div class="imperial-marquee" aria-hidden="true">
@@ -1109,7 +1336,7 @@ body {
 </header>
 
 <!-- 3. HERO MONOLITH & LIVE PROTOCOL TELEMETRY HUD -->
-<section class="hero-monolith">
+<section class="hero-monolith scroll-fade-node">
   <div class="container">
     <div class="hero-tag">
       <span>🏛️ BYZANTINE FISCAL SOVEREIGNTY × ATHENIAN EUTHYNA × CIRCLE ARC L1</span>
@@ -1138,25 +1365,25 @@ body {
 
     <!-- Live KPI Monolith Strip -->
     <div class="kpi-grid">
-      <div class="kpi-card">
+      <div class="kpi-card scroll-fade-node">
         <div class="kpi-label">TOTAL ARC CAPITAL</div>
         <div class="kpi-value" id="kpiTotalCapital">$34,880 <span style="font-size: 1rem; color: var(--gold-light);">USDC</span></div>
         <div class="kpi-sub">● CONSOLIDATED ACROSS ARC CORE</div>
       </div>
 
-      <div class="kpi-card purple">
+      <div class="kpi-card purple scroll-fade-node">
         <div class="kpi-label">USYC YIELD VAULT</div>
         <div class="kpi-value" id="kpiVaultBalance">$25,000 <span style="font-size: 1rem; color: #c48eff;">USYC</span></div>
         <div class="kpi-sub" style="color: #c48eff;">▲ 5.20% APY AUTOMATED COMPOUNDING</div>
       </div>
 
-      <div class="kpi-card cyan">
+      <div class="kpi-card cyan scroll-fade-node">
         <div class="kpi-label">LIQUID RUNWAY BUFFER</div>
         <div class="kpi-value" id="kpiRunwayBuffer">$9,880 <span style="font-size: 1rem; color: var(--arc-cyan);">USDC</span></div>
         <div class="kpi-sub" style="color: var(--arc-cyan);">✓ 30-DAY SAFETY BUFFER SATISFIED</div>
       </div>
 
-      <div class="kpi-card emerald">
+      <div class="kpi-card emerald scroll-fade-node">
         <div class="kpi-label">POLICYWALLET DAILY LIMIT</div>
         <div class="kpi-value" id="kpiDailyLimit">880 <span style="font-size: 1rem; color: var(--emerald-pass);">/ 1000 USDC</span></div>
         <div class="kpi-sub" style="color: var(--emerald-pass);">✓ 88% REMAINING &le; $250 AUTO-SETTLE</div>
@@ -1166,7 +1393,7 @@ body {
 </section>
 
 <!-- 4. SOVEREIGN WAR ROOM & DISPATCH PAD -->
-<section id="war-room" class="section-monolith">
+<section id="war-room" class="section-monolith scroll-fade-node">
   <div class="container">
     <div class="section-header-block">
       <span class="section-kicker">01 // AUTONOMOUS OPERATOR</span>
@@ -1178,7 +1405,7 @@ body {
 
     <div class="warroom-grid">
       <!-- Left: Policy Guardrail & Action Dispatch Plate -->
-      <div class="command-plate" id="dispatchPlate">
+      <div class="command-plate scroll-fade-node" id="dispatchPlate">
         <div class="plate-header">
           <div class="plate-title">
             <span>🏛️ INVOICE DISPATCH PAD</span>
@@ -1267,7 +1494,7 @@ body {
       <!-- Right: Blueprint & Euthyna Run-Sheet -->
       <div>
         <!-- 2D Canvas Matrix -->
-        <div class="blueprint-card" id="matrix">
+        <div class="blueprint-card scroll-fade-node" id="matrix">
           <div class="plate-header" style="margin-bottom: 14px; padding-bottom: 10px;">
             <div class="plate-title" style="font-size: 0.95rem;">
               <span>⚡ ON-CHAIN TRANSACTION FLOW BLUEPRINT</span>
@@ -1280,7 +1507,7 @@ body {
         </div>
 
         <!-- Euthyna Monospace Run-Sheet -->
-        <div class="till-receipt-box">
+        <div class="till-receipt-box scroll-fade-node">
           <div class="receipt-tape-header">
             <span>📜 EUTHYNA IMMUTABLE AUDIT RUN-SHEET</span>
             <span style="color: var(--emerald-pass);">BEANCOUNT v2 FORMAT</span>
@@ -1310,7 +1537,7 @@ body {
 </section>
 
 <!-- 5. ARCHITECTURAL DROPS / PILLARS (6 MONOLITHS) -->
-<section id="pillars" class="section-monolith">
+<section id="pillars" class="section-monolith scroll-fade-node">
   <div class="container">
     <div class="section-header-block">
       <span class="section-kicker">02 // ARCHITECTURAL PILLARS</span>
@@ -1322,7 +1549,7 @@ body {
 
     <div class="pillars-grid">
       <!-- Pillar 1 -->
-      <div class="pillar-monolith">
+      <div class="pillar-monolith scroll-fade-node">
         <div>
           <div class="pillar-meta">
             <span class="pillar-idx">PILLAR // 01</span>
@@ -1340,7 +1567,7 @@ body {
       </div>
 
       <!-- Pillar 2 -->
-      <div class="pillar-monolith">
+      <div class="pillar-monolith scroll-fade-node">
         <div>
           <div class="pillar-meta">
             <span class="pillar-idx">PILLAR // 02</span>
@@ -1358,7 +1585,7 @@ body {
       </div>
 
       <!-- Pillar 3 -->
-      <div class="pillar-monolith">
+      <div class="pillar-monolith scroll-fade-node">
         <div>
           <div class="pillar-meta">
             <span class="pillar-idx">PILLAR // 03</span>
@@ -1376,7 +1603,7 @@ body {
       </div>
 
       <!-- Pillar 4 -->
-      <div class="pillar-monolith">
+      <div class="pillar-monolith scroll-fade-node">
         <div>
           <div class="pillar-meta">
             <span class="pillar-idx">PILLAR // 04</span>
@@ -1394,7 +1621,7 @@ body {
       </div>
 
       <!-- Pillar 5 -->
-      <div class="pillar-monolith">
+      <div class="pillar-monolith scroll-fade-node">
         <div>
           <div class="pillar-meta">
             <span class="pillar-idx">PILLAR // 05</span>
@@ -1412,7 +1639,7 @@ body {
       </div>
 
       <!-- Pillar 6 -->
-      <div class="pillar-monolith">
+      <div class="pillar-monolith scroll-fade-node">
         <div>
           <div class="pillar-meta">
             <span class="pillar-idx">PILLAR // 06</span>
@@ -1433,7 +1660,7 @@ body {
 </section>
 
 <!-- 6. FOUNDRY 21/21 FORMAL PROOFS MATRIX -->
-<section id="proofs" class="section-monolith">
+<section id="proofs" class="section-monolith scroll-fade-node">
   <div class="container">
     <div class="section-header-block">
       <span class="section-kicker">03 // FORMAL VERIFICATION</span>
@@ -1443,7 +1670,7 @@ body {
       </p>
     </div>
 
-    <div class="proofs-table-wrap">
+    <div class="proofs-table-wrap scroll-fade-node">
       <table class="proofs-table">
         <thead>
           <tr>
@@ -1988,6 +2215,152 @@ async function updateLiveMetrics() {
 
 updateLiveMetrics();
 setInterval(updateLiveMetrics, 10000);
+
+/* ---------------------------------------------------------------------
+   Dynamic Cursor Spotlight & Scroll Fade Controller
+   --------------------------------------------------------------------- */
+(function initCursorAndScrollDynamics() {
+  const aurora = document.getElementById('cursorAurora');
+  const reticle = document.getElementById('cursorReticle');
+  const scrollRail = document.getElementById('scrollRail');
+  const scrollThumb = document.getElementById('scrollRailThumb');
+
+  let mouseX = window.innerWidth / 2;
+  let mouseY = window.innerHeight / 2;
+  let currentX = mouseX;
+  let currentY = mouseY;
+  let isMoving = false;
+  let isScrolling = false;
+  let idleTimeout = null;
+  let scrollTimeout = null;
+
+  // Track Mouse Coordinates and Card Proximity
+  window.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+
+    if (!isMoving) {
+      isMoving = true;
+      if (aurora) aurora.classList.add('active');
+      if (reticle) reticle.classList.add('active');
+    }
+
+    clearTimeout(idleTimeout);
+    idleTimeout = setTimeout(() => {
+      isMoving = false;
+      if (!isScrolling) {
+        if (aurora) aurora.classList.remove('active');
+        if (reticle) reticle.classList.remove('active');
+      }
+    }, 1200);
+
+    // Compute relative cursor coords for hovered cards
+    const hoverElements = document.querySelectorAll('.kpi-card, .command-plate, .pillar-monolith, .blueprint-card');
+    hoverElements.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (
+        mouseX >= rect.left && mouseX <= rect.right &&
+        mouseY >= rect.top && mouseY <= rect.bottom
+      ) {
+        el.style.setProperty('--mouse-x', `${mouseX - rect.left}px`);
+        el.style.setProperty('--mouse-y', `${mouseY - rect.top}px`);
+      }
+    });
+  }, { passive: true });
+
+  // Fade out on mouseleave
+  document.addEventListener('mouseleave', () => {
+    isMoving = false;
+    isScrolling = false;
+    if (aurora) {
+      aurora.classList.remove('active');
+      aurora.classList.remove('scrolling');
+    }
+    if (reticle) {
+      reticle.classList.remove('active');
+      reticle.classList.remove('scrolling');
+    }
+    if (scrollRail) scrollRail.classList.remove('visible');
+  });
+
+  // Smooth lerp loop for cursor aurora and reticle
+  function renderCursor() {
+    currentX += (mouseX - currentX) * 0.16;
+    currentY += (mouseY - currentY) * 0.16;
+
+    if (aurora) {
+      aurora.style.left = `${currentX}px`;
+      aurora.style.top = `${currentY}px`;
+    }
+    if (reticle) {
+      reticle.style.left = `${currentX}px`;
+      reticle.style.top = `${currentY}px`;
+    }
+    requestAnimationFrame(renderCursor);
+  }
+  requestAnimationFrame(renderCursor);
+
+  // Scroll Fade in / Fade out triggers
+  window.addEventListener('scroll', () => {
+    isScrolling = true;
+    if (aurora) {
+      aurora.classList.add('active');
+      aurora.classList.add('scrolling');
+    }
+    if (reticle) {
+      reticle.classList.add('active');
+      reticle.classList.add('scrolling');
+    }
+    if (scrollRail) {
+      scrollRail.classList.add('visible');
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (maxScroll > 0 && scrollThumb) {
+        const ratio = Math.min(Math.max(window.scrollY / maxScroll, 0), 1);
+        scrollThumb.style.transform = `translateY(${ratio * (200 - 40)}px)`;
+      }
+    }
+
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      isScrolling = false;
+      if (aurora) aurora.classList.remove('scrolling');
+      if (reticle) reticle.classList.remove('scrolling');
+      if (scrollRail) scrollRail.classList.remove('visible');
+      if (!isMoving) {
+        if (aurora) aurora.classList.remove('active');
+        if (reticle) reticle.classList.remove('active');
+      }
+    }, 600);
+  }, { passive: true });
+
+  // IntersectionObserver Fallback for scroll-driven entry/exit fade
+  const fadeNodes = document.querySelectorAll('.scroll-fade-node');
+  if (fadeNodes.length > 0) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          entry.target.classList.remove('out-view-top');
+        } else {
+          const rect = entry.target.getBoundingClientRect();
+          if (rect.top < 0) {
+            entry.target.classList.add('out-view-top');
+            entry.target.classList.remove('in-view');
+          } else {
+            entry.target.classList.remove('in-view');
+            entry.target.classList.remove('out-view-top');
+          }
+        }
+      });
+    }, {
+      root: null,
+      rootMargin: '0px 0px -40px 0px',
+      threshold: [0, 0.15, 0.5, 0.85, 1]
+    });
+
+    fadeNodes.forEach(node => observer.observe(node));
+  }
+})();
 </script>
 </body>
 </html>
