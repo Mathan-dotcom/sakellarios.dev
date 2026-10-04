@@ -131,3 +131,12 @@ option "operating_currency" "USDC"
   meta-timestamp: "2026-10-04T10:09:45.950Z"
   Assets:Arc:PolicyWallet:USDC                   -120.00 USDC
   Expenses:Infrastructure:Hosting            120.00 USDC
+
+2026-10-04 * "Circle Paymaster / Vendor Settlement" "Paid INFRASTRUCTURE Invoice #INV-CLOUD-7189"
+  meta-agent-id: "0x2222222222222222222222222222222222222222"
+  meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
+  meta-sanctions-check: "CLEAN"
+  meta-tx-hash: "0x6c9e0602576e0a353f37f69baf1f11a9602d523df0ba1480280bf60f31da4800"
+  meta-timestamp: "2026-10-04T14:38:54.704Z"
+  Assets:Arc:PolicyWallet:USDC                   -120.00 USDC
+  Expenses:Infrastructure:Hosting            120.00 USDC

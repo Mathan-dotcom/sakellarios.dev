@@ -375,5 +375,34 @@
       "liquidUsdcAvailable": 9880
     },
     "txHash": "0x3925db73dc0ea9b8ff17542170ed82b5d124331df5a16f8a561502e7e5cef8fd"
+  },
+  {
+    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-04T14:38:54.704Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 120,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-CLOUD-7189",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-04T14:38:52.303Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 760,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 1
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9760
+    },
+    "txHash": "0x6c9e0602576e0a353f37f69baf1f11a9602d523df0ba1480280bf60f31da4800"
   }
 ]
