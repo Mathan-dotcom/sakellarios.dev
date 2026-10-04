@@ -8,11 +8,18 @@ const express = require('express');
 const cors = require('cors');
 const { VestiarionAgent } = require('./services/agentRunner');
 
+const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(__dirname));
+
+// Serve primary UI
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'supernova_explotion_2.html'));
+});
 
 // Initialize the Autonomous Treasury Agent
 const agent = new VestiarionAgent();
