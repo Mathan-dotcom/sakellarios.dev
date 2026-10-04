@@ -14,9 +14,9 @@ const PORT = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname));
+app.use(express.static(__dirname, { index: false }));
 
-// Serve Flagship 3D Codex UI (frontend.html)
+// Serve Flagship 3D Codex UI (frontend.html & index.html)
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend.html'));
 });
@@ -35,7 +35,7 @@ app.get('/landing', (req, res) => {
 
 // Serve 3D Supernova Integrated Scrollytelling Experience
 app.get('/supernova', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'supernova_app.html'));
 });
 
 // Initialize the Autonomous Treasury Agent
