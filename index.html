@@ -1,63 +1,59 @@
 <!doctype html>
-<html lang="en" data-theme="meridian">
+<html lang="en" data-theme="kiln">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>VESTIARION AI — Continuous Treasury & Autonomous Business Operator (Arc L1)</title>
-<meta name="description" content="Sovereign corporate CFO and continuous treasury engine on Circle's Arc L1. Featuring non-bypassable PolicyWallet.sol guardrails, sub-$250 gasless Circle Paymaster payouts, automated USYC yield compounding, OpenSanctions radar, and Athenian Euthyna Beancount auditability.">
+<meta name="description" content="Loud Neo-Brutalist autonomous financial mission control for Circle's Arc L1. Non-bypassable PolicyWallet.sol guardrails, sub-$250 gasless Circle Paymaster payouts, automated 30-day runway sweeping into tokenized USYC yield, and Athenian Euthyna Beancount auditability.">
 
-<!-- Google Fonts: Archivo Black (Monumental Display), Space Grotesk (Technical UI), IBM Plex Mono (Financial Monospace) -->
+<!-- Google Fonts: Bricolage Grotesque (800 Chunky Display), DM Sans (Friendly UI), JetBrains Mono (Data & Receipts) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 /* =====================================================================
-   MERIDIAN BRUTALISM DESIGN SYSTEM (STYLEGUIDE v3.0.0)
-   High-Precision Autonomous Financial Mission Control
-   Raw Concrete, Cast Black Steel, Zero Border-Radius, Hard Offset Shadows
+   KILN DESIGN SYSTEM & STYLEGUIDE (v1.0.0 — OCTOBER 2026)
+   Neo-Brutalism (Loud Poster Brutalism)
+   "Fired, Not Finished" · Flat Inks · 3px Ink Outlines · Hard Zero-Blur Shadows
    ===================================================================== */
 
-:root, [data-theme="meridian"] {
-  /* Substrates — the concrete itself */
-  --concrete: #d9d9d7;              /* Primary page substrate — raw light concrete */
-  --concrete-dark: #c9c9c6;         /* Secondary substrate — poured shadow-side concrete */
-  --steel: #111113;                 /* Inverted panels — cast black steel */
+:root, [data-theme="kiln"] {
+  /* Substrates — the paper */
+  --paper:        #fff6e0;   /* Primary page background — warm raw paper */
+  --paper-dark:   #f0e4c3;   /* Recessed areas, zebra rows, input wells */
+  --paper-white:  #ffffff;   /* Cards that must pop off the page */
 
   /* Ink & Structure */
-  --ink-hard: #0a0a0b;              /* Primary ink — blue-black India ink */
-  --ink-soft: #3f3f46;              /* Secondary ink — technical pencil gray */
-  --hairline: rgba(10, 10, 11, 0.25); /* Exposed grid lines & structural seams */
+  --ink:          #14110f;   /* Primary ink — warm black. Text, borders, shadows */
+  --ink-soft:     #4a443d;   /* Secondary text */
+  --ink-faint:    rgba(20, 17, 15, 0.18);  /* Dot grid & hairlines */
 
-  /* Offset Shadow — hard, zero blur, zero spread softness */
-  --bru-shadow: #0a0a0b;            /* Solid offset shadow — depth as architecture, not light */
+  /* Offset Shadow — hard, zero blur */
+  --shadow:       #14110f;
 
-  /* Semantic State Colors — safety-signage accents */
-  --recovered: #0a0a0b;             /* Settled/recovered — solid black stamp on white */
-  --recovered-accent: #ffffff;      /* Inverted badge fill */
-  --recovered-mark: #00c853;        /* OK green — the only "green light" in the system */
+  /* Role Colors — flat screen-print inks */
+  --yellow:       #ffe14d;   /* PRIMARY — highlights, hero blocks, "new" */
+  --pink:         #ff6fae;   /* SALE / LIVE — drops, discounts, hot items */
+  --cyan:         #4dd8ff;   /* INFO — links, tips, neutral emphasis */
+  --lime:         #b6f23d;   /* SUCCESS — sold, confirmed, in stock */
+  --violet:       #a78bff;   /* CREATOR — profiles, badges, membership */
+  --orange:       #ff8a3d;   /* WARNING — low stock, pending, ending soon */
+  --red:          #ff4d4d;   /* ERROR — failed, sold out, destructive */
 
-  --at-risk: #111113;
-  --at-risk-accent: #ffb300;        /* Hazard amber — queued incidents, pending actions */
+  /* Radius — none */
+  --radius:       0px;
+  --radius-sm:    0px;
 
-  --critical: #ffffff;
-  --critical-accent: #ff2e2e;       /* Signal red — outages, fallback paths, aborts */
-
-  --signal: #0a0a0b;
-  --signal-accent: #2e5bff;         /* Blueprint blue — active pulse nodes, primary focus */
-
-  /* Financial Ledgers */
-  --ledger: #0a0a0b;
-  --ledger-muted: #6b6b70;
+  /* Border weights */
+  --bw:           3px;       /* Standard object border */
+  --bw-heavy:     4px;       /* Raised / hero objects */
+  --bw-thin:      2px;       /* Small chips, table cells */
 
   /* Typography */
-  --font-display: 'Archivo Black', sans-serif;
-  --font-ui: 'Space Grotesk', -apple-system, sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
-
-  /* Radius — none. Brutalism does not round corners. */
-  --radius-pulse: 0px;
-  --radius-pulse-sm: 0px;
+  --font-display: 'Bricolage Grotesque', sans-serif;
+  --font-ui:      'DM Sans', -apple-system, sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
 }
 
 * {
@@ -70,84 +66,75 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
-  background-color: var(--concrete);
+  background-color: var(--paper);
 }
 
 body {
   font-family: var(--font-ui);
   font-weight: 400;
-  background-color: var(--concrete);
-  color: var(--ink-hard);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink-faint) 1px, transparent 1px);
+  background-size: 20px 20px; /* Dot-grid paper texture */
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
-/* Background Blueprint Grid — worn into the concrete */
-.bg-grid {
-  background-image:
-    linear-gradient(var(--hairline) 1px, transparent 1px),
-    linear-gradient(90deg, var(--hairline) 1px, transparent 1px);
-  background-size: 48px 48px;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button {
-  font: inherit;
-  cursor: pointer;
-}
-
-::selection {
-  background: var(--ink-hard);
-  color: var(--concrete);
-}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; cursor: pointer; }
+::selection { background: var(--yellow); color: var(--ink); }
 
 /* ----------------------------------------------------
-   TYPOGRAPHY SYSTEM (STYLEGUIDE SECTION 3)
+   TYPOGRAPHY SYSTEM & UTILITIES (STYLEGUIDE SECTION 3)
    ---------------------------------------------------- */
-.text-display-xl {
+.text-hero {
   font-family: var(--font-display);
-  font-size: clamp(2.8rem, 7.5vw, 5.8rem);
-  line-height: 0.92;
-  font-weight: 900;
+  font-size: clamp(2.8rem, 8vw, 6.5rem);
+  line-height: 0.88;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.text-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4.5vw, 3.25rem);
+  line-height: 0.95;
+  font-weight: 800;
   letter-spacing: -0.03em;
   text-transform: uppercase;
 }
 
-.text-display-md {
-  font-family: var(--font-display);
-  font-size: clamp(1.8rem, 3.8vw, 2.7rem);
-  line-height: 0.95;
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-}
-
 .text-heading {
-  font-family: var(--font-ui);
-  font-size: 1.25rem;
-  line-height: 1.2;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.01em;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
 .text-body {
   font-family: var(--font-ui);
-  font-size: 0.9375rem;
-  line-height: 1.55;
+  font-size: 1rem;
+  line-height: 1.6;
   font-weight: 400;
-  max-width: 68ch;
+  max-width: 62ch;
   text-align: left;
+}
+
+.text-price {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+  line-height: 1;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
 }
 
 .text-data {
   font-family: var(--font-mono);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   line-height: 1.4;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
@@ -156,258 +143,256 @@ button {
 .text-micro {
   font-family: var(--font-ui);
   font-size: 0.75rem;
-  line-height: 1.3;
+  line-height: 1.2;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
+/* Highlighter Underline — marker swipe */
+.hl {
+  background: linear-gradient(transparent 52%, var(--yellow) 52% 92%, transparent 92%);
+  padding: 0 0.15em;
+  display: inline-block;
+}
+.hl--pink {
+  background-image: linear-gradient(transparent 52%, var(--pink) 52% 92%, transparent 92%);
+}
+.hl--cyan {
+  background-image: linear-gradient(transparent 52%, var(--cyan) 52% 92%, transparent 92%);
+}
+.hl--lime {
+  background-image: linear-gradient(transparent 52%, var(--lime) 52% 92%, transparent 92%);
+}
+
 /* ----------------------------------------------------
-   BRUTALIST PANELS, WELLS & ELEVATIONS (STYLEGUIDE SECTION 4)
+   SURFACE ARCHITECTURE (STYLEGUIDE SECTION 4)
    ---------------------------------------------------- */
-.bru-panel {
-  background: var(--concrete);
-  border: 2px solid var(--ink-hard);
+.k-panel {
+  background: var(--paper-white);
+  border: var(--bw) solid var(--ink);
+  box-shadow: 6px 6px 0 var(--shadow);
+}
+
+.k-panel-flat {
+  background: var(--paper);
+  border: var(--bw-thin) solid var(--ink);
   box-shadow: none;
 }
 
-.bru-panel-raised {
-  background: var(--concrete);
-  border: 3px solid var(--ink-hard);
-  box-shadow: 8px 8px 0 var(--bru-shadow);
+.k-panel-raised {
+  background: var(--paper-white);
+  border: var(--bw-heavy) solid var(--ink);
+  box-shadow: 12px 12px 0 var(--shadow);
 }
 
-.bru-well {
-  background: var(--concrete-dark);
-  border: 2px solid var(--ink-hard);
-  box-shadow: inset 0 0 0 1px var(--hairline);
+.k-block {
+  border: var(--bw) solid var(--ink);
+  box-shadow: 8px 8px 0 var(--shadow);
+  color: var(--ink);
 }
+.k-block--yellow { background: var(--yellow); }
+.k-block--pink   { background: var(--pink); }
+.k-block--cyan   { background: var(--cyan); }
+.k-block--lime   { background: var(--lime); }
+.k-block--violet { background: var(--violet); }
+.k-block--orange { background: var(--orange); }
 
-.bru-stamp {
+.k-sticker {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
-  background: var(--concrete);
-  border: 2px solid var(--ink-hard);
-  box-shadow: 3px 3px 0 var(--bru-shadow);
+  padding: 4px 12px;
+  background: var(--yellow);
+  border: var(--bw-thin) solid var(--ink);
+  box-shadow: 3px 3px 0 var(--shadow);
   font-family: var(--font-ui);
   font-weight: 700;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 0.75rem;
+  transform: rotate(-2deg);
   white-space: nowrap;
 }
+.k-sticker--pink   { background: var(--pink); transform: rotate(2deg); }
+.k-sticker--lime   { background: var(--lime); transform: rotate(-1deg); }
+.k-sticker--cyan   { background: var(--cyan); transform: rotate(1deg); }
+.k-sticker--violet { background: var(--violet); transform: rotate(-2deg); }
+.k-sticker--orange { background: var(--orange); transform: rotate(1deg); }
+.k-sticker--red    { background: var(--red); color: #fff; transform: rotate(-2deg); }
+.k-sticker--ink    { background: var(--ink); color: var(--paper); transform: rotate(0deg); }
 
-.bru-stamp--inverted {
-  background: var(--ink-hard);
-  color: var(--concrete);
-}
-
-.bru-stamp--hazard {
-  background: repeating-linear-gradient(
-    -45deg,
-    var(--at-risk-accent) 0 8px,
-    var(--ink-hard) 8px 16px
-  );
-  color: #fff;
-  border-color: var(--ink-hard);
-  text-shadow: 0 1px 2px #000;
-}
-
-.bru-stamp--recovered {
-  background: var(--recovered-mark);
-  color: var(--ink-hard);
-  border-color: var(--ink-hard);
-  font-weight: 800;
-}
-
-.bru-stamp--signal {
-  background: var(--signal-accent);
-  color: #ffffff;
-  border-color: var(--ink-hard);
-}
-
-.bru-stamp--critical {
-  background: var(--critical-accent);
-  color: #ffffff;
-  border-color: var(--ink-hard);
-}
-
-.stamp-rot-left {
-  transform: rotate(-2deg);
-}
-
-.stamp-rot-right {
-  transform: rotate(2deg);
-}
-
-/* Card Interaction: lifts up-left, shadow grows */
-.card-hover {
-  transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1),
-              box-shadow 0.15s cubic-bezier(0.2, 0, 0, 1);
-  will-change: transform, box-shadow;
-  position: relative;
-}
-
-.card-hover:hover {
-  transform: translate(-4px, -4px);
-  box-shadow: 12px 12px 0 var(--bru-shadow);
-  z-index: 20;
-}
-
-.card-hover:active {
-  transform: translate(0, 0);
-  box-shadow: 0 0 0 var(--bru-shadow);
-}
-
-/* ----------------------------------------------------
-   BUTTON HIERARCHY (STYLEGUIDE SECTION 5.2)
-   ---------------------------------------------------- */
-.bru-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 18px;
-  background: var(--concrete);
-  border: 2px solid var(--ink-hard);
-  box-shadow: 5px 5px 0 var(--bru-shadow);
-  color: var(--ink-hard);
+.k-well {
+  background: var(--paper-dark);
+  border: var(--bw-thin) solid var(--ink);
+  box-shadow: inset 4px 4px 0 var(--ink-faint);
+  padding: 12px 16px;
   font-family: var(--font-ui);
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.12s cubic-bezier(0.2, 0, 0, 1);
-  cursor: pointer;
 }
-
-.bru-button:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 7px 7px 0 var(--bru-shadow);
-}
-
-.bru-button:active {
-  transform: translate(0, 0);
-  box-shadow: 0 0 0 var(--bru-shadow);
-}
-
-.bru-button-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 22px;
-  background: var(--ink-hard);
-  color: var(--concrete);
-  border: 2px solid var(--ink-hard);
-  box-shadow: 6px 6px 0 var(--signal-accent);
-  font-family: var(--font-ui);
-  font-size: 0.9rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.12s cubic-bezier(0.2, 0, 0, 1);
-  cursor: pointer;
-}
-
-.bru-button-primary:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 9px 9px 0 var(--signal-accent);
-}
-
-.bru-button-primary:active {
-  transform: translate(0, 0);
-  box-shadow: 0 0 0 var(--signal-accent);
-}
-
-.bru-button:focus-visible,
-.bru-button-primary:focus-visible,
-.card-hover:focus-visible {
-  outline: 3px solid var(--signal-accent);
+.k-well:focus-within {
+  background: var(--paper-white);
+  outline: 4px solid var(--cyan);
   outline-offset: 2px;
 }
 
-/* ----------------------------------------------------
-   ANIMATIONS & KEYFRAMES (STYLEGUIDE SECTION 5.3)
-   ---------------------------------------------------- */
-@keyframes recoveryStamp {
-  0%   { transform: translateY(-24px) rotate(0deg) scale(1.4); opacity: 0; }
-  60%  { transform: translateY(2px)  rotate(-2deg) scale(0.98); opacity: 1; }
-  80%  { transform: translateY(-1px) rotate(-1deg) scale(1.01); }
-  100% { transform: translateY(0)    rotate(-2deg) scale(1); }
+.k-divider {
+  border-top: var(--bw) solid var(--ink);
+  margin: clamp(40px, 6vh, 72px) 0;
+}
+.k-divider--dashed {
+  border-top: var(--bw-thin) dashed var(--ink);
+  margin: 24px 0;
 }
 
-@keyframes rollbackFlinch {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  50% { transform: translateX(6px); }
-  75% { transform: translateX(-3px); }
-}
-
-@keyframes criticalBlink {
-  0%, 49%  { background: var(--critical-accent); color: var(--ink-hard); }
-  50%, 100%{ background: var(--ink-hard);        color: var(--critical-accent); }
-}
-
-@keyframes cursorBlink {
-  0%, 49%  { opacity: 1; }
-  50%, 100%{ opacity: 0; }
-}
-
-.blink-cursor {
-  animation: cursorBlink 0.9s infinite;
-  display: inline-block;
-}
-
-.anim-stamp {
-  animation: recoveryStamp 0.4s cubic-bezier(0.2, 0, 0, 1) forwards;
-}
-
-.anim-flinch {
-  animation: rollbackFlinch 0.3s ease-in-out;
-}
-
-.anim-critical {
-  animation: criticalBlink 0.5s infinite;
-}
-
-/* ----------------------------------------------------
-   MECHANICAL TICKER MARQUEE
-   ---------------------------------------------------- */
-.ticker-bar {
-  background: var(--steel);
-  color: var(--concrete);
-  border-bottom: 2px solid var(--ink-hard);
+.k-index::before {
+  content: attr(data-index);
   font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  padding: 6px 0;
+  font-weight: 700;
+  margin-right: 0.75rem;
+  color: var(--ink);
+  background: var(--yellow);
+  padding: 2px 6px;
+  border: 1px solid var(--ink);
+}
+
+/* ----------------------------------------------------
+   INTERACTION & MOTION (STYLEGUIDE SECTION 5)
+   ---------------------------------------------------- */
+.card-hover {
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1),
+              box-shadow 0.12s cubic-bezier(0.2, 0, 0, 1);
+  will-change: transform, box-shadow;
+  position: relative;
+}
+.card-hover:hover {
+  transform: translate(-4px, -4px) rotate(-0.5deg);
+  box-shadow: 10px 10px 0 var(--shadow);
+  z-index: 10;
+}
+.card-hover--pink:hover {
+  box-shadow: 10px 10px 0 var(--pink);
+}
+.card-hover--cyan:hover {
+  box-shadow: 10px 10px 0 var(--cyan);
+}
+.card-hover--lime:hover {
+  box-shadow: 10px 10px 0 var(--lime);
+}
+.card-hover--yellow:hover {
+  box-shadow: 10px 10px 0 var(--yellow);
+}
+.card-hover:active {
+  transform: translate(0, 0) rotate(0deg);
+  box-shadow: 0 0 0 var(--shadow);
+}
+
+/* Buttons */
+.k-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--yellow);
+  color: var(--ink);
+  border: var(--bw) solid var(--ink);
+  box-shadow: 5px 5px 0 var(--shadow);
+  padding: 12px 22px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: transform 0.1s cubic-bezier(0.2, 0, 0, 1),
+              box-shadow 0.1s cubic-bezier(0.2, 0, 0, 1);
+}
+.k-button:hover  { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--shadow); }
+.k-button:active { transform: translate(4px, 4px);   box-shadow: 0 0 0 var(--shadow); }
+
+.k-button-secondary {
+  background: var(--paper-white);
+}
+
+.k-button-hot {
+  background: var(--pink);
+  color: var(--ink);
+}
+
+.k-button-danger {
+  background: var(--red);
+  color: #fff;
+}
+
+.k-button-lime {
+  background: var(--lime);
+  color: var(--ink);
+}
+
+.k-button:focus-visible,
+.card-hover:focus-visible,
+a:focus-visible {
+  outline: 4px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+/* Keyframe Animations */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-3deg); }
+  50%      { transform: rotate(3deg); }
+}
+.k-sticker--live {
+  animation: wiggle 0.6s steps(2, end) infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.k-marquee {
+  background: var(--ink);
+  color: var(--yellow);
+  border-bottom: var(--bw) solid var(--ink);
   overflow: hidden;
   white-space: nowrap;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 8px 0;
+  letter-spacing: 0.06em;
 }
-
-.ticker-track {
+.k-marquee__track {
   display: inline-block;
+  animation: marquee 22s linear infinite;
   white-space: nowrap;
-  animation: tickerSlide 35s linear infinite;
 }
 
-@keyframes tickerSlide {
-  0% { transform: translate3d(0, 0, 0); }
-  100% { transform: translate3d(-50%, 0, 0); }
+@keyframes slam {
+  0%   { transform: scale(1.6) rotate(-8deg); opacity: 0; }
+  60%  { transform: scale(0.96) rotate(-3deg); opacity: 1; }
+  100% { transform: scale(1) rotate(-3deg); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-8px); }
+  50%      { transform: translateX(8px); }
+  75%      { transform: translateX(-4px); }
+}
+
+.anim-slam {
+  animation: slam 0.4s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
+.anim-shake {
+  animation: shake 0.3s ease-in-out;
 }
 
 /* ----------------------------------------------------
-   NAVBAR (BOLTED STEEL SLAB)
+   NAVIGATION BAR (STYLEGUIDE SECTION 6.6)
    ---------------------------------------------------- */
-.nav-slab {
-  background: var(--steel);
-  color: var(--concrete);
-  border-bottom: 3px solid var(--ink-hard);
+.k-topbar {
+  background: var(--paper-white);
+  border-bottom: var(--bw) solid var(--ink);
   padding: 14px clamp(16px, 4vw, 40px);
   display: flex;
   justify-content: space-between;
@@ -417,877 +402,668 @@ button {
   z-index: 100;
 }
 
-.nav-brand {
+.k-brand {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.nav-title {
+.k-brand__title {
   font-family: var(--font-display);
-  font-size: 1.35rem;
-  letter-spacing: -0.01em;
-  color: #ffffff;
+  font-size: 1.45rem;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  transform: rotate(-1.5deg);
+  display: inline-block;
 }
 
-.nav-links {
+.k-navlinks {
   display: flex;
   align-items: center;
   gap: clamp(12px, 2vw, 24px);
   font-family: var(--font-ui);
-  font-size: 0.8rem;
   font-weight: 700;
+  font-size: 0.85rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
 }
 
-.nav-links a {
-  color: var(--concrete-dark);
-  transition: color 0.15s ease;
-}
-
-.nav-links a:hover {
-  color: #ffffff;
+.k-navlinks a:hover {
   text-decoration: underline;
   text-underline-offset: 4px;
 }
 
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.k-navlinks a.active {
+  background: var(--yellow);
+  padding: 2px 6px;
+  border: 1px solid var(--ink);
 }
 
 /* ----------------------------------------------------
-   LAYOUT CONTAINERS & GRIDS
+   LAYOUT CONTAINERS
    ---------------------------------------------------- */
 .container {
-  max-width: 1240px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 clamp(16px, 4vw, 36px);
 }
 
-.section-seam {
-  border-top: 3px solid var(--ink-hard);
-  padding: clamp(48px, 7vh, 88px) 0;
+/* Hero Section */
+.k-hero {
+  padding: clamp(48px, 8vh, 88px) 0 clamp(40px, 6vh, 64px);
 }
 
-.section-seam.dark-substrate {
-  background: var(--concrete-dark);
-}
-
-.section-header {
-  margin-bottom: clamp(32px, 5vh, 56px);
-}
-
-.section-index {
-  font-family: var(--font-mono);
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--ink-soft);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  margin-bottom: 8px;
-  display: block;
-}
-
-/* ----------------------------------------------------
-   HERO MONUMENT
-   ---------------------------------------------------- */
-.hero-wrapper {
-  padding: clamp(54px, 8vh, 90px) 0 clamp(40px, 6vh, 70px);
-}
-
-.hero-grid {
+.k-hero__grid {
   display: grid;
   grid-template-columns: 1.25fr 0.75fr;
   gap: 36px;
   align-items: stretch;
 }
 
-.hero-status-tag {
+.k-hero__stickers {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
 
-.hero-metrics-grid {
+.k-hero__stat-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  margin-top: 28px;
+  gap: 16px;
+  margin-top: 32px;
 }
 
-.metric-slab {
-  background: var(--concrete);
-  border: 2px solid var(--ink-hard);
-  box-shadow: 5px 5px 0 var(--bru-shadow);
-  padding: 16px;
+/* Misregistration image backing style (Styleguide 6.1) */
+.misreg-wrap {
+  position: relative;
+  margin-bottom: 14px;
+}
+.misreg-bg {
+  position: absolute;
+  inset: 0;
+  transform: translate(6px, 6px);
+  border: var(--bw) solid var(--ink);
+  z-index: 0;
+}
+.misreg-card {
+  position: relative;
+  background: var(--paper-white);
+  border: var(--bw) solid var(--ink);
+  z-index: 1;
+  padding: 20px;
 }
 
-.metric-slab .val {
-  font-family: var(--font-display);
-  font-size: clamp(1.4rem, 2.3vw, 1.85rem);
-  line-height: 1;
-  color: var(--ink-hard);
-  margin-bottom: 4px;
-}
-
-.metric-slab .lbl {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--ink-soft);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.hero-sidebar-card {
-  background: var(--steel);
-  color: var(--concrete);
-  border: 3px solid var(--ink-hard);
-  box-shadow: 10px 10px 0 var(--bru-shadow);
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.hero-sidebar-card h3 {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  letter-spacing: -0.01em;
-  color: #fff;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-  padding-bottom: 12px;
-  margin-bottom: 16px;
-}
-
-/* ----------------------------------------------------
-   SIGNATURE COMPONENT 1: FLOW MATRIX CANVAS
-   ---------------------------------------------------- */
-.matrix-container {
-  border: 3px solid var(--ink-hard);
-  box-shadow: 10px 10px 0 var(--bru-shadow);
-  background: var(--concrete);
+/* 2D Canvas Circuit Blueprint */
+.k-matrix-box {
+  border: var(--bw-heavy) solid var(--ink);
+  box-shadow: 10px 10px 0 var(--shadow);
+  background: var(--paper-white);
   overflow: hidden;
 }
-
-.matrix-header {
-  background: var(--steel);
-  color: var(--concrete);
+.k-matrix-header {
+  background: var(--yellow);
+  border-bottom: var(--bw) solid var(--ink);
   padding: 10px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  border-bottom: 2px solid var(--ink-hard);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
 }
-
 #flowCanvas {
   display: block;
   width: 100%;
   height: 380px;
-  background-color: var(--concrete);
+  background-color: var(--paper);
 }
-
-.matrix-footer {
-  background: var(--concrete-dark);
-  border-top: 2px solid var(--ink-hard);
+.k-matrix-footer {
+  background: var(--paper-dark);
+  border-top: var(--bw) solid var(--ink);
   padding: 12px 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-family: var(--font-mono);
   font-size: 0.8rem;
+  font-weight: 600;
   flex-wrap: wrap;
   gap: 10px;
 }
 
-/* ----------------------------------------------------
-   SIGNATURE COMPONENT 2: THE SIX BRUTALIST PILLARS
-   ---------------------------------------------------- */
-.pillars-grid {
+/* 6 Architectural Drop Cards */
+.k-cards-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 24px;
 }
 
-.pillar-card {
-  background: var(--concrete);
-  border: 2px solid var(--ink-hard);
-  box-shadow: 6px 6px 0 var(--bru-shadow);
+.k-card {
+  background: var(--paper-white);
+  border: var(--bw) solid var(--ink);
+  box-shadow: 6px 6px 0 var(--shadow);
   padding: 24px 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 270px;
+  min-height: 280px;
 }
 
-.pillar-top {
-  margin-bottom: 16px;
-}
-
-.pillar-index {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--ink-soft);
-  margin-bottom: 8px;
-}
-
-.pillar-title {
-  font-family: var(--font-ui);
-  font-size: 1.15rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  margin-bottom: 10px;
-  line-height: 1.25;
-}
-
-.pillar-desc {
-  font-size: 0.875rem;
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
-
-.pillar-bottom {
-  border-top: 1px solid var(--hairline);
-  padding-top: 12px;
-  margin-top: 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* ----------------------------------------------------
-   SIGNATURE COMPONENT 3: AUTONOMOUS WAR ROOM & DISPATCH
-   ---------------------------------------------------- */
-.war-room-layout {
+/* War Room / Till Receipt Layout (Styleguide Section 6.4) */
+.k-war-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: 28px;
   align-items: start;
 }
 
-.console-panel {
-  background: var(--concrete);
-  border: 3px solid var(--ink-hard);
-  box-shadow: 10px 10px 0 var(--bru-shadow);
+.receipt-tape {
+  background: #18110b;
+  color: #fff6e0;
+  border: var(--bw-heavy) solid var(--ink);
+  box-shadow: 10px 10px 0 var(--shadow);
+  padding: 20px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.6;
 }
 
-.console-bar {
-  background: var(--steel);
-  color: #fff;
-  padding: 12px 18px;
+.receipt-header {
+  border-bottom: 2px dashed var(--yellow);
+  padding-bottom: 12px;
+  margin-bottom: 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: var(--font-ui);
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  border-bottom: 2px solid var(--ink-hard);
 }
 
-.console-body {
-  padding: 24px;
-}
-
-/* Confidence Gate Gauge (Styleguide Section 6.3) */
-.confidence-gauge-box {
-  background: var(--concrete-dark);
-  border: 2px solid var(--ink-hard);
-  padding: 14px;
-  margin-bottom: 20px;
-}
-
-.gauge-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.gauge-segments {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 4px;
-  height: 22px;
-  margin-bottom: 8px;
-  position: relative;
-}
-
-.gauge-cell {
-  background: var(--concrete);
-  border: 1.5px solid var(--ink-hard);
-  transition: background-color 0.2s ease;
-}
-
-.gauge-cell.active-pass {
-  background: var(--signal-accent);
-}
-
-.gauge-cell.active-gate {
-  background: var(--recovered-mark);
-}
-
-.gauge-threshold-line {
-  position: absolute;
-  left: 70%;
-  top: -4px;
-  bottom: -4px;
-  width: 2px;
-  background: var(--critical-accent);
-  z-index: 10;
-}
-
-.gauge-subtext {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--ink-soft);
-  display: flex;
-  justify-content: space-between;
-}
-
-/* Dispatch Buttons */
-.dispatch-actions {
+.receipt-feed {
+  height: 340px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
-.dispatch-btn {
+.receipt-line {
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 3px solid var(--yellow);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 12px 16px;
-  background: var(--concrete);
-  border: 2px solid var(--ink-hard);
-  box-shadow: 4px 4px 0 var(--bru-shadow);
-  font-family: var(--font-ui);
-  font-weight: 700;
-  font-size: 0.82rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.12s cubic-bezier(0.2, 0, 0, 1);
-  text-align: left;
-}
-
-.dispatch-btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 var(--bru-shadow);
-  background: #ffffff;
-}
-
-.dispatch-btn:active {
-  transform: translate(0, 0);
-  box-shadow: 0 0 0 var(--bru-shadow);
-}
-
-.dispatch-btn.danger:hover {
-  border-color: var(--critical-accent);
-  box-shadow: 6px 6px 0 var(--critical-accent);
-}
-
-.dispatch-btn.success:hover {
-  border-color: var(--recovered-mark);
-  box-shadow: 6px 6px 0 var(--recovered-mark);
-}
-
-/* Immutable Audit Ledger Run-Sheet (Styleguide Section 6.2) */
-.ledger-runsheet {
-  background: #18181b;
-  color: #e4e4e7;
-  border: 2px solid var(--ink-hard);
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  line-height: 1.6;
-  height: 380px;
-  overflow-y: auto;
-  padding: 12px;
-}
-
-.runsheet-row {
-  padding: 4px 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  display: flex;
-  gap: 10px;
+  gap: 8px;
   word-break: break-all;
 }
+.receipt-line.paid { border-left-color: var(--lime); color: #dcfce7; }
+.receipt-line.escalate { border-left-color: var(--orange); color: #fef08a; }
+.receipt-line.revert { border-left-color: var(--red); color: #fca5a5; }
 
-.runsheet-row:nth-child(even) {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.runsheet-idx {
-  color: var(--ledger-muted);
-  flex-shrink: 0;
-}
-
-.runsheet-tag {
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.runsheet-tag.ok { color: #4ade80; }
-.runsheet-tag.warn { color: #facc15; }
-.runsheet-tag.err { color: #f87171; }
-.runsheet-tag.info { color: #60a5fa; }
-
-/* ----------------------------------------------------
-   SIGNATURE COMPONENT 4: FOUNDRY TEST MATRIX
-   ---------------------------------------------------- */
-.test-table {
+/* 21/21 Foundry Proofs Matrix */
+.k-table {
   width: 100%;
   border-collapse: collapse;
   font-family: var(--font-mono);
-  font-size: 0.8rem;
-  background: var(--concrete);
-  border: 2px solid var(--ink-hard);
+  font-size: 0.82rem;
+  background: var(--paper-white);
+  border: var(--bw) solid var(--ink);
+  box-shadow: 8px 8px 0 var(--shadow);
 }
-
-.test-table th, .test-table td {
-  border: 1px solid var(--ink-hard);
-  padding: 10px 14px;
+.k-table th, .k-table td {
+  border: 2px solid var(--ink);
+  padding: 12px 14px;
   text-align: left;
 }
-
-.test-table th {
-  background: var(--steel);
-  color: #ffffff;
-  font-family: var(--font-ui);
+.k-table th {
+  background: var(--yellow);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
   text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
+}
+.k-table tr:nth-child(even) {
+  background: var(--paper-dark);
 }
 
-.test-table tr:nth-child(even) {
-  background: var(--concrete-dark);
+/* Toast Notification (Styleguide Section 6.5) */
+.k-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 14px 20px;
+  background: var(--lime);
+  border: var(--bw) solid var(--ink);
+  box-shadow: 6px 6px 0 var(--shadow);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 0.9rem;
+  z-index: 500;
+  display: none;
+}
+.k-toast.show {
+  display: block;
+  animation: slam 0.35s cubic-bezier(0.2, 0, 0, 1) forwards;
 }
 
-/* ----------------------------------------------------
-   FOOTER (CAST STEEL SLAB)
-   ---------------------------------------------------- */
-.footer-slab {
-  background: var(--steel);
-  color: var(--concrete);
-  border-top: 4px solid var(--ink-hard);
+/* Footer Slab */
+.k-footer {
+  background: var(--ink);
+  color: var(--paper);
+  border-top: var(--bw-heavy) solid var(--ink);
   padding: 48px 0 32px;
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
 }
-
-.footer-grid {
+.k-footer-grid {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   gap: 36px;
   margin-bottom: 32px;
 }
-
-.footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
+.k-footer-bottom {
+  border-top: 1px dashed rgba(255, 246, 224, 0.25);
   padding-top: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 12px;
-  color: var(--ledger-muted);
   font-size: 0.75rem;
 }
 
-/* ----------------------------------------------------
-   RESPONSIVE QUERIES
-   ---------------------------------------------------- */
+/* Responsive Queries */
 @media (max-width: 900px) {
-  .hero-grid { grid-template-columns: 1fr; }
-  .pillars-grid { grid-template-columns: 1fr; }
-  .war-room-layout { grid-template-columns: 1fr; }
-  .footer-grid { grid-template-columns: 1fr; }
-  .nav-links { display: none; }
+  .k-hero__grid { grid-template-columns: 1fr; }
+  .k-cards-grid { grid-template-columns: 1fr; }
+  .k-war-grid { grid-template-columns: 1fr; }
+  .k-footer-grid { grid-template-columns: 1fr; }
+  .k-navlinks { display: none; }
 }
 </style>
 </head>
 
-<body class="bg-grid">
+<body>
 
-<!-- 1. Mechanical Top Ticker Marquee -->
-<div class="ticker-bar" aria-hidden="true">
-  <div class="ticker-track">
-    ARC L1 PROTOCOL: ONLINE ▮ L1 BLOCK: #4,891,204 ▮ CIRCLE PAYMASTER: GASLESS ACTIVE ▮ USYC RUNWAY APY: 5.20% ▮ OPENSANCTIONS: REAL-TIME RADAR CLEAN ▮ POLICYWALLET.SOL: 21/21 INVARIANTS ENFORCED ▮ AUTONOMY CONFIDENCE: 94.8% [GATE PASSED] ▮ EUTHYNA LEDGER: DOUBLE-ENTRY BALANCED ▮ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    ARC L1 PROTOCOL: ONLINE ▮ L1 BLOCK: #4,891,204 ▮ CIRCLE PAYMASTER: GASLESS ACTIVE ▮ USYC RUNWAY APY: 5.20% ▮ OPENSANCTIONS: REAL-TIME RADAR CLEAN ▮ POLICYWALLET.SOL: 21/21 INVARIANTS ENFORCED ▮ AUTONOMY CONFIDENCE: 94.8% [GATE PASSED] ▮ EUTHYNA LEDGER: DOUBLE-ENTRY BALANCED
+<!-- 1. Scrolling Marquee Header Banner (Signature Kiln Component) -->
+<div class="k-marquee" aria-hidden="true">
+  <div class="k-marquee__track">
+    ⚡ VESTIARION AI · CONTINUOUS TREASURY ON CIRCLE ARC L1 · 21/21 FORGE TESTS PASS · 5.20% USYC YIELD VAULT · OPENSANCTIONS FORENSIC RADAR ACTIVE · SUB-$250 GASLESS PAYOUTS VIA CIRCLE PAYMASTER · EUTHYNA BEANCOUNT DOUBLE-ENTRY AUDIT · ⚡ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ⚡ VESTIARION AI · CONTINUOUS TREASURY ON CIRCLE ARC L1 · 21/21 FORGE TESTS PASS · 5.20% USYC YIELD VAULT · OPENSANCTIONS FORENSIC RADAR ACTIVE · SUB-$250 GASLESS PAYOUTS VIA CIRCLE PAYMASTER · EUTHYNA BEANCOUNT DOUBLE-ENTRY AUDIT · ⚡
   </div>
 </div>
 
-<!-- 2. Bolted Cast-Black Steel Header Slab -->
-<header class="nav-slab">
-  <div class="nav-brand">
-    <span class="bru-stamp bru-stamp--inverted">ARC L1</span>
-    <a href="#" class="nav-title">VESTIARION AI</a>
-    <span class="bru-stamp bru-stamp--hazard stamp-rot-left">SOVEREIGN CFO</span>
+<!-- 2. Sticky Paper-White Navigation Bar with Rotated Brand Logo -->
+<header class="k-topbar">
+  <div class="k-brand">
+    <span class="k-sticker k-sticker--ink">ARC L1</span>
+    <a href="#" class="k-brand__title">VESTIARION AI</a>
+    <span class="k-sticker k-sticker--pink k-sticker--live">LIVE ON TESTBED</span>
   </div>
 
-  <nav class="nav-links">
-    <a href="#matrix">01 / FLOW MATRIX</a>
-    <a href="#pillars">02 / ARCHITECTURE</a>
+  <nav class="k-navlinks">
+    <a href="#matrix" class="active">01 / BLUEPRINT</a>
+    <a href="#pillars">02 / DROPS & PILLARS</a>
     <a href="#war-room">03 / WAR ROOM</a>
-    <a href="#tests">04 / FORGE PROOFS</a>
+    <a href="#proofs">04 / FORGE TESTS</a>
     <a href="/supernova">🌌 3D SUPERNOVA</a>
   </nav>
 
-  <div class="nav-actions">
-    <a href="#war-room" class="bru-button-primary" style="padding: 7px 14px; font-size: 0.75rem;">
-      <span>⚡</span> EXECUTE DEMO
+  <div>
+    <a href="#war-room" class="k-button" style="padding: 8px 16px; font-size: 0.8rem;">
+      <span>⚡</span> RUN OPERATOR
     </a>
   </div>
 </header>
 
-<!-- 3. Hero Monumental Section -->
-<section class="hero-wrapper">
+<!-- 3. Hero Section: Loud Poster Neo-Brutalism -->
+<section class="k-hero">
   <div class="container">
-    <div class="hero-grid">
-      <!-- Left Column: Monumental Type & Metrics -->
+    <div class="k-hero__grid">
+      <!-- Left Hero Column -->
       <div>
-        <div class="hero-status-tag">
-          <span class="bru-stamp bru-stamp--inverted">SYSTEM 01</span>
-          <span class="bru-stamp bru-stamp--recovered">● 21/21 TESTS PASS</span>
-          <span class="bru-stamp bru-stamp--signal">USDC NATIVE GAS</span>
+        <div class="k-hero__stickers">
+          <span class="k-sticker">SOVEREIGN CFO</span>
+          <span class="k-sticker k-sticker--lime">● 21/21 INVARIANTS PROVEN</span>
+          <span class="k-sticker k-sticker--cyan">USDC NATIVE GAS</span>
+          <span class="k-sticker k-sticker--violet">EUTHYNA AUDITED</span>
         </div>
 
-        <h1 class="text-display-xl">
-          CONTINUOUS<br>
-          TREASURY<br>
-          ON ARC L1.
+        <h1 class="text-hero">
+          <span class="hl">CONTINUOUS</span><br>
+          TREASURY.<br>
+          <span class="hl hl--pink">AUTONOMOUS</span> CFO.
         </h1>
 
-        <p class="text-body" style="margin-top: 24px; font-size: 1.05rem;">
-          The sovereign on-chain corporate CFO and continuous treasury management engine built natively for <strong>Circle’s Arc L1</strong>. Combining Byzantine fiscal sovereignty (<em>Vestiarion</em>) with Athenian accountability (<em>Euthyna</em>) to deliver non-bypassable <code>PolicyWallet.sol</code> guardrails, sub-$250 gasless settlements, automated 30-day runway sweeping into tokenized <strong>USYC yield</strong>, and real-time <strong>OpenSanctions</strong> screening.
+        <p class="text-body" style="margin-top: 24px; font-size: 1.1rem; color: var(--ink);">
+          The sovereign on-chain corporate CFO and continuous treasury management engine built natively for <strong>Circle’s Arc L1</strong>. Featuring non-bypassable <code>PolicyWallet.sol</code> spending caps, zero-gas sub-$250 payouts via <strong>Circle Paymaster</strong>, programmatic 30-day runway sweeping into tokenized <strong>USYC yield (5.2% APY)</strong>, and real-time <strong>OpenSanctions</strong> screening.
         </p>
 
         <div style="display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap;">
-          <a href="#war-room" class="bru-button-primary">
-            <span>ENTER WAR ROOM CONSOLE</span> <span>↓</span>
+          <a href="#war-room" class="k-button k-button-hot">
+            <span>⚡ DISPATCH INVOICE DEMO</span> <span>↓</span>
           </a>
-          <a href="https://github.com/Mathan-dotcom/sakellarios.dev" target="_blank" rel="noopener" class="bru-button">
+          <a href="https://github.com/Mathan-dotcom/sakellarios.dev" target="_blank" rel="noopener" class="k-button k-button-secondary">
             <span>GITHUB SOURCE</span> <span>↗</span>
           </a>
-          <a href="/supernova" class="bru-stamp stamp-rot-right" style="cursor: pointer; padding: 12px 16px;">
-            <span>🌌 VIEW 3D SUPERNOVA</span>
+          <a href="/supernova" class="k-sticker k-sticker--lime" style="cursor: pointer; padding: 12px 16px; font-size: 0.85rem; transform: rotate(1deg);">
+            <span>🌌 VIEW 3D SUPERNOVA UNIVERSE</span>
           </a>
         </div>
 
-        <!-- 4 Key Telemetry Slabs -->
-        <div class="hero-metrics-grid">
-          <div class="metric-slab card-hover">
-            <div class="val text-data" id="hero-yield-bal">$10,000.00</div>
-            <div class="lbl">USYC Yield Vault (5.2% APY)</div>
+        <!-- 4 Saturated Metric Blocks with Color Hover Reveals -->
+        <div class="k-hero__stat-grid">
+          <div class="k-block k-block--yellow card-hover card-hover--pink" style="padding: 20px;">
+            <div class="text-price" id="heroYieldVal">$10,000.00</div>
+            <div class="text-micro" style="margin-top: 4px;">USYC Yield Vault (5.20% APY)</div>
           </div>
-          <div class="metric-slab card-hover">
-            <div class="val text-data" id="hero-buffer-bal">$10,900.00</div>
-            <div class="lbl">30-Day Operational Buffer</div>
+          <div class="k-block k-block--cyan card-hover card-hover--lime" style="padding: 20px;">
+            <div class="text-price">&le; $250.00</div>
+            <div class="text-micro" style="margin-top: 4px;">Single Tx Gasless Cap (Circle Paymaster)</div>
           </div>
-          <div class="metric-slab card-hover">
-            <div class="val text-data">≤ $250.00</div>
-            <div class="lbl">Gasless Single-Tx Ceiling</div>
+          <div class="k-block k-block--lime card-hover card-hover--yellow" style="padding: 20px;">
+            <div class="text-price">100.0%</div>
+            <div class="text-micro" style="margin-top: 4px;">OpenSanctions Real-Time Radar Clean</div>
           </div>
-          <div class="metric-slab card-hover">
-            <div class="val text-data" style="color: var(--recovered-mark);">100% CLEAN</div>
-            <div class="lbl">OpenSanctions Forensic Radar</div>
+          <div class="k-block k-block--violet card-hover card-hover--pink" style="padding: 20px;">
+            <div class="text-price">21 / 21 PASS</div>
+            <div class="text-micro" style="margin-top: 4px;">Foundry Mathematical Invariants</div>
           </div>
         </div>
       </div>
 
-      <!-- Right Column: Cast Black Steel Operational Summary -->
-      <div class="hero-sidebar-card">
-        <div>
-          <div class="bru-stamp bru-stamp--signal" style="margin-bottom: 12px;">SPECIFICATION REPORT</div>
-          <h3>AUTONOMOUS TREASURY CORE</h3>
-          <p class="text-data" style="color: var(--concrete-dark); line-height: 1.7; font-size: 0.8rem; margin-bottom: 20px;">
-            <strong>HOST CHAIN:</strong> Circle Arc L1 (EVM-compatible)<br>
-            <strong>NATIVE GAS:</strong> USDC (Direct Settlement)<br>
-            <strong>POLICY ENGINE:</strong> PolicyWallet.sol (Enforced Invariants)<br>
-            <strong>DAILY LIMIT:</strong> 1,000 USDC / 24h Window<br>
-            <strong>AUDIT SPEC:</strong> Double-Entry Beancount + JSON-LD<br>
-            <strong>SANCTIONS ENGINE:</strong> Real-time OpenSanctions API
-          </p>
-        </div>
+      <!-- Right Column: Hero Drop Card with Misregistration Backing Block -->
+      <div class="misreg-wrap">
+        <div class="misreg-bg" style="background: var(--pink);"></div>
+        <div class="misreg-card" style="box-shadow: 8px 8px 0 var(--shadow);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <span class="k-sticker k-sticker--ink">CONTRACT // SPEC</span>
+            <span class="k-sticker k-sticker--lime">ACTIVE STATE</span>
+          </div>
 
-        <div class="bru-well" style="padding: 14px; background: #000; border-color: rgba(255,255,255,0.2);">
-          <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.72rem; color: #a1a1aa; margin-bottom: 6px;">
-            <span>ACTIVE POLICY CONTRACT</span>
-            <span style="color: var(--recovered-mark);">VERIFIED</span>
+          <h3 class="text-heading" style="margin-bottom: 12px;">POLICYWALLET.SOL</h3>
+          <p class="text-body" style="font-size: 0.88rem; margin-bottom: 20px;">
+            Bytecode-enforced financial guardrails. The AI agent holds zero authority to breach single-tx thresholds ($250) or daily cumulative budgets ($1,000).
+          </p>
+
+          <div class="k-well" style="margin-bottom: 16px;">
+            <div class="text-micro" style="color: var(--ink-soft); margin-bottom: 4px;">ARC L1 DEPLOYMENT</div>
+            <div class="text-data" style="word-break: break-all; font-weight: 700;">
+              0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195
+            </div>
           </div>
-          <div class="text-data" style="font-size: 0.75rem; color: #fff; word-break: break-all;">
-            0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195
+
+          <div class="k-well" style="margin-bottom: 20px;">
+            <div class="text-micro" style="color: var(--ink-soft); margin-bottom: 4px;">DAILY REMAINING BUDGET</div>
+            <div class="text-price" style="font-size: 1.5rem; color: var(--ink);" id="heroDailyBudget">
+              880.00 USDC <span style="font-size: 0.85rem; font-weight: 500;">/ 1000 USDC</span>
+            </div>
           </div>
+
+          <a href="#war-room" class="k-button k-button-hot" style="width: 100%;">
+            <span>⚡ DISPATCH SIMULATION NOW</span>
+          </a>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 4. Signature Component: 2D Transaction Flow Matrix -->
-<section id="matrix" class="section-seam dark-substrate">
+<div class="k-divider"></div>
+
+<!-- 4. Signature Component: 2D Canvas Circuit Blueprint (Kiln Style) -->
+<section id="matrix">
   <div class="container">
-    <div class="section-header">
-      <span class="section-index">01 / CIRCUIT BLUEPRINT</span>
-      <h2 class="text-display-md">TRANSACTION FLOW MATRIX</h2>
-      <p class="text-body" style="color: var(--ink-soft); margin-top: 8px;">
-        Real-time telemetry circuit diagram showing the autonomous settlement pipeline across Arc L1, policy guardrails, compliance radar, and yield sweeper.
+    <div style="margin-bottom: 28px;">
+      <span class="k-index" data-index="01">BLUEPRINT TOPOLOGY</span>
+      <h2 class="text-title">TRANSACTION FLOW MATRIX</h2>
+      <p class="text-body" style="margin-top: 6px;">
+        Live circuit diagram of autonomous transaction routing across Arc L1, policy guardrails, compliance radar, and yield sweeper.
       </p>
     </div>
 
-    <div class="matrix-container">
-      <div class="matrix-header">
-        <span>[TOPOLOGY: ARC L1 SOVEREIGN RAILS]</span>
-        <span id="matrix-pulse-text">STATUS: 60 FPS CIRCUIT ACTIVE ▮</span>
+    <div class="k-matrix-box">
+      <div class="k-matrix-header">
+        <span>[CIRCUIT TOPOLOGY: ARC L1 SOVEREIGN RAILS]</span>
+        <span class="k-sticker k-sticker--lime">60 FPS ENGINE ACTIVE ▮</span>
       </div>
       <canvas id="flowCanvas"></canvas>
-      <div class="matrix-footer">
-        <div><strong>NODES:</strong> 6 CORE ARCHITECTURAL BLOCKS</div>
-        <div><strong>ACTIVE PACKETS:</strong> <span id="packet-count">14 IN FLIGHT</span></div>
-        <div><strong>LATENCY:</strong> <span style="color: var(--recovered-mark);">42ms (ARC L1 RPC)</span></div>
+      <div class="k-matrix-footer">
+        <div><strong>NODES:</strong> 6 ARCHITECTURAL BLOCKS</div>
+        <div><strong>FLIGHT PACKETS:</strong> <span id="packetCount">14 PACKETS</span></div>
+        <div><strong>PAYMASTER:</strong> <span style="color: var(--ink); background: var(--lime); padding: 1px 6px;">GASLESS (0.00 ETH)</span></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 5. Signature Component: 6 Architectural Pillars -->
-<section id="pillars" class="section-seam">
+<div class="k-divider"></div>
+
+<!-- 5. Signature Component: Six Architectural Drops & Pillars -->
+<section id="pillars">
   <div class="container">
-    <div class="section-header">
-      <span class="section-index">02 / ARCHITECTURAL PILLARS</span>
-      <h2 class="text-display-md">SIX BOLTED FOUNDATIONS</h2>
-      <p class="text-body" style="color: var(--ink-soft); margin-top: 8px;">
-        Designed without compromise. Every module is a distinct concrete slab declaring its mathematical boundaries.
+    <div style="margin-bottom: 28px;">
+      <span class="k-index" data-index="02">FOUNDATIONS</span>
+      <h2 class="text-title">THE SIX ARCHITECTURAL DROPS</h2>
+      <p class="text-body" style="margin-top: 6px;">
+        Solid, flat screen-printed modules. Each one bounded by heavy ink outlines declaring its exact role.
       </p>
     </div>
 
-    <div class="pillars-grid">
-      <!-- Pillar 01 -->
-      <div class="pillar-card card-hover">
-        <div class="pillar-top">
-          <div class="pillar-index">PILLAR // 01</div>
-          <h3 class="pillar-title">BYZANTINE VESTIARION CORE</h3>
-          <p class="pillar-desc">
-            Historical Byzantine imperial treasury re-architected on Arc L1. Unifying treasury asset custody, payroll settlement, and cash runway management into an un-slept sovereign agent.
+    <div class="k-cards-grid">
+      <!-- Card 01 -->
+      <div class="k-card card-hover card-hover--yellow">
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span class="k-sticker k-sticker--ink">DROP // 01</span>
+            <span class="k-sticker">CORE</span>
+          </div>
+          <h3 class="text-heading" style="margin-bottom: 8px;">BYZANTINE VESTIARION</h3>
+          <p class="text-body" style="font-size: 0.88rem;">
+            Imperial treasury re-architected on Arc L1. Unifying treasury custody, payroll settlement, and continuous cash runway management into an un-slept sovereign agent.
           </p>
         </div>
-        <div class="pillar-bottom">
-          <span class="bru-stamp bru-stamp--inverted">ARC L1 EVM</span>
-          <span class="text-data">USDC GAS</span>
+        <div style="border-top: var(--bw-thin) solid var(--ink); padding-top: 14px; margin-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <span class="text-price" style="font-size: 1.15rem;">ARC L1 EVM</span>
+          <span class="text-micro" style="background: var(--yellow); padding: 2px 6px; border: 1px solid var(--ink);">NATIVE USDC</span>
         </div>
       </div>
 
-      <!-- Pillar 02 -->
-      <div class="pillar-card card-hover">
-        <div class="pillar-top">
-          <div class="pillar-index">PILLAR // 02</div>
-          <h3 class="pillar-title">30-DAY RUNWAY & USYC SWEEPER</h3>
-          <p class="pillar-desc">
-            Automated runway forecasting calculates operating cash requirements. Idle capital above the 30-day runway is programmatically swept into tokenized USYC earning 5.2% APY with JIT redemption.
+      <!-- Card 02 -->
+      <div class="k-card card-hover card-hover--lime">
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span class="k-sticker k-sticker--ink">DROP // 02</span>
+            <span class="k-sticker k-sticker--lime">5.20% APY</span>
+          </div>
+          <h3 class="text-heading" style="margin-bottom: 8px;">30-DAY RUNWAY & USYC</h3>
+          <p class="text-body" style="font-size: 0.88rem;">
+            Automated runway forecasting calculates operating cash requirements. Surplus capital above the 30-day buffer is programmatically swept into tokenized USYC with JIT liquidity.
           </p>
         </div>
-        <div class="pillar-bottom">
-          <span class="bru-stamp bru-stamp--recovered">5.20% APY</span>
-          <span class="text-data">JIT LIQUID</span>
+        <div style="border-top: var(--bw-thin) solid var(--ink); padding-top: 14px; margin-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <span class="text-price" style="font-size: 1.15rem;">$10,000 SWEPT</span>
+          <span class="text-micro" style="background: var(--lime); padding: 2px 6px; border: 1px solid var(--ink);">JIT LIQUID</span>
         </div>
       </div>
 
-      <!-- Pillar 03 -->
-      <div class="pillar-card card-hover">
-        <div class="pillar-top">
-          <div class="pillar-index">PILLAR // 03</div>
-          <h3 class="pillar-title">POLICYWALLET.SOL HARD GUARDRAILS</h3>
-          <p class="pillar-desc">
-            Mathematical constraints enforced at bytecode level. The AI agent holds zero private key permissions to bypass single-tx caps ($250) or rolling daily maximums ($1,000).
+      <!-- Card 03 -->
+      <div class="k-card card-hover card-hover--pink">
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span class="k-sticker k-sticker--ink">DROP // 03</span>
+            <span class="k-sticker k-sticker--pink">BYTECODE</span>
+          </div>
+          <h3 class="text-heading" style="margin-bottom: 8px;">POLICYWALLET.SOL</h3>
+          <p class="text-body" style="font-size: 0.88rem;">
+            Mathematical constraints enforced at bytecode level. The AI agent holds zero private key authority to bypass single-tx ceilings ($250) or rolling daily maximums ($1,000).
           </p>
         </div>
-        <div class="pillar-bottom">
-          <span class="bru-stamp bru-stamp--hazard">BYTECODE CAP</span>
-          <span class="text-data">&le; $250 / TX</span>
+        <div style="border-top: var(--bw-thin) solid var(--ink); padding-top: 14px; margin-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <span class="text-price" style="font-size: 1.15rem;">&le; $250 / TX</span>
+          <span class="text-micro" style="background: var(--pink); padding: 2px 6px; border: 1px solid var(--ink);">GUARDED</span>
         </div>
       </div>
 
-      <!-- Pillar 04 -->
-      <div class="pillar-card card-hover">
-        <div class="pillar-top">
-          <div class="pillar-index">PILLAR // 04</div>
-          <h3 class="pillar-title">CIRCLE PAYMASTER GASLESS RAILS</h3>
-          <p class="pillar-desc">
-            ERC-4337 Account Abstraction paymaster integration on Arc. Approved micro-invoices settle without requiring ETH gas, abstracting operational friction for vendors and contractors.
+      <!-- Card 04 -->
+      <div class="k-card card-hover card-hover--cyan">
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span class="k-sticker k-sticker--ink">DROP // 04</span>
+            <span class="k-sticker k-sticker--cyan">ZERO GAS</span>
+          </div>
+          <h3 class="text-heading" style="margin-bottom: 8px;">CIRCLE PAYMASTER</h3>
+          <p class="text-body" style="font-size: 0.88rem;">
+            ERC-4337 Account Abstraction paymaster integration on Arc. Approved micro-invoices settle without requiring ETH gas, abstracting operational friction for vendors and builders.
           </p>
         </div>
-        <div class="pillar-bottom">
-          <span class="bru-stamp bru-stamp--signal">ZERO GAS</span>
-          <span class="text-data">ERC-4337</span>
+        <div style="border-top: var(--bw-thin) solid var(--ink); padding-top: 14px; margin-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <span class="text-price" style="font-size: 1.15rem;">0.00 ETH GAS</span>
+          <span class="text-micro" style="background: var(--cyan); padding: 2px 6px; border: 1px solid var(--ink);">ERC-4337</span>
         </div>
       </div>
 
-      <!-- Pillar 05 -->
-      <div class="pillar-card card-hover">
-        <div class="pillar-top">
-          <div class="pillar-index">PILLAR // 05</div>
-          <h3 class="pillar-title">OPENSANCTIONS FORENSIC SCANNER</h3>
-          <p class="pillar-desc">
+      <!-- Card 05 -->
+      <div class="k-card card-hover card-hover--pink">
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span class="k-sticker k-sticker--ink">DROP // 05</span>
+            <span class="k-sticker k-sticker--red">RADAR</span>
+          </div>
+          <h3 class="text-heading" style="margin-bottom: 8px;">OPENSANCTIONS SCANNER</h3>
+          <p class="text-body" style="font-size: 0.88rem;">
             Pre-flight screening radar checks vendor addresses against OFAC SDN, EU, and UN sanction datasets before signing any payload. Sanctioned targets trigger immediate reverts.
           </p>
         </div>
-        <div class="pillar-bottom">
-          <span class="bru-stamp bru-stamp--critical">PRE-FLIGHT</span>
-          <span class="text-data">OFAC RADAR</span>
+        <div style="border-top: var(--bw-thin) solid var(--ink); padding-top: 14px; margin-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <span class="text-price" style="font-size: 1.15rem;">PRE-FLIGHT</span>
+          <span class="text-micro" style="background: var(--red); color: #fff; padding: 2px 6px; border: 1px solid var(--ink);">OFAC SDN</span>
         </div>
       </div>
 
-      <!-- Pillar 06 -->
-      <div class="pillar-card card-hover">
-        <div class="pillar-top">
-          <div class="pillar-index">PILLAR // 06</div>
-          <h3 class="pillar-title">EUTHYNA DOUBLE-ENTRY AUDIT</h3>
-          <p class="pillar-desc">
+      <!-- Card 06 -->
+      <div class="k-card card-hover card-hover--violet">
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+            <span class="k-sticker k-sticker--ink">DROP // 06</span>
+            <span class="k-sticker k-sticker--violet">EUTHYNA</span>
+          </div>
+          <h3 class="text-heading" style="margin-bottom: 8px;">BEANCOUNT AUDIT</h3>
+          <p class="text-body" style="font-size: 0.88rem;">
             Athenian audit tradition codified in Beancount plain text. Every transaction emits an immutable balanced journal entry and signed cryptographic receipt for GAAP compliance.
           </p>
         </div>
-        <div class="pillar-bottom">
-          <span class="bru-stamp bru-stamp--inverted">BEANCOUNT</span>
-          <span class="text-data">JSON-LD</span>
+        <div style="border-top: var(--bw-thin) solid var(--ink); padding-top: 14px; margin-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <span class="text-price" style="font-size: 1.15rem;">DOUBLE-ENTRY</span>
+          <span class="text-micro" style="background: var(--violet); padding: 2px 6px; border: 1px solid var(--ink);">JSON-LD</span>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 6. Signature Component: Live Operator War Room -->
-<section id="war-room" class="section-seam dark-substrate">
+<div class="k-divider"></div>
+
+<!-- 6. Signature Component: Live Operator War Room & Till Receipt Console -->
+<section id="war-room">
   <div class="container">
-    <div class="section-header">
-      <span class="section-index">03 / LIVE OPERATOR WAR ROOM</span>
-      <h2 class="text-display-md">DISPATCH & AUDIT RUN-SHEET</h2>
-      <p class="text-body" style="color: var(--ink-soft); margin-top: 8px;">
-        Test the autonomous decision pipeline directly. Transactions evaluate compliance constraints, enforce mathematical caps, and append immutable Beancount records.
+    <div style="margin-bottom: 28px;">
+      <span class="k-index" data-index="03">SIMULATION TERMINAL</span>
+      <h2 class="text-title">WAR ROOM & TILL RECEIPT CONSOLE</h2>
+      <p class="text-body" style="margin-top: 6px;">
+        Trigger live autonomous decision pipelines. Every payout passes through sanctions radar, evaluates policy ceilings, and prints a verified till receipt.
       </p>
     </div>
 
-    <div class="war-room-layout">
-      <!-- Left: Dispatch Console -->
-      <div class="console-panel" id="dispatchConsolePanel">
-        <div class="console-bar">
-          <span>OPERATOR TERMINAL // DISPATCH</span>
-          <span id="console-status-stamp" class="bru-stamp bru-stamp--recovered" style="font-size: 0.68rem; padding: 2px 8px;">STANDBY</span>
+    <div class="k-war-grid">
+      <!-- Left: Interactive Dispatcher Slab -->
+      <div class="k-panel-raised" id="dispatchPanel" style="padding: 28px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: var(--bw) solid var(--ink); padding-bottom: 14px; margin-bottom: 20px;">
+          <h3 class="text-heading">INVOICE DISPATCH PAD</h3>
+          <span id="dispatchStatusBadge" class="k-sticker k-sticker--lime">READY // ARMED</span>
         </div>
 
-        <div class="console-body">
-          <!-- Confidence Gate Gauge -->
-          <div class="confidence-gauge-box">
-            <div class="gauge-header">
-              <span>BAYESIAN AUTONOMY CONFIDENCE</span>
-              <span id="gaugeValueText" style="color: var(--signal-accent);">94.8% (AUTO-DISPATCH)</span>
-            </div>
-            <div class="gauge-segments" id="gaugeSegments">
-              <div class="gauge-cell active-pass"></div>
-              <div class="gauge-cell active-pass"></div>
-              <div class="gauge-cell active-pass"></div>
-              <div class="gauge-cell active-pass"></div>
-              <div class="gauge-cell active-pass"></div>
-              <div class="gauge-cell active-pass"></div>
-              <div class="gauge-cell active-pass"></div>
-              <div class="gauge-cell active-gate"></div>
-              <div class="gauge-cell active-gate"></div>
-              <div class="gauge-cell"></div>
-              <div class="gauge-threshold-line" title="Autonomy Gate: 0.70"></div>
-            </div>
-            <div class="gauge-subtext">
-              <span>MANUAL REVIEW (&lt; 0.70)</span>
-              <span>▲ THRESHOLD: 0.70</span>
-              <span style="color: var(--recovered-mark);">SOVEREIGN (0.70+)</span>
-            </div>
+        <!-- Autonomy Gate segmented indicator -->
+        <div class="k-well" style="margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-family: var(--font-display); font-size: 0.85rem;">
+            <span>BAYESIAN AUTONOMY GATE</span>
+            <span style="color: var(--ink); background: var(--yellow); padding: 1px 6px; border: 1px solid var(--ink);">94.8% (AUTO-DISPATCH)</span>
           </div>
-
-          <!-- Dispatch Action Buttons -->
-          <div class="dispatch-actions">
-            <button class="dispatch-btn success" onclick="executeInvoice('micro')">
-              <div>
-                <div style="font-size: 0.9rem; color: var(--ink-hard);">⚡ SETTLE CLOUD SERVER BILL</div>
-                <div style="font-size: 0.75rem; color: var(--ink-soft); font-family: var(--font-mono); margin-top: 2px;">
-                  INV-CLOUD-8821 · 120.00 USDC &le; $250 CAP
-                </div>
-              </div>
-              <span class="bru-stamp bru-stamp--recovered" style="font-size: 0.7rem;">GASLESS PAYOUT</span>
-            </button>
-
-            <button class="dispatch-btn" onclick="executeInvoice('escalate')">
-              <div>
-                <div style="font-size: 0.9rem; color: var(--ink-hard);">⚠️ SUBMIT AUDIT INVOICE (CAP BREACH)</div>
-                <div style="font-size: 0.75rem; color: var(--ink-soft); font-family: var(--font-mono); margin-top: 2px;">
-                  INV-AUDIT-004 · 450.00 USDC &gt; $250 CAP
-                </div>
-              </div>
-              <span class="bru-stamp bru-stamp--hazard" style="font-size: 0.7rem;">ESCALATE TO QUEUE</span>
-            </button>
-
-            <button class="dispatch-btn danger" onclick="executeInvoice('blocked')">
-              <div>
-                <div style="font-size: 0.9rem; color: var(--critical-accent);">🚫 TRANSFER TO SANCTIONED ENTITY</div>
-                <div style="font-size: 0.75rem; color: var(--ink-soft); font-family: var(--font-mono); margin-top: 2px;">
-                  INV-ROGUE-99 · 500.00 USDC &rarr; OFAC SDN HIT
-                </div>
-              </div>
-              <span class="bru-stamp bru-stamp--critical" style="font-size: 0.7rem;">REVERT PAYOUT</span>
-            </button>
-
-            <button class="dispatch-btn" onclick="executeInvoice('sweep')">
-              <div>
-                <div style="font-size: 0.9rem; color: var(--signal-accent);">📈 SWEEP SURPLUS INTO USYC VAULT</div>
-                <div style="font-size: 0.75rem; color: var(--ink-soft); font-family: var(--font-mono); margin-top: 2px;">
-                  30-Day Buffer Satisfied &rarr; Compound at 5.2% APY
-                </div>
-              </div>
-              <span class="bru-stamp bru-stamp--signal" style="font-size: 0.7rem;">USYC SWEEP</span>
-            </button>
+          <div style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; height: 20px; border: var(--bw-thin) solid var(--ink); padding: 2px; background: var(--paper);">
+            <div style="background: var(--cyan);"></div>
+            <div style="background: var(--cyan);"></div>
+            <div style="background: var(--cyan);"></div>
+            <div style="background: var(--cyan);"></div>
+            <div style="background: var(--cyan);"></div>
+            <div style="background: var(--cyan);"></div>
+            <div style="background: var(--cyan);"></div>
+            <div style="background: var(--lime);"></div>
+            <div style="background: var(--lime);"></div>
+            <div style="background: transparent;"></div>
           </div>
+          <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.7rem; margin-top: 6px;">
+            <span>HUMAN GATE (&lt; 0.70)</span>
+            <span>▲ THRESHOLD: 0.70</span>
+            <span style="color: var(--ink); font-weight: 700;">AUTONOMOUS (0.70+)</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <button class="k-button k-button-lime" style="width: 100%; justify-content: space-between;" onclick="triggerDispatch('micro')">
+            <div style="text-align: left;">
+              <div>⚡ SETTLE INFRASTRUCTURE INVOICE</div>
+              <div class="text-data" style="font-size: 0.72rem; color: var(--ink-soft); text-transform: none;">INV-CLOUD-8821 · 120.00 USDC &le; $250 CAP</div>
+            </div>
+            <span class="k-sticker k-sticker--ink" style="font-size: 0.65rem;">GASLESS [OK]</span>
+          </button>
+
+          <button class="k-button" style="width: 100%; justify-content: space-between; background: var(--orange);" onclick="triggerDispatch('escalate')">
+            <div style="text-align: left;">
+              <div>⚠️ SUBMIT AUDIT BILL (EXCEEDS CAP)</div>
+              <div class="text-data" style="font-size: 0.72rem; color: var(--ink-soft); text-transform: none;">INV-AUDIT-004 · 450.00 USDC &gt; $250 CAP</div>
+            </div>
+            <span class="k-sticker k-sticker--ink" style="font-size: 0.65rem;">ESCALATE</span>
+          </button>
+
+          <button class="k-button k-button-danger" style="width: 100%; justify-content: space-between;" onclick="triggerDispatch('blocked')">
+            <div style="text-align: left;">
+              <div>🚫 ATTEMPT TRANSFER TO BLOCKED OFAC</div>
+              <div class="text-data" style="font-size: 0.72rem; color: #fff; text-transform: none;">INV-ROGUE-99 · 500.00 USDC &rarr; SANCTIONS HIT</div>
+            </div>
+            <span class="k-sticker k-sticker--ink" style="font-size: 0.65rem; color: var(--red);">REVERT [HALT]</span>
+          </button>
+
+          <button class="k-button" style="width: 100%; justify-content: space-between; background: var(--yellow);" onclick="triggerDispatch('sweep')">
+            <div style="text-align: left;">
+              <div>📈 SWEEP RUNWAY SURPLUS INTO USYC</div>
+              <div class="text-data" style="font-size: 0.72rem; color: var(--ink-soft); text-transform: none;">30-Day Buffer Satisfied &rarr; Compound at 5.2% APY</div>
+            </div>
+            <span class="k-sticker k-sticker--ink" style="font-size: 0.65rem;">YIELD SWEEP</span>
+          </button>
         </div>
       </div>
 
-      <!-- Right: Immutable Audit Ledger Run-Sheet -->
-      <div class="console-panel">
-        <div class="console-bar">
-          <span>EUTHYNA AUDIT RUN-SHEET // PLAIN TEXT</span>
-          <span class="text-data" style="font-size: 0.7rem; color: #a1a1aa;">ARC L1 EVENT LOG <span class="blink-cursor">▮</span></span>
+      <!-- Right: Till Receipt / Order Ledger (Styleguide Section 6.4) -->
+      <div class="receipt-tape">
+        <div class="receipt-header">
+          <span style="font-family: var(--font-display); font-size: 1.1rem; color: var(--yellow);">TILL RECEIPT // RUN-SHEET</span>
+          <span class="k-sticker k-sticker--pink" style="font-size: 0.65rem;">ARC L1 STREAM</span>
         </div>
 
-        <div class="ledger-runsheet" id="runsheetLog">
-          <div class="runsheet-row">
-            <span class="runsheet-idx">#0001</span>
-            <span class="runsheet-tag info">[BOOT]</span>
-            <span>Vestiarion Agent connected to Arc L1 PolicyWallet (0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195)</span>
+        <div class="receipt-feed" id="receiptFeed">
+          <div class="receipt-line paid">
+            <span>[#001]</span>
+            <span>ORD-00101 · VESTIARION CORE BOOT · 0x9A48...02195 · [PAID]</span>
           </div>
-          <div class="runsheet-row">
-            <span class="runsheet-idx">#0002</span>
-            <span class="runsheet-tag ok">[CHECK]</span>
-            <span>Policy limits: Daily Cap = 1000 USDC | Single Tx Cap = 250 USDC | Invariants = 21/21 PASS</span>
+          <div class="receipt-line paid">
+            <span>[#002]</span>
+            <span>ORD-00102 · POLICY LIMITS: DAILY=1000 USDC | SINGLE=250 USDC · [ACTIVE]</span>
           </div>
-          <div class="runsheet-row">
-            <span class="runsheet-idx">#0003</span>
-            <span class="runsheet-tag ok">[RADAR]</span>
-            <span>OpenSanctions HTTP Engine synchronized with OFAC SDN list</span>
+          <div class="receipt-line paid">
+            <span>[#003]</span>
+            <span>ORD-00103 · OPENSANCTIONS RADAR: OFAC SDN LIVE · [CLEAN]</span>
           </div>
-          <div class="runsheet-row">
-            <span class="runsheet-idx">#0004</span>
-            <span class="runsheet-tag ok">[READY]</span>
-            <span>Autonomous operator armed. Select a dispatch action on the left.</span>
+          <div class="receipt-line paid">
+            <span>[#004]</span>
+            <span>ORD-00104 · SELECT DISPATCH ACTION TO TRIGGER ON-CHAIN SETTLEMENT · [STANDBY]</span>
           </div>
         </div>
       </div>
@@ -1295,63 +1071,65 @@ button {
   </div>
 </section>
 
-<!-- 7. Signature Component: Foundry Verifiable Test Suite -->
-<section id="tests" class="section-seam">
+<div class="k-divider"></div>
+
+<!-- 7. Signature Component: 21/21 Foundry Proofs Table -->
+<section id="proofs">
   <div class="container">
-    <div class="section-header">
-      <span class="section-index">04 / FORMAL VERIFICATION MATRIX</span>
-      <h2 class="text-display-md">21/21 FOUNDRY INVARIANTS</h2>
-      <p class="text-body" style="color: var(--ink-soft); margin-top: 8px;">
-        All financial guardrails are proven via formal unit, fuzz, and invariant tests in Foundry before deployment.
+    <div style="margin-bottom: 28px;">
+      <span class="k-index" data-index="04">FORMAL PROOFS</span>
+      <h2 class="text-title">21/21 FOUNDRY TEST INVARIANTS</h2>
+      <p class="text-body" style="margin-top: 6px;">
+        Mathematical constraints verified on Circle Arc L1 testbed before execution.
       </p>
     </div>
 
     <div style="overflow-x: auto;">
-      <table class="test-table">
+      <table class="k-table">
         <thead>
           <tr>
             <th>TEST IDENTIFIER</th>
             <th>INVARIANT SPECIFICATION</th>
             <th>GAS CONSUMPTION</th>
-            <th>STATUS</th>
+            <th>STATUS STAMP</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td><code>test_ExecutePayout_Standard()</code></td>
-            <td>Sub-$250 payment settles gaslessly and decrements daily available budget</td>
+            <td>Sub-$250 invoice executes gaslessly and updates remaining budget</td>
             <td>28,491 gas</td>
-            <td><span class="bru-stamp bru-stamp--recovered" style="font-size: 0.65rem;">PASS [OK]</span></td>
+            <td><span class="k-sticker k-sticker--lime">[PAID] PASS</span></td>
           </tr>
           <tr>
             <td><code>test_RevertIf_ExceedsSingleTxLimit()</code></td>
-            <td>Invoices exceeding $250 revert with <code>SingleTxLimitExceeded()</code> and queue</td>
+            <td>Payouts over $250 revert with <code>SingleTxLimitExceeded()</code> and queue</td>
             <td>12,180 gas</td>
-            <td><span class="bru-stamp bru-stamp--recovered" style="font-size: 0.65rem;">PASS [OK]</span></td>
+            <td><span class="k-sticker k-sticker--lime">[QUEUED] PASS</span></td>
           </tr>
           <tr>
             <td><code>test_RevertIf_DailyCeilingBreached()</code></td>
-            <td>Total 24h disbursements cannot breach 1,000 USDC threshold</td>
+            <td>Cumulative 24-hour disbursements cannot exceed 1,000 USDC</td>
             <td>14,022 gas</td>
-            <td><span class="bru-stamp bru-stamp--recovered" style="font-size: 0.65rem;">PASS [OK]</span></td>
+            <td><span class="k-sticker k-sticker--lime">[CEILING] PASS</span></td>
           </tr>
           <tr>
             <td><code>test_SanctionsRevert_UnauthorizedTarget()</code></td>
             <td>Pre-flight sanctions failure emits security alert and halts execution</td>
             <td>9,840 gas</td>
-            <td><span class="bru-stamp bru-stamp--recovered" style="font-size: 0.65rem;">PASS [OK]</span></td>
+            <td><span class="k-sticker k-sticker--lime">[BLOCKED] PASS</span></td>
           </tr>
           <tr>
             <td><code>test_USYC_ForceApproveAndSweep()</code></td>
             <td>Surplus liquid cash above 30-day buffer sweeps into USYC vault</td>
             <td>34,120 gas</td>
-            <td><span class="bru-stamp bru-stamp--recovered" style="font-size: 0.65rem;">PASS [OK]</span></td>
+            <td><span class="k-sticker k-sticker--lime">[SWEPT] PASS</span></td>
           </tr>
           <tr>
             <td><code>test_AthenianEuthyna_BalancedReceipt()</code></td>
             <td>Ledger post-state emits debit/credit zero sum in Beancount journal</td>
             <td>18,910 gas</td>
-            <td><span class="bru-stamp bru-stamp--recovered" style="font-size: 0.65rem;">PASS [OK]</span></td>
+            <td><span class="k-sticker k-sticker--lime">[BALANCED] PASS</span></td>
           </tr>
         </tbody>
       </table>
@@ -1359,64 +1137,71 @@ button {
   </div>
 </section>
 
-<!-- 8. Bolted Cast-Black Steel Footer -->
-<footer class="footer-slab">
+<!-- Toast Notification (Styleguide Section 6.5) -->
+<div class="k-toast" id="toastBox">
+  <span id="toastMsg">⚡ SETTLED GASLESSLY VIA CIRCLE PAYMASTER!</span>
+</div>
+
+<div class="k-divider"></div>
+
+<!-- 8. Bolted Cast Steel Footer -->
+<footer class="k-footer">
   <div class="container">
-    <div class="footer-grid">
+    <div class="k-footer-grid">
       <div>
         <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 16px;">
-          <span class="bru-stamp bru-stamp--inverted">ARC L1 SOVEREIGN</span>
-          <span style="font-family: var(--font-display); font-size: 1.15rem; color: #fff;">VESTIARION AI</span>
+          <span class="k-sticker k-sticker--pink">ARC L1 SOVEREIGN</span>
+          <span style="font-family: var(--font-display); font-size: 1.3rem; color: var(--yellow);">VESTIARION AI</span>
         </div>
-        <p style="color: var(--concrete-dark); max-width: 52ch; font-size: 0.78rem; line-height: 1.6;">
+        <p style="color: var(--paper-dark); max-width: 52ch; font-size: 0.82rem; line-height: 1.6;">
           Autonomous Continuous Treasury and Business Operator engine built natively for Circle’s Arc L1. Unifying Byzantine centralized fiscal institutions with Athenian Euthyna auditability.
         </p>
       </div>
 
       <div>
-        <div style="font-family: var(--font-ui); font-size: 0.85rem; font-weight: 700; color: #fff; margin-bottom: 12px; text-transform: uppercase;">
+        <div style="font-family: var(--font-display); font-size: 0.95rem; color: var(--yellow); margin-bottom: 14px; text-transform: uppercase;">
           EXPERIENCES
         </div>
         <div style="display: flex; flex-direction: column; gap: 8px;">
-          <a href="/" style="color: var(--concrete-dark); text-decoration: underline;">01 / BRUTALIST MISSION CONTROL</a>
-          <a href="/supernova" style="color: var(--concrete-dark); text-decoration: underline;">02 / 3D SUPERNOVA UNIVERSE</a>
-          <a href="/landing" style="color: var(--concrete-dark); text-decoration: underline;">03 / FLAGSHIP LANDING</a>
-          <a href="/api/treasury/summary" target="_blank" style="color: var(--concrete-dark); text-decoration: underline;">04 / TELEMETRY JSON API</a>
+          <a href="/" style="color: var(--paper); text-decoration: underline;">01 / KILN NEO-BRUTALIST OPERATOR</a>
+          <a href="/supernova" style="color: var(--paper); text-decoration: underline;">02 / 3D SUPERNOVA UNIVERSE</a>
+          <a href="/landing" style="color: var(--paper); text-decoration: underline;">03 / FLAGSHIP LANDING</a>
+          <a href="/api/treasury/summary" target="_blank" style="color: var(--paper); text-decoration: underline;">04 / TELEMETRY JSON API</a>
         </div>
       </div>
 
       <div>
-        <div style="font-family: var(--font-ui); font-size: 0.85rem; font-weight: 700; color: #fff; margin-bottom: 12px; text-transform: uppercase;">
+        <div style="font-family: var(--font-display); font-size: 0.95rem; color: var(--yellow); margin-bottom: 14px; text-transform: uppercase;">
           REPOSITORY
         </div>
         <div style="display: flex; flex-direction: column; gap: 8px;">
-          <a href="https://github.com/Mathan-dotcom/sakellarios.dev" target="_blank" rel="noopener" style="color: #fff; text-decoration: underline;">
+          <a href="https://github.com/Mathan-dotcom/sakellarios.dev" target="_blank" rel="noopener" style="color: var(--paper); text-decoration: underline;">
             github.com/Mathan-dotcom/sakellarios.dev
           </a>
-          <span style="color: var(--recovered-mark);">COMMIT: 206402b · MAIN BRANCH</span>
-          <span style="color: var(--ledger-muted);">RFB 01 & RFB 04 TRACK COMPLIANT</span>
+          <span style="color: var(--lime);">BRANCH: MAIN · PRODUCTION</span>
+          <span style="color: var(--paper-dark);">RFB 01 & RFB 04 TRACK COMPLIANT</span>
         </div>
       </div>
     </div>
 
-    <div class="footer-bottom">
-      <div>&copy; 2026 VESTIARION AI · ARCHITECTED FOR CIRCLE ARC L1 · ALL RIGHTS RESERVED</div>
+    <div class="k-footer-bottom">
+      <div>&copy; 2026 VESTIARION AI · DESIGN SYSTEM: KILN NEO-BRUTALISM v1.0.0 · ALL RIGHTS RESERVED</div>
       <div style="display: flex; gap: 16px;">
         <span>POLICY: 0x9A48...02195</span>
-        <span>USDC PAYMASTER: ACTIVE</span>
+        <span style="color: var(--lime);">USDC PAYMASTER: ACTIVE</span>
       </div>
     </div>
   </div>
 </footer>
 
 <!-- =====================================================================
-     INTERACTIVE JAVASCRIPT: FLOW MATRIX & DISPATCH ENGINE
+     INTERACTIVE JAVASCRIPT: CIRCUIT BLUEPRINT & DISPATCH ENGINE
      ===================================================================== -->
 <script>
 /* ---------------------------------------------------------------------
-   1. Interactive 2D Canvas Flow Matrix (Styleguide Section 6.1)
+   1. 2D Canvas Flow Matrix in Kiln Neo-Brutalist Aesthetic
    --------------------------------------------------------------------- */
-(function initFlowMatrix() {
+(function initKilnMatrix() {
   const canvas = document.getElementById('flowCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
@@ -1428,18 +1213,17 @@ button {
   resize();
   window.addEventListener('resize', resize);
 
-  // Core Nodes on Blueprint Grid
+  // Nodes with Kiln role color fills
   const nodes = [
-    { id: 'arc', xRatio: 0.12, yRatio: 0.5, label: 'ARC L1 RPC', status: 'OK' },
-    { id: 'agent', xRatio: 0.32, yRatio: 0.5, label: 'VESTIARION AGENT', status: 'OK' },
-    { id: 'radar', xRatio: 0.52, yRatio: 0.22, label: 'OPENSANCTIONS', status: 'OK' },
-    { id: 'policy', xRatio: 0.52, yRatio: 0.78, label: 'POLICYWALLET.SOL', status: 'OK' },
-    { id: 'paymaster', xRatio: 0.75, yRatio: 0.28, label: 'CIRCLE PAYMASTER', status: 'OK' },
-    { id: 'usyc', xRatio: 0.75, yRatio: 0.72, label: 'USYC VAULT', status: 'OK' },
-    { id: 'euthyna', xRatio: 0.92, yRatio: 0.5, label: 'EUTHYNA LEDGER', status: 'OK' }
+    { id: 'arc', xRatio: 0.12, yRatio: 0.5, label: 'ARC L1 RPC', color: '#4dd8ff' },
+    { id: 'agent', xRatio: 0.32, yRatio: 0.5, label: 'VESTIARION', color: '#ffe14d' },
+    { id: 'radar', xRatio: 0.52, yRatio: 0.22, label: 'OPENSANCTIONS', color: '#ff6fae' },
+    { id: 'policy', xRatio: 0.52, yRatio: 0.78, label: 'POLICYWALLET', color: '#ffe14d' },
+    { id: 'paymaster', xRatio: 0.75, yRatio: 0.28, label: 'PAYMASTER', color: '#b6f23d' },
+    { id: 'usyc', xRatio: 0.75, yRatio: 0.72, label: 'USYC VAULT', color: '#a78bff' },
+    { id: 'euthyna', xRatio: 0.92, yRatio: 0.5, label: 'EUTHYNA LEDGER', color: '#14110f', textLight: true }
   ];
 
-  // Wire connections between nodes
   const links = [
     ['arc', 'agent'],
     ['agent', 'radar'],
@@ -1451,16 +1235,15 @@ button {
     ['usyc', 'euthyna']
   ];
 
-  // Moving packets on wires
   const packets = [];
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < 14; i++) {
     const link = links[Math.floor(Math.random() * links.length)];
     packets.push({
       from: link[0],
       to: link[1],
       t: Math.random(),
-      speed: 0.004 + Math.random() * 0.007,
-      isAlert: false
+      speed: 0.005 + Math.random() * 0.007,
+      color: ['#ffe14d', '#ff6fae', '#4dd8ff', '#b6f23d'][Math.floor(Math.random() * 4)]
     });
   }
 
@@ -1472,32 +1255,23 @@ button {
     const w = canvas.width, h = canvas.height;
     ctx.clearRect(0, 0, w, h);
 
-    // Draw exposed 48px blueprint grid
-    ctx.strokeStyle = 'rgba(10, 10, 11, 0.12)';
-    ctx.lineWidth = 1;
-    for (let x = 0; x < w; x += 48) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, h);
-      ctx.stroke();
-    }
-    for (let y = 0; y < h; y += 48) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y);
-      ctx.stroke();
+    // Warm dot-grid background
+    ctx.fillStyle = 'rgba(20, 17, 15, 0.12)';
+    for (let x = 12; x < w; x += 24) {
+      for (let y = 12; y < h; y += 24) {
+        ctx.fillRect(x, y, 2, 2);
+      }
     }
 
-    // Draw hard connecting wires (1px black ink)
+    // Heavy 3px black ink wires
     links.forEach(([fromId, toId]) => {
       const a = getNode(fromId), b = getNode(toId);
       const ax = a.xRatio * w, ay = a.yRatio * h;
       const bx = b.xRatio * w, by = b.yRatio * h;
 
-      ctx.strokeStyle = '#0a0a0b';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#14110f';
+      ctx.lineWidth = 3;
       ctx.beginPath();
-      // Orthogonal brutalist routing
       const midX = (ax + bx) / 2;
       ctx.moveTo(ax, ay);
       ctx.lineTo(midX, ay);
@@ -1506,7 +1280,7 @@ button {
       ctx.stroke();
     });
 
-    // Update and draw packets
+    // Square packets on wires
     packets.forEach(p => {
       p.t += p.speed;
       if (p.t > 1) {
@@ -1536,35 +1310,35 @@ button {
         py = by;
       }
 
-      // Draw square packet (zero circles)
-      ctx.fillStyle = p.isAlert ? '#ff2e2e' : '#2e5bff';
-      ctx.fillRect(px - 3, py - 3, 6, 6);
-      ctx.strokeStyle = '#0a0a0b';
-      ctx.strokeRect(px - 3, py - 3, 6, 6);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(px - 4, py - 4, 8, 8);
+      ctx.strokeStyle = '#14110f';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(px - 4, py - 4, 8, 8);
     });
 
-    // Draw solid architectural square nodes
+    // Solid screen-printed blocks with offset shadows
     nodes.forEach(n => {
       const x = n.xRatio * w, y = n.yRatio * h;
-      const nw = 110, nh = 36;
+      const nw = 114, nh = 38;
       const left = x - nw / 2, top = y - nh / 2;
 
       // Solid offset shadow
-      ctx.fillStyle = '#0a0a0b';
-      ctx.fillRect(left + 4, top + 4, nw, nh);
+      ctx.fillStyle = '#14110f';
+      ctx.fillRect(left + 5, top + 5, nw, nh);
 
-      // Node body
-      ctx.fillStyle = (n.status === 'ALERT') ? '#ff2e2e' : '#d9d9d7';
+      // Node solid fill
+      ctx.fillStyle = n.color;
       ctx.fillRect(left, top, nw, nh);
 
-      // Node border
-      ctx.strokeStyle = '#0a0a0b';
-      ctx.lineWidth = 2;
+      // 3px ink border
+      ctx.strokeStyle = '#14110f';
+      ctx.lineWidth = 3;
       ctx.strokeRect(left, top, nw, nh);
 
       // Text label
-      ctx.fillStyle = (n.status === 'ALERT') ? '#ffffff' : '#0a0a0b';
-      ctx.font = 'bold 9px "IBM Plex Mono", monospace';
+      ctx.fillStyle = n.textLight ? '#fff6e0' : '#14110f';
+      ctx.font = '800 10px "Bricolage Grotesque", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(n.label, x, y);
@@ -1573,49 +1347,44 @@ button {
     requestAnimationFrame(draw);
   }
   requestAnimationFrame(draw);
-
-  window.triggerMatrixAlert = function() {
-    packets.forEach(p => p.isAlert = true);
-    setTimeout(() => {
-      packets.forEach(p => p.isAlert = false);
-    }, 2400);
-  };
 })();
 
 /* ---------------------------------------------------------------------
-   2. Live Operator Dispatch Console & Beancount Run-Sheet
+   2. Till Receipt / Order Ledger Dispatch Operations
    --------------------------------------------------------------------- */
-let runsheetIndex = 5;
+let receiptCount = 5;
 
-function appendRunsheet(tag, message, cls = 'info') {
-  const container = document.getElementById('runsheetLog');
-  const now = new Date().toISOString().substring(11, 19);
-  const row = document.createElement('div');
-  row.className = 'runsheet-row';
-  row.innerHTML = `
-    <span class="runsheet-idx">#${String(runsheetIndex++).padStart(4, '0')}</span>
-    <span class="runsheet-tag ${cls}">[${tag}]</span>
-    <span>[${now}Z] ${message}</span>
-  `;
-  container.appendChild(row);
-  container.scrollTop = container.scrollHeight;
+function showToast(text, bg = 'var(--lime)') {
+  const toast = document.getElementById('toastBox');
+  const msg = document.getElementById('toastMsg');
+  toast.style.background = bg;
+  msg.textContent = text;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3500);
 }
 
-window.executeInvoice = async function(type) {
-  const panel = document.getElementById('dispatchConsolePanel');
-  const statusStamp = document.getElementById('console-status-stamp');
+function appendReceipt(ord, text, type = 'paid') {
+  const feed = document.getElementById('receiptFeed');
+  const row = document.createElement('div');
+  row.className = `receipt-line ${type}`;
+  row.innerHTML = `<span>[#${String(receiptCount++).padStart(3, '0')}]</span><span>ORD-${ord} · ${text}</span>`;
+  feed.appendChild(row);
+  feed.scrollTop = feed.scrollHeight;
+}
+
+window.triggerDispatch = async function(type) {
+  const panel = document.getElementById('dispatchPanel');
+  const badge = document.getElementById('dispatchStatusBadge');
 
   if (type === 'micro') {
-    statusStamp.className = "bru-stamp bru-stamp--recovered anim-stamp";
-    statusStamp.textContent = "PAYOUT SETTLED";
+    badge.className = "k-sticker k-sticker--lime anim-slam";
+    badge.textContent = "SETTLED [OK]";
+    showToast("⚡ INVOICE SETTLED GASLESSLY VIA CIRCLE PAYMASTER!", "var(--lime)");
 
-    appendRunsheet("INV-RECV", "Processing INV-CLOUD-8821 (120.00 USDC) to 0x3333...3333 [INFRASTRUCTURE]", "info");
-    appendRunsheet("SANCTIONS", "Pre-flight OpenSanctions HTTP screening: 0x3333...3333 PASSED (CLEAN)", "ok");
-    appendRunsheet("POLICY", "PolicyWallet.executePayout(): 120.00 USDC &le; 250.00 single-tx ceiling. APPROVED.", "ok");
-    appendRunsheet("PAYMASTER", "Gasless transaction dispatched via Circle Paymaster (Tx: 0x680e...41bb)", "ok");
-    appendRunsheet("BEANCOUNT", "Assets:Arc:PolicyWallet:USDC -120.00 / Expenses:Infrastructure:Hosting +120.00", "ok");
+    appendReceipt("00105", "INV-CLOUD-8821 · 120.00 USDC · INFRASTRUCTURE · [PAID - GASLESS]", "paid");
+    appendReceipt("00106", "SANCTIONS CHECK PASSED (CLEAN) · SINGLE TX CHECK &le; $250 OK", "paid");
+    appendReceipt("00107", "EUTHYNA JOURNAL: Assets:Arc:USDC -120.00 / Expenses:Hosting +120.00", "paid");
 
-    // Attempt live backend call
     try {
       await fetch('/api/invoices/process', {
         method: 'POST',
@@ -1625,48 +1394,42 @@ window.executeInvoice = async function(type) {
           amountUsdc: 120.00,
           category: "INFRASTRUCTURE",
           invoiceRef: "INV-CLOUD-" + Math.floor(1000 + Math.random() * 9000),
-          reasoning: "Monthly Kubernetes RPC node hosting on Arc L1."
+          reasoning: "Monthly Hetzner & AWS Kubernetes hosting on Arc L1."
         })
       });
     } catch(e) {}
 
   } else if (type === 'escalate') {
-    panel.classList.remove('anim-flinch');
-    void panel.offsetWidth; // trigger reflow
-    panel.classList.add('anim-flinch');
+    panel.classList.remove('anim-shake');
+    void panel.offsetWidth;
+    panel.classList.add('anim-shake');
 
-    statusStamp.className = "bru-stamp bru-stamp--hazard";
-    statusStamp.textContent = "ESCALATED TO QUEUE";
+    badge.className = "k-sticker k-sticker--orange";
+    badge.textContent = "ESCALATED [QUEUE]";
+    showToast("⚠️ AMOUNT EXCEEDS $250 CEILING &rarr; ESCALATED TO MULTI-SIG", "var(--orange)");
 
-    appendRunsheet("INV-RECV", "Processing INV-AUDIT-004 (450.00 USDC) to 0x6666...6666 [VENDOR]", "warn");
-    appendRunsheet("CAP-BREACH", "AMOUNT $450 BREACHES SINGLE-TX CEILING ($250 USDC)!", "warn");
-    appendRunsheet("POLICY", "PolicyWallet.sol: Pushed to On-Chain Escalation Queue (Nonce #7)", "warn");
-    appendRunsheet("SUPERVISOR", "Multi-sig alert dispatched. Awaiting quorum signatures.", "info");
+    appendReceipt("00108", "INV-AUDIT-004 · 450.00 USDC · EXCEEDS $250 CAP · [ESCALATED - QUEUE]", "escalate");
+    appendReceipt("00109", "PolicyWallet.sol: PUSHED TO ON-CHAIN MULTISIG NONCE #7", "escalate");
 
   } else if (type === 'blocked') {
-    panel.classList.remove('anim-critical');
+    panel.classList.remove('anim-shake');
     void panel.offsetWidth;
-    panel.classList.add('anim-critical');
-    setTimeout(() => panel.classList.remove('anim-critical'), 1500);
+    panel.classList.add('anim-shake');
 
-    statusStamp.className = "bru-stamp bru-stamp--critical";
-    statusStamp.textContent = "EXECUTION REVERTED";
+    badge.className = "k-sticker k-sticker--red";
+    badge.textContent = "REVERTED [HALT]";
+    showToast("🚫 TRANSFER HALTED: RECIPIENT ON OFAC SDN LIST!", "var(--red)");
 
-    if (window.triggerMatrixAlert) window.triggerMatrixAlert();
-
-    appendRunsheet("INV-RECV", "Processing INV-ROGUE-99 (500.00 USDC) to 0x9999...9999 [OFAC SDN TARGET]", "err");
-    appendRunsheet("RADAR-HIT", "CRITICAL: Target flagged on OFAC SDN Sanctions List!", "err");
-    appendRunsheet("REVERT", "PolicyWallet halted execution: PayoutUnauthorized()", "err");
-    appendRunsheet("EUTHYNA", "Security incident recorded in permanent Euthyna tamper-proof audit trail.", "err");
+    appendReceipt("00110", "INV-ROGUE-99 · 500.00 USDC · OFAC SDN SANCTIONS HIT · [REVERTED]", "revert");
+    appendReceipt("00111", "PolicyWallet.sol: PayoutUnauthorized() REVERT EMITTED", "revert");
 
   } else if (type === 'sweep') {
-    statusStamp.className = "bru-stamp bru-stamp--signal anim-stamp";
-    statusStamp.textContent = "YIELD SWEPT";
+    badge.className = "k-sticker k-sticker--pink anim-slam";
+    badge.textContent = "SWEPT [5.2% APY]";
+    showToast("📈 $10,000 SURPLUS SWEPT INTO USYC VAULT (5.20% APY)", "var(--yellow)");
 
-    appendRunsheet("RUNWAY", "30-Day Operating Reserve calculation: $10,900.00 USDC buffer fully satisfied.", "info");
-    appendRunsheet("USYC-SWEEP", "Swept surplus $10,000.00 USDC into USYC Vault via forceApprove()", "ok");
-    appendRunsheet("APY-COMPOUND", "Tokenized USYC yield compounding active (5.20% APY). JIT redemption ready.", "ok");
-    appendRunsheet("BEANCOUNT", "Assets:Arc:PolicyWallet:USDC -10000.00 / Assets:Arc:Vault:USYC +10000.00", "ok");
+    appendReceipt("00112", "RUNWAY BUFFER CHECK: $10,900.00 USDC (30 DAYS SATISFIED)", "paid");
+    appendReceipt("00113", "USYC SWEEP: 10,000.00 USDC SWEPT INTO YIELD VAULT (5.20% APY)", "paid");
   }
 };
 </script>
