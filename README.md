@@ -1,4 +1,4 @@
-# 🏛️ Vestiarion AI — Continuous Treasury & Autonomous Business Operator
+# 🏛️ sakellarious.dev — Continuous Treasury & Autonomous Business Operator
 
 > **Built natively for Arc L1 (Circle's stablecoin-native Layer-1) with USYC yield primitives, Circle Gateway multichain reserve views, Circle Paymaster gasless execution, non-bypassable on-chain guardrails in `PolicyWallet.sol`, and continuous Euthyna Beancount auditability.**
 
@@ -41,13 +41,14 @@ npm start
 
 ---
 
-## 🏛️ Interactive 3D Imperial Codex UI (`frontend.html`)
+## 🏛️ Kiln Neo-Brutalist Storefront UI (`frontend.html` / `index.html`)
 
-The primary frontend is a physical 3D parchment codex featuring:
-- **3D Curled Leaf Mechanics:** Physical paper kinematics where 18 linked segments turn dynamically with realistic tangent arcs, light specular reflection, and ambient contact shadows.
-- **Magnifying Loupe Glass:** Interactive brass-ringed loupe with 2.3x optical magnification that can be grabbed and dragged across parchment folios to inspect architectural details.
-- **Nine Architectural Folios:** Complete interactive codex tracing the Vestiarion continuous treasury from Arc L1 sovereign core, automated USYC yield sweeping, and `PolicyWallet.sol` spending caps to double-entry Beancount auditability.
-- **Live Operator Terminal:** Interactive dispatch console to simulate micro-invoices, compliance sanctions enforcement, threshold escalation queues, and yield sweeps.
+The primary frontend is built strictly following the **Kiln Neo-Brutalism Styleguide** (`STYLEGUIDE-Brutalism-Kiln.md`), featuring:
+- **"Fired, Not Finished" Loud Poster Brutalism:** Flat screen-print ink fills (`--yellow: #ffe14d`, `--pink: #ff6fae`, `--cyan: #4dd8ff`, `--lime: #b6f23d`), 3px solid ink outlines, and zero border radius (`0px !important`).
+- **Tactile Paper Substrate:** Warm raw paper substrate (`#fff6e0`) with an authentic 20px dot grid and zero soft gradients or glassmorphism.
+- **Tri-Font Hierarchy:** Chunky uppercase headlines in `Bricolage Grotesque`, friendly UI controls in `DM Sans`, and raw cryptographic receipts in `JetBrains Mono`.
+- **2D Canvas Circuit Blueprint:** Orthogonal circuit matrix mapping packet flows across Arc L1 RPC, sakellarious.dev agent, OpenSanctions, PolicyWallet, Paymaster, USYC Vault, and Euthyna Ledger.
+- **War Room & Physical Till Tape Console:** Live interactive console allowing real-time invoice dispatch, sanctions check, policy evaluation, and physical monospace till run-sheet recording.
 
 ---
 
@@ -68,7 +69,7 @@ The project also features a 60–120 FPS lightweight Three.js particle system wh
 
 ```text
                                +-------------------------------------+
-                               |          Vestiarion Agent           |
+                               |          sakellarious.dev Agent           |
                                +-------------------------------------+
                                   |               |                |
              +--------------------+               |                +--------------------+
@@ -240,3 +241,4 @@ All JSON-LD cryptographic audit receipts conforming to PRD Section 8 schema.
   Assets:Arc:PolicyWallet:USDC                   -120.00 USDC
   Expenses:Infrastructure:Hosting                 120.00 USDC
 ```
+
