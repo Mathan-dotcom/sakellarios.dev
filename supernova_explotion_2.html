@@ -3,551 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vestiarion AI — Continuous Treasury & Autonomous Business Operator (Arc L1)</title>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            --bg-dark: #030712;
-            --gold-primary: #f59e0b;
-            --gold-light: #fcd34d;
-            --arc-cyan: #06b6d4;
-            --arc-cyan-glow: #22d3ee;
-            --emerald-yield: #10b981;
-            --shield-violet: #8b5cf6;
-            --alert-crimson: #ef4444;
-            --text-main: #f9fafb;
-            --text-dim: #9ca3af;
-            --glass-bg: rgba(15, 23, 42, 0.72);
-            --glass-card: rgba(15, 23, 42, 0.82);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --glass-glow: rgba(245, 158, 11, 0.12);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            overflow-x: hidden;
-            overflow-y: auto;
-            scroll-behavior: auto;
-            min-height: 100vh;
-            cursor: default;
-        }
-
-        /* Fixed 3D Canvas Background */
-        #webgl-canvas-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        #webgl-canvas-container canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Subtle Ambient Lighting Overlay */
-        .ambient-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 1;
-            pointer-events: none;
-            background: radial-gradient(circle at 50% 50%, rgba(3, 7, 18, 0.2) 0%, rgba(3, 7, 18, 0.85) 100%);
-        }
-
-        /* Navigation Header */
-        header.top-nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 36px;
-            background: rgba(3, 7, 18, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .brand-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: #fff;
-        }
-
-        .brand-crest {
-            font-size: 24px;
-            filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.5));
-        }
-
-        .brand-name {
-            font-family: 'Cinzel', serif;
-            font-size: 1.15rem;
-            font-weight: 800;
-            letter-spacing: 0.05em;
-            background: linear-gradient(135deg, #fff 0%, var(--gold-light) 60%, var(--gold-primary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .brand-sub {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            color: var(--arc-cyan);
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            padding: 2px 6px;
-            border-radius: 4px;
-            letter-spacing: 0.08em;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-        }
-
-        .nav-link-btn {
-            background: none;
-            border: none;
-            color: var(--text-dim);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: color 0.2s ease, transform 0.2s ease;
-        }
-
-        .nav-link-btn:hover {
-            color: var(--gold-light);
-            transform: translateY(-1px);
-        }
-
-        .nav-action-btn {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.05) 100%);
-            border: 1px solid rgba(245, 158, 11, 0.4);
-            color: var(--gold-light);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);
-        }
-
-        .nav-action-btn:hover {
-            background: var(--gold-primary);
-            color: #000;
-            box-shadow: 0 0 25px rgba(245, 158, 11, 0.45);
-        }
-
-        /* Sound Toggle Button */
-        #audio-toggle {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-            color: var(--text-dim);
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        #audio-toggle:hover {
-            border-color: var(--gold-primary);
-            color: var(--gold-light);
-        }
-
-        /* Fixed Navigation Sidebar Dots */
-        #scroll-nav {
-            position: fixed;
-            left: 28px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .nav-pip {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-        }
-
-        .nav-pip:hover, .nav-pip.active {
-            background: var(--gold-primary);
-            box-shadow: 0 0 14px var(--gold-primary);
-            transform: scale(1.35);
-            border-color: var(--gold-light);
-        }
-
-        .nav-pip .pip-tooltip {
-            position: absolute;
-            left: 24px;
-            top: 50%;
-            transform: translateY(-50%);
-            white-space: nowrap;
-            padding: 4px 10px;
-            background: rgba(15, 23, 42, 0.95);
-            border: 1px solid var(--glass-border);
-            border-radius: 6px;
-            font-size: 11px;
-            font-family: 'JetBrains Mono', monospace;
-            color: #fff;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease, transform 0.2s ease;
-        }
-
-        .nav-pip:hover .pip-tooltip {
-            opacity: 1;
-            transform: translateY(-50%) translateX(4px);
-        }
-
-        /* Scrollytelling Sections */
-        .scroll-stage {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-        }
-
-        .scroll-section {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 100px 8vw 80px 8vw;
-            position: relative;
-        }
-
-        .scroll-section.align-right {
-            justify-content: flex-end;
-        }
-
-        .scroll-section.align-center {
-            justify-content: center;
-            text-align: center;
-        }
-
-        /* Glass Narrative Cards */
-        .narrative-card {
-            max-width: 640px;
-            padding: 42px;
-            background: var(--glass-card);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid var(--glass-border);
-            border-radius: 28px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 30px var(--glass-glow);
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
-        }
-
-        .narrative-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(245, 158, 11, 0.35);
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 14px;
-            border-radius: 9999px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 18px;
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--gold-light);
-            border: 1px solid rgba(245, 158, 11, 0.25);
-        }
-
-        .badge.cyan {
-            background: rgba(6, 182, 212, 0.1);
-            color: var(--arc-cyan-glow);
-            border-color: rgba(6, 182, 212, 0.25);
-        }
-
-        .badge.emerald {
-            background: rgba(16, 185, 129, 0.1);
-            color: #6ee7b7;
-            border-color: rgba(16, 185, 129, 0.25);
-        }
-
-        .badge.violet {
-            background: rgba(139, 92, 246, 0.1);
-            color: #c4b5fd;
-            border-color: rgba(139, 92, 246, 0.25);
-        }
-
-        h1.title-cinzel {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(2.4rem, 5vw, 3.8rem);
-            font-weight: 900;
-            letter-spacing: -0.01em;
-            line-height: 1.1;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg, #ffffff 0%, #fef3c7 40%, var(--gold-primary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        h2.section-heading {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(1.8rem, 3.5vw, 2.4rem);
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: #fff;
-            letter-spacing: -0.01em;
-        }
-
-        p.description {
-            font-size: 1.05rem;
-            line-height: 1.7;
-            color: var(--text-dim);
-            margin-bottom: 24px;
-        }
-
-        /* Metric Grid Cards */
-        .metric-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-top: 24px;
-        }
-
-        .metric-card {
-            background: rgba(3, 7, 18, 0.6);
-            border: 1px solid var(--glass-border);
-            padding: 16px;
-            border-radius: 16px;
-            text-align: left;
-        }
-
-        .metric-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--text-dim);
-            margin-bottom: 6px;
-            text-transform: uppercase;
-        }
-
-        .metric-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .metric-value.gold { color: var(--gold-light); }
-        .metric-value.emerald { color: #6ee7b7; }
-        .metric-value.cyan { color: var(--arc-cyan-glow); }
-        .metric-value.violet { color: #c4b5fd; }
-
-        /* Interactive Playground Widgets */
-        .interactive-box {
-            background: rgba(3, 7, 18, 0.7);
-            border: 1px solid var(--glass-border);
-            border-radius: 18px;
-            padding: 20px;
-            margin-top: 20px;
-            text-align: left;
-        }
-
-        .box-title {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            color: var(--gold-light);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 14px;
-        }
-
-        .action-chip {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid var(--glass-border);
-            color: var(--text-main);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            padding: 8px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .action-chip:hover {
-            background: rgba(245, 158, 11, 0.15);
-            border-color: var(--gold-primary);
-            color: var(--gold-light);
-            transform: translateY(-1px);
-        }
-
-        .action-chip.danger:hover {
-            background: rgba(239, 68, 68, 0.15);
-            border-color: var(--alert-crimson);
-            color: #fca5a5;
-        }
-
-        .action-chip.success:hover {
-            background: rgba(16, 185, 129, 0.15);
-            border-color: var(--emerald-yield);
-            color: #6ee7b7;
-        }
-
-        /* Console Output Box */
-        .console-feed {
-            background: #020617;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
-            padding: 14px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11.5px;
-            line-height: 1.5;
-            color: #94a3b8;
-            max-height: 180px;
-            overflow-y: auto;
-            margin-top: 14px;
-        }
-
-        .feed-line {
-            margin-bottom: 4px;
-            word-break: break-all;
-        }
-
-        .feed-line.success { color: #34d399; }
-        .feed-line.warning { color: #fbbf24; }
-        .feed-line.error { color: #f87171; }
-        .feed-line.info { color: #38bdf8; }
-
-        /* Code/Beancount Preview */
-        .code-container {
-            background: #020617;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 16px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11.5px;
-            line-height: 1.6;
-            color: #cbd5e1;
-            text-align: left;
-            overflow-x: auto;
-        }
-
-        .kw-date { color: #f59e0b; font-weight: 600; }
-        .kw-account { color: #38bdf8; }
-        .kw-amount { color: #34d399; font-weight: 600; }
-        .kw-meta { color: #94a3b8; font-style: italic; }
-
-        /* Bottom Fixed Telemetry HUD */
-        #perf-hud {
-            position: fixed;
-            bottom: 20px;
-            right: 24px;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 16px;
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 9999px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--text-dim);
-            letter-spacing: 0.05em;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            pointer-events: auto;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--emerald-yield);
-            box-shadow: 0 0 8px var(--emerald-yield);
-            animation: pulse-dot 2s infinite ease-in-out;
-        }
-
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.85); }
-        }
-
-        /* Keyboard Tip */
-        .key-hint {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-            padding: 1px 5px;
-            font-size: 10px;
-            font-family: 'JetBrains Mono', monospace;
-            color: #fff;
-        }
-
-        @media (max-width: 768px) {
-            header.top-nav { padding: 12px 18px; }
-            .nav-links { display: none; }
-            .scroll-section { padding: 80px 5vw 60px 5vw; }
-            .narrative-card { padding: 28px 20px; }
-            .metric-grid { grid-template-columns: 1fr; }
-            #scroll-nav { display: none; }
-            #perf-hud { bottom: 12px; right: 12px; font-size: 10px; }
-        }
-    </style>
-
+    <title>Particles Swarm Export</title>
+    <style>body { margin: 0; overflow: hidden; background: #000; }</style>
     <script type="importmap">
     {
         "imports": {
@@ -558,828 +15,162 @@
     </script>
 </head>
 <body>
-
-    <!-- 3D Canvas Background -->
-    <div id="webgl-canvas-container"></div>
-    <div class="ambient-overlay"></div>
-
-    <!-- Fixed Top Navigation Header -->
-    <header class="top-nav">
-        <a href="#section-0" class="brand-container">
-            <span class="brand-crest">🏛️</span>
-            <div>
-                <div class="brand-name">VESTIARION AI</div>
-                <div style="display: flex; gap: 6px; align-items: center;">
-                    <span class="brand-sub">ARC L1 SOVEREIGN</span>
-                    <span style="font-size: 10px; color: #10b981;">● 21/21 TESTS PASS</span>
-                </div>
-            </div>
-        </a>
-
-        <div class="nav-links">
-            <button class="nav-link-btn" onclick="scrollToSection(0)">Singularity</button>
-            <button class="nav-link-btn" onclick="scrollToSection(1)">Yield Orbit</button>
-            <button class="nav-link-btn" onclick="scrollToSection(2)">Policy Shield</button>
-            <button class="nav-link-btn" onclick="scrollToSection(3)">Compliance Radar</button>
-            <button class="nav-link-btn" onclick="scrollToSection(4)">Euthyna Ledger</button>
-            <button class="nav-link-btn" onclick="scrollToSection(5)">Mission Control</button>
-        </div>
-
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <button id="audio-toggle" title="Toggle Cosmic Ambience (Web Audio API)">
-                <span id="audio-icon">🔇</span>
-            </button>
-            <button class="nav-action-btn" onclick="scrollToSection(5)">TEST SIMULATOR</button>
-        </div>
-    </header>
-
-    <!-- Side Navigation Dots Tracker -->
-    <nav id="scroll-nav" aria-label="Section Navigation">
-        <div class="nav-pip active" data-index="0"><span class="pip-tooltip">01 Imperial Core</span></div>
-        <div class="nav-pip" data-index="1"><span class="pip-tooltip">02 Continuous Yield</span></div>
-        <div class="nav-pip" data-index="2"><span class="pip-tooltip">03 Policy Shield</span></div>
-        <div class="nav-pip" data-index="3"><span class="pip-tooltip">04 Compliance Radar</span></div>
-        <div class="nav-pip" data-index="4"><span class="pip-tooltip">05 Euthyna Ledger</span></div>
-        <div class="nav-pip" data-index="5"><span class="pip-tooltip">06 Mission Control</span></div>
-    </nav>
-
-    <!-- Scrollytelling Sections -->
-    <main class="scroll-stage">
-        
-        <!-- SECTION 0: IMPERIAL CORE / SINGULARITY -->
-        <section class="scroll-section" id="section-0">
-            <div class="narrative-card">
-                <span class="badge">🏛️ Autonomous Corporate CFO</span>
-                <h1 class="title-cinzel">VESTIARION AI</h1>
-                <p class="description">
-                    The un-slept corporate CFO and automated treasury manager built natively for Circle's stablecoin Layer-1 <strong>Arc</strong>. Fusing the Byzantine imperial treasury (<em>Vestiarion</em>) with Athenian continuous audit (<em>Euthyna</em>).
-                </p>
-
-                <div class="metric-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">30-Day Buffer Target</div>
-                        <div class="metric-value gold">$10,900 <span style="font-size: 13px; font-weight: normal; color: var(--text-dim);">USDC</span></div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">USYC Vault Allocation</div>
-                        <div class="metric-value emerald">$25,000 <span style="font-size: 13px; font-weight: normal; color: #34d399;">(5.2% APY)</span></div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Single Tx Guardrail</div>
-                        <div class="metric-value cyan">&le; $250 <span style="font-size: 13px; font-weight: normal; color: var(--text-dim);">USDC</span></div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Daily Spending Limit</div>
-                        <div class="metric-value violet">$1,000 <span style="font-size: 13px; font-weight: normal; color: var(--text-dim);">USDC/day</span></div>
-                    </div>
-                </div>
-
-                <div style="margin-top: 24px; font-size: 12px; color: var(--text-dim); display: flex; align-items: center; gap: 8px;">
-                    <span>Tip: Scroll with mousewheel or press</span>
-                    <span class="key-hint">&darr;</span>
-                    <span class="key-hint">&uarr;</span>
-                    <span>to navigate the 3D particle story.</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 1: CONTINUOUS YIELD & CASH FLOW -->
-        <section class="scroll-section align-right" id="section-1">
-            <div class="narrative-card">
-                <span class="badge emerald">📈 JIT Liquidity & Yield Sweeping</span>
-                <h2 class="section-heading">Continuous Yield & Liquidity</h2>
-                <p class="description">
-                    Vestiarion continuously computes forward-looking 30-day operating requirements. Idle USDC above required operating reserves is automatically swept into tokenized <strong>USYC yield vaults</strong>, executing Just-In-Time redemptions for approved accounts payable.
-                </p>
-
-                <div class="interactive-box">
-                    <div class="box-title">
-                        <span>30-Day Runway Forecasting</span>
-                        <span style="color: #34d399;">OPTIMAL ALLOCATION</span>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: var(--text-dim);">Fixed AP (Hosting/Nodes):</span>
-                            <span>$8,500 USDC</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: var(--text-dim);">Variable AP (SaaS/Vendor):</span>
-                            <span>$2,000 USDC</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: var(--text-dim);">Safety Margin:</span>
-                            <span>$400 USDC</span>
-                        </div>
-                        <div style="border-top: 1px solid var(--glass-border); padding-top: 6px; display: flex; justify-content: space-between; font-weight: 600; color: var(--gold-light);">
-                            <span>Target Operating Buffer:</span>
-                            <span>$10,900 USDC</span>
-                        </div>
-                    </div>
-
-                    <div class="btn-group">
-                        <button class="action-chip success" onclick="triggerParticleBurst('yield')">⚡ Simulate USYC Sweep</button>
-                        <button class="action-chip" onclick="triggerParticleBurst('jit')">🔄 Simulate JIT Redemption</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 2: MATHEMATICAL GUARDRAILS (POLICYWALLET.SOL) -->
-        <section class="scroll-section" id="section-2">
-            <div class="narrative-card">
-                <span class="badge violet">🛡️ Hard Mathematical Constraints</span>
-                <h2 class="section-heading">PolicyWallet Guardrails</h2>
-                <p class="description">
-                    Autonomous agents cannot act as rogue treasurers. Payout authority is constrained by non-bypassable smart contract invariants in <code>PolicyWallet.sol</code>, proven by a complete 21-test Foundry test suite.
-                </p>
-
-                <div class="interactive-box">
-                    <div class="box-title">
-                        <span>On-Chain Escalation Matrix</span>
-                        <span style="color: #c4b5fd;">PolicyWallet.sol</span>
-                    </div>
-                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-dim); line-height: 1.6;">
-                        <div>• <strong>Direct Payout (&le; $250 USDC):</strong> Gasless execution via Circle Paymaster</div>
-                        <div>• <strong>Escalation (&gt; $250 USDC):</strong> Queued for multi-sig supervisor approval</div>
-                        <div>• <strong>Daily Hard Cap:</strong> $1,000 USDC across all categories</div>
-                        <div>• <strong>Timeout Invariant:</strong> Pending escalations auto-expire in 3 days</div>
-                    </div>
-
-                    <div class="btn-group">
-                        <button class="action-chip" onclick="triggerParticleBurst('shield')">🛡️ Pulse Defense Lattice</button>
-                        <button class="action-chip danger" onclick="triggerParticleBurst('breach')">⚠️ Simulate Cap Breach</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 3: COMPLIANCE RADAR & SANCTIONS SCREENING -->
-        <section class="scroll-section align-right" id="section-3">
-            <div class="narrative-card">
-                <span class="badge cyan">🔍 Real-Time Forensic Scanning</span>
-                <h2 class="section-heading">Sanctions Screening Radar</h2>
-                <p class="description">
-                    Before any settlement initiates, the autonomous operator executes real-time cryptographic screening against international sanctions databases (OFAC, EU, UN) via the <strong>OpenSanctions</strong> HTTP engine.
-                </p>
-
-                <div class="interactive-box">
-                    <div class="box-title">
-                        <span>Live Sanctions Verifier</span>
-                        <span id="scan-status" style="color: var(--arc-cyan-glow);">RADAR ACTIVE</span>
-                    </div>
-                    <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-                        <input id="sanction-input" type="text" value="0x3333333333333333333333333333333333333333" 
-                            style="flex: 1; background: #020617; border: 1px solid var(--glass-border); border-radius: 8px; padding: 8px 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #fff;" />
-                        <button class="action-chip success" onclick="screenAddress()">Screen</button>
-                    </div>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                        <button class="action-chip" onclick="fillAndScreen('0x3333333333333333333333333333333333333333', false)">Test Clean Vendor</button>
-                        <button class="action-chip danger" onclick="fillAndScreen('0x1111111111111111111111111111111111111111', true)">Test OFAC Flagged</button>
-                    </div>
-                    <div id="sanction-result" style="margin-top: 10px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #34d399;">
-                        Status: Ready for query.
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 4: EUTHYNA CONTINUOUS AUDIT LEDGER -->
-        <section class="scroll-section" id="section-4">
-            <div class="narrative-card">
-                <span class="badge">📜 Verifiable Double-Entry</span>
-                <h2 class="section-heading">Euthyna Audit Ledger</h2>
-                <p class="description">
-                    Named after the Athenian audit magistrates, every transaction creates cryptographic JSON-LD receipts and double-entry <strong>Beancount</strong> ledger records, enabling verifiable and mathematical financial transparency.
-                </p>
-
-                <div class="code-container">
-<span class="kw-date">2026-10-04</span> * <span style="color: #f1f5f9;">"Circle Paymaster / Settlement"</span> <span style="color: #94a3b8;">"INV-CLOUD-8821"</span>
-  <span class="kw-meta">meta-agent-id:</span> "0x2222...2222"
-  <span class="kw-meta">meta-policy-rule:</span> "PolicyWallet.executePayout.passed"
-  <span class="kw-meta">meta-sanctions-check:</span> "CLEAN"
-  <span class="kw-account">Assets:Arc:PolicyWallet:USDC</span>      <span class="kw-amount">-120.00 USDC</span>
-  <span class="kw-account">Expenses:Infrastructure:Hosting</span>    <span class="kw-amount">+120.00 USDC</span>
-                </div>
-
-                <div class="btn-group">
-                    <button class="action-chip" onclick="triggerParticleBurst('ledger')">⚖️ Rebalance Ledger Matrix</button>
-                    <button class="action-chip success" onclick="triggerParticleBurst('hash')">🔏 Verify Cryptographic Hash</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 5: MISSION CONTROL / INTERACTIVE SIMULATOR -->
-        <section class="scroll-section align-center" id="section-5">
-            <div class="narrative-card" style="max-width: 820px; margin: 0 auto;">
-                <span class="badge emerald">⚡ Live Mission Control</span>
-                <h2 class="section-heading">Autonomous Operator Console</h2>
-                <p class="description">
-                    Test the complete autonomous decision engine in real-time. Trigger invoices, test spending guardrails, and observe autonomous settlement or supervisor escalations with dynamic 3D particle reactivity.
-                </p>
-
-                <div class="interactive-box">
-                    <div class="box-title">
-                        <span>Invoice Dispatch & Policy Simulator</span>
-                        <span id="sim-status" style="color: #34d399;">AGENT STANDBY</span>
-                    </div>
-
-                    <div class="btn-group" style="justify-content: center;">
-                        <button class="action-chip success" onclick="simulateInvoice('micro')">
-                            ⚡ Settle Cloud Hosting ($120 USDC)
-                        </button>
-                        <button class="action-chip" onclick="simulateInvoice('escalated')">
-                            ⚠️ Dispatch Large Invoice ($450 USDC)
-                        </button>
-                        <button class="action-chip danger" onclick="simulateInvoice('sanctioned')">
-                            🚫 Submit Blocked Entity ($500 USDC)
-                        </button>
-                        <button class="action-chip success" onclick="simulateInvoice('sweep')">
-                            📈 Sweep Surplus to USYC Vault
-                        </button>
-                    </div>
-
-                    <div class="console-feed" id="sim-feed">
-                        <div class="feed-line info">[System] Vestiarion AI operator connected to Arc L1 testbed.</div>
-                        <div class="feed-line info">[PolicyWallet] Daily limit: 1000 USDC | Single Tx Cap: 250 USDC.</div>
-                        <div class="feed-line success">[Ready] Select a simulated action above to dispatch transactions.</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Performance & Status HUD -->
-    <div id="perf-hud">
-        <div class="status-dot"></div>
-        <span id="fps-display">60 FPS</span>
-        <span>|</span>
-        <span id="particle-stat">4,500 PARTICLES</span>
-        <span>|</span>
-        <span id="formation-name">IMPERIAL CORE</span>
-    </div>
-
-    <!-- Main Logic: Three.js Optimized Particle Engine -->
     <script type="module">
         import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
         import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
         import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-        // -----------------------------------------------------------
-        // CONFIGURATION: OPTIMIZED FOR ULTRA-HIGH FPS (60-120 FPS)
-        // -----------------------------------------------------------
-        const COUNT = 4500;
-        const STAGE_NAMES = [
-            "IMPERIAL CORE",
-            "YIELD STREAM",
-            "POLICY SHIELD",
-            "COMPLIANCE RADAR",
-            "EUTHYNA MATRIX",
-            "MISSION CONTROL"
-        ];
+        // CONFIG
+        const COUNT = 20000;
+        const SPEED_MULT = 1;
+        const AUTO_SPIN = true;
 
-        // RENDERER & SCENE SETUP
-        const container = document.getElementById('webgl-canvas-container');
+        // SETUP
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x030712, 0.008);
-
-        const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 0, 85);
-
-        const renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            powerPreference: "high-performance",
-            alpha: true
-        });
+        scene.fog = new THREE.FogExp2(0x000000, 0.01);
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(0, 0, 100);
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        container.appendChild(renderer.domElement);
+        document.body.appendChild(renderer.domElement);
 
-        // POST-PROCESSING: HIGH PERFORMANCE BLOOM
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.autoRotate = AUTO_SPIN;
+        controls.autoRotateSpeed = 2.0;
+
+        // POST PROCESSING
         const composer = new EffectComposer(renderer);
         composer.addPass(new RenderPass(scene, camera));
-        
-        const bloomPass = new UnrealBloomPass(
-            new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2),
-            1.4, // Strength
-            0.45, // Radius
-            0.15  // Threshold
-        );
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        bloomPass.strength = 1.8; bloomPass.radius = 0.4; bloomPass.threshold = 0;
         composer.addPass(bloomPass);
 
-        // -----------------------------------------------------------
-        // PRECOMPUTED SHAPE FORMATIONS (TYPED ARRAYS FOR ZERO GC)
-        // -----------------------------------------------------------
-        const formations = {
-            core: new Float32Array(COUNT * 3),
-            coreColors: new Float32Array(COUNT * 3),
-
-            stream: new Float32Array(COUNT * 3),
-            streamColors: new Float32Array(COUNT * 3),
-
-            shield: new Float32Array(COUNT * 3),
-            shieldColors: new Float32Array(COUNT * 3),
-
-            radar: new Float32Array(COUNT * 3),
-            radarColors: new Float32Array(COUNT * 3),
-
-            ledger: new Float32Array(COUNT * 3),
-            ledgerColors: new Float32Array(COUNT * 3),
-
-            console: new Float32Array(COUNT * 3),
-            consoleColors: new Float32Array(COUNT * 3)
-        };
-
-        const c1 = new THREE.Color();
-
-        for (let i = 0; i < COUNT; i++) {
-            const i3 = i * 3;
-            const fi = i / COUNT;
-
-            // 1. Imperial Core (Binary Core + Accretion Disk)
-            if (i < COUNT * 0.15) {
-                const star = i % 2;
-                const rad = Math.pow(Math.random(), 2) * 5;
-                const theta = Math.random() * Math.PI * 2;
-                const phi = Math.acos(Math.random() * 2 - 1);
-                const xOff = star === 0 ? -9 : 9;
-                formations.core[i3] = xOff + rad * Math.sin(phi) * Math.cos(theta);
-                formations.core[i3 + 1] = rad * Math.sin(phi) * Math.sin(theta);
-                formations.core[i3 + 2] = rad * Math.cos(phi);
-                c1.setHex(star === 0 ? 0xf59e0b : 0x06b6d4);
-            } else {
-                const diskRad = 12 + Math.pow(Math.random(), 1.5) * 45;
-                const angle = Math.random() * Math.PI * 2;
-                formations.core[i3] = Math.cos(angle) * diskRad;
-                formations.core[i3 + 1] = (Math.random() - 0.5) * (4 + diskRad * 0.15);
-                formations.core[i3 + 2] = Math.sin(angle) * diskRad;
-                c1.setHex(Math.random() > 0.4 ? 0xf59e0b : 0x38bdf8);
-            }
-            formations.coreColors[i3] = c1.r;
-            formations.coreColors[i3 + 1] = c1.g;
-            formations.coreColors[i3 + 2] = c1.b;
-
-            // 2. Yield Stream (Double-helix Toroidal Flow)
-            const u = fi * Math.PI * 12;
-            const rMajor = 26;
-            const rMinor = 8 + Math.sin(u * 2) * 3;
-            const strand = (i % 2 === 0) ? 0 : Math.PI;
-            formations.stream[i3] = (rMajor + rMinor * Math.cos(u * 2 + strand)) * Math.cos(u);
-            formations.stream[i3 + 1] = rMinor * Math.sin(u * 2 + strand);
-            formations.stream[i3 + 2] = (rMajor + rMinor * Math.cos(u * 2 + strand)) * Math.sin(u);
-            c1.setHex(i % 3 === 0 ? 0x10b981 : (i % 3 === 1 ? 0x34d399 : 0xf59e0b));
-            formations.streamColors[i3] = c1.r;
-            formations.streamColors[i3 + 1] = c1.g;
-            formations.streamColors[i3 + 2] = c1.b;
-
-            // 3. Policy Shield (Geodesic Spherical Cage)
-            const phiS = Math.acos(1 - 2 * fi);
-            const thetaS = Math.sqrt(COUNT * Math.PI) * phiS;
-            const rShield = 28 + (Math.sin(thetaS * 5) * 1.5);
-            formations.shield[i3] = rShield * Math.cos(thetaS) * Math.sin(phiS);
-            formations.shield[i3 + 1] = rShield * Math.sin(thetaS) * Math.sin(phiS);
-            formations.shield[i3 + 2] = rShield * Math.cos(phiS);
-            c1.setHex(i % 4 === 0 ? 0x8b5cf6 : (i % 4 === 1 ? 0x3b82f6 : 0xec4899));
-            formations.shieldColors[i3] = c1.r;
-            formations.shieldColors[i3 + 1] = c1.g;
-            formations.shieldColors[i3 + 2] = c1.b;
-
-            // 4. Compliance Radar (Planar concentric scanning rings)
-            const ringId = Math.floor(Math.random() * 5);
-            const ringR = 8 + ringId * 8 + (Math.random() - 0.5) * 2;
-            const ringAng = Math.random() * Math.PI * 2;
-            formations.radar[i3] = Math.cos(ringAng) * ringR;
-            formations.radar[i3 + 1] = (Math.random() - 0.5) * 2;
-            formations.radar[i3 + 2] = Math.sin(ringAng) * ringR;
-            c1.setHex(ringId === 4 ? 0x00f5a0 : 0x06b6d4);
-            formations.radarColors[i3] = c1.r;
-            formations.radarColors[i3 + 1] = c1.g;
-            formations.radarColors[i3 + 2] = c1.b;
-
-            // 5. Euthyna Ledger (Dual-column balanced ledger matrix)
-            const col = i % 2;
-            const row = Math.floor(i / 2);
-            const numRows = COUNT / 2;
-            const rowY = (row / numRows - 0.5) * 62;
-            const colX = col === 0 ? -18 : 18;
-            const jitterZ = (Math.random() - 0.5) * 12;
-            const jitterX = (Math.random() - 0.5) * 8;
-            formations.ledger[i3] = colX + jitterX;
-            formations.ledger[i3 + 1] = rowY;
-            formations.ledger[i3 + 2] = jitterZ;
-            c1.setHex(col === 0 ? 0xf59e0b : 0x60a5fa);
-            formations.ledgerColors[i3] = c1.r;
-            formations.ledgerColors[i3 + 1] = c1.g;
-            formations.ledgerColors[i3 + 2] = c1.b;
-
-            // 6. Mission Control (Interactive Reactive Cloud)
-            const radM = 15 + Math.random() * 35;
-            const thM = Math.random() * Math.PI * 2;
-            const phM = Math.acos(Math.random() * 2 - 1);
-            formations.console[i3] = radM * Math.sin(phM) * Math.cos(thM);
-            formations.console[i3 + 1] = radM * Math.sin(phM) * Math.sin(thM);
-            formations.console[i3 + 2] = radM * Math.cos(phM);
-            c1.setHex(0xf59e0b);
-            formations.consoleColors[i3] = c1.r;
-            formations.consoleColors[i3 + 1] = c1.g;
-            formations.consoleColors[i3 + 2] = c1.b;
-        }
-
+        // SWARM OBJECTS
+        const dummy = new THREE.Object3D();
+        const color = new THREE.Color();
+        const target = new THREE.Vector3();
+        const pColor = new THREE.Color(); // Kept for safety, for potential references
+        
         // INSTANCED MESH
-        const geom = new THREE.TetrahedronGeometry(0.28);
-        const mat = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.95
-        });
-
-        const instancedMesh = new THREE.InstancedMesh(geom, mat, COUNT);
+        const geometry = new THREE.TetrahedronGeometry(0.25);
+        const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        
+        const instancedMesh = new THREE.InstancedMesh(geometry, material, COUNT);
         instancedMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-        instancedMesh.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(COUNT * 3), 3);
-        instancedMesh.instanceColor.setUsage(THREE.DynamicDrawUsage);
         scene.add(instancedMesh);
 
-        // Particle Runtime States
-        const currentPos = new Float32Array(COUNT * 3);
-        const particleVel = new Float32Array(COUNT * 3);
-        for (let i = 0; i < COUNT * 3; i++) {
-            currentPos[i] = formations.core[i];
-            particleVel[i] = 0;
+        // DATA ARRAYS
+        const positions = [];
+        for(let i=0; i<COUNT; i++) {
+            positions.push(new THREE.Vector3((Math.random()-0.5)*100, (Math.random()-0.5)*100, (Math.random()-0.5)*100));
+            instancedMesh.setColorAt(i, color.setHex(0x00ff88)); // Init Color
         }
 
-        const formationList = [
-            { pos: formations.core, col: formations.coreColors },
-            { pos: formations.stream, col: formations.streamColors },
-            { pos: formations.shield, col: formations.shieldColors },
-            { pos: formations.radar, col: formations.radarColors },
-            { pos: formations.ledger, col: formations.ledgerColors },
-            { pos: formations.console, col: formations.consoleColors }
-        ];
-
-        // -----------------------------------------------------------
-        // SMOOTH SCROLL TRACKING & CAMERA CHOREOGRAPHY
-        // -----------------------------------------------------------
-        let targetScroll = 0;
-        let smoothScroll = 0;
-        let scrollFraction = 0;
-        const totalStages = 5;
-
-        function updateScrollMetrics() {
-            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-            targetScroll = maxScroll > 0 ? window.scrollY / maxScroll : 0;
-        }
-        window.addEventListener('scroll', updateScrollMetrics, { passive: true });
-
-        window.scrollToSection = function(index) {
-            const targetEl = document.getElementById(`section-${index}`);
-            if (targetEl) {
-                targetEl.scrollIntoView({ behavior: 'smooth' });
-            }
+        // CONTROL STUBS
+        const PARAMS = {"blast":70,"speed":6,"flash":2.5,"debris":1.8,"shells":3,"orbit":12,"orbitspeed":1.5};
+        const addControl = (id, label, min, max, val) => {
+            return PARAMS[id] !== undefined ? PARAMS[id] : val;
         };
+        const setInfo = () => {};
+        const annotate = () => {};
 
-        const navPips = document.querySelectorAll('.nav-pip');
-        navPips.forEach(pip => {
-            pip.addEventListener('click', () => {
-                const idx = parseInt(pip.getAttribute('data-index'));
-                window.scrollToSection(idx);
-            });
-        });
-
-        // Mouse Physics & Gravity Well
-        const mouse = { x: 0, y: 0, targetX: 0, targetY: 0, worldX: 0, worldY: 0 };
-        window.addEventListener('mousemove', (e) => {
-            mouse.targetX = (e.clientX / window.innerWidth - 0.5) * 2;
-            mouse.targetY = -(e.clientY / window.innerHeight - 0.5) * 2;
-            mouse.worldX = mouse.targetX * 45;
-            mouse.worldY = mouse.targetY * 30;
-        }, { passive: true });
-
-        // Click Shockwave Burst
-        let shockwaveTime = -100;
-        let shockwaveOrigin = new THREE.Vector3();
-        window.addEventListener('click', (e) => {
-            // Ignore clicks on buttons/inputs
-            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.closest('button')) return;
-            shockwaveTime = performance.now() * 0.001;
-            shockwaveOrigin.set(mouse.worldX, mouse.worldY, 0);
-            playCosmicTone(440, 0.2);
-        });
-
-        // Particle Burst Triggers for UI buttons
-        window.triggerParticleBurst = function(type) {
-            shockwaveTime = performance.now() * 0.001;
-            shockwaveOrigin.set(0, 0, 0);
-
-            if (type === 'yield') {
-                playCosmicTone(523.25, 0.4);
-                flashParticleColor(0x10b981);
-            } else if (type === 'breach') {
-                playCosmicTone(220, 0.5);
-                flashParticleColor(0xef4444);
-            } else if (type === 'shield') {
-                playCosmicTone(392, 0.3);
-                flashParticleColor(0x8b5cf6);
-            } else if (type === 'ledger') {
-                playCosmicTone(659.25, 0.3);
-                flashParticleColor(0x60a5fa);
-            } else {
-                playCosmicTone(329.63, 0.3);
-            }
-        };
-
-        function flashParticleColor(hexColor) {
-            const tempC = new THREE.Color(hexColor);
-            const colorsAttr = instancedMesh.instanceColor.array;
-            for (let i = 0; i < COUNT; i++) {
-                if (Math.random() < 0.4) {
-                    const i3 = i * 3;
-                    colorsAttr[i3] = tempC.r;
-                    colorsAttr[i3 + 1] = tempC.g;
-                    colorsAttr[i3 + 2] = tempC.b;
-                }
-            }
-            instancedMesh.instanceColor.needsUpdate = true;
-        }
-
-        // Web Audio Synthesizer
-        let audioCtx = null;
-        let isAudioEnabled = false;
-        const audioBtn = document.getElementById('audio-toggle');
-        const audioIcon = document.getElementById('audio-icon');
-
-        audioBtn.addEventListener('click', () => {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            isAudioEnabled = !isAudioEnabled;
-            audioIcon.textContent = isAudioEnabled ? '🔊' : '🔇';
-            audioBtn.style.borderColor = isAudioEnabled ? 'var(--emerald-yield)' : 'var(--glass-border)';
-            if (isAudioEnabled) {
-                playCosmicTone(329.63, 0.5);
-            }
-        });
-
-        function playCosmicTone(freq, duration = 0.3) {
-            if (!isAudioEnabled || !audioCtx) return;
-            try {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(freq * 0.5, audioCtx.currentTime + duration);
-                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            } catch (err) {
-                console.warn(err);
-            }
-        }
-
-        // OpenSanctions Live Checker Stub
-        window.fillAndScreen = function(addr, isSanctioned) {
-            document.getElementById('sanction-input').value = addr;
-            window.screenAddress(isSanctioned);
-        };
-
-        window.screenAddress = function(forceSanctioned = false) {
-            const val = document.getElementById('sanction-input').value.trim();
-            const resEl = document.getElementById('sanction-result');
-            const statusEl = document.getElementById('scan-status');
-
-            statusEl.textContent = "SCANNING DATABASE...";
-            statusEl.style.color = "var(--gold-light)";
-            resEl.textContent = "Running heuristic query across OFAC, EU, UN SDN lists...";
-
-            triggerParticleBurst('shield');
-
-            setTimeout(() => {
-                const isBlocked = forceSanctioned || val.toLowerCase().includes("1111");
-                if (isBlocked) {
-                    statusEl.textContent = "THREAT DETECTED";
-                    statusEl.style.color = "var(--alert-crimson)";
-                    resEl.innerHTML = `<span style="color: var(--alert-crimson);">🚫 MATCH FOUND: OFAC SDN Specially Designated Entity</span><br>Execution reverted by PolicyWallet guardrail.`;
-                    triggerParticleBurst('breach');
-                } else {
-                    statusEl.textContent = "CLEAN (PASSED)";
-                    statusEl.style.color = "var(--emerald-yield)";
-                    resEl.innerHTML = `<span style="color: var(--emerald-yield);">✅ VERIFIED CLEAN: No sanction records found.</span><br>Policy status: Permitted for automated execution.`;
-                    triggerParticleBurst('yield');
-                }
-            }, 500);
-        };
-
-        // Mission Control Simulator
-        window.simulateInvoice = function(type) {
-            const feed = document.getElementById('sim-feed');
-            const statusEl = document.getElementById('sim-status');
-            const now = new Date().toLocaleTimeString();
-
-            function appendFeed(text, cls = 'info') {
-                const line = document.createElement('div');
-                line.className = `feed-line ${cls}`;
-                line.textContent = `[${now}] ${text}`;
-                feed.appendChild(line);
-                feed.scrollTop = feed.scrollHeight;
-            }
-
-            if (type === 'micro') {
-                statusEl.textContent = "PAYOUT SETTLED (GASLESS)";
-                statusEl.style.color = "var(--emerald-yield)";
-                appendFeed("Invoice received: INV-CLOUD-9941 ($120.00 USDC)", "info");
-                appendFeed("Sanctions check passed (OpenSanctions API)", "success");
-                appendFeed("Within cap ($120 <= $250 maxSingleTx) -> Settled gaslessly via Circle Paymaster", "success");
-                appendFeed("Beancount double-entry receipt emitted (txId: 0x3a00...ef3)", "info");
-                triggerParticleBurst('yield');
-            } else if (type === 'escalated') {
-                statusEl.textContent = "ESCALATED TO QUEUE";
-                statusEl.style.color = "var(--gold-light)";
-                appendFeed("Invoice received: INV-AUDIT-4402 ($450.00 USDC)", "warning");
-                appendFeed("Single transaction limit exceeded ($450 > $250 maxSingleTx)!", "warning");
-                appendFeed("PolicyWallet.sol: Pushed to On-Chain Escalation Queue (Nonce #4)", "warning");
-                appendFeed("Supervisor notification dispatched via Webhook. Awaiting owner multi-sig.", "info");
-                triggerParticleBurst('shield');
-            } else if (type === 'sanctioned') {
-                statusEl.textContent = "TRANSACTION REVERTED";
-                statusEl.style.color = "var(--alert-crimson)";
-                appendFeed("Invoice received: INV-ROGUE-001 ($500.00 USDC)", "error");
-                appendFeed("CRITICAL: Recipient matched OFAC Sanctions List!", "error");
-                appendFeed("PolicyWallet reverted execution: PayoutUnauthorized()", "error");
-                appendFeed("Security alert logged in Euthyna audit trail.", "error");
-                triggerParticleBurst('breach');
-            } else if (type === 'sweep') {
-                statusEl.textContent = "SURPLUS SWEPT TO USYC";
-                statusEl.style.color = "var(--emerald-yield)";
-                appendFeed("Buffer evaluation: Operating reserve $10,900 USDC satisfied.", "info");
-                appendFeed("Surplus capital ($10,000 USDC) swept into USYC Vault via forceApprove()", "success");
-                appendFeed("Earning 5.2% APY tokenized yield. JIT redemption active.", "success");
-                triggerParticleBurst('yield');
-            }
-        };
-
-        // FPS Tracker
-        let frameCount = 0;
-        let lastFpsUpdate = performance.now();
-        const fpsDisplay = document.getElementById('fps-display');
-        const formationDisplay = document.getElementById('formation-name');
-
-        // Transform dummy
-        const dummy = new THREE.Object3D();
+        // ANIMATION LOOP
         const clock = new THREE.Clock();
-
-        // -----------------------------------------------------------
-        // MAIN ANIMATION LOOP (LOCKED AT 60-120 FPS)
-        // -----------------------------------------------------------
+        
         function animate() {
             requestAnimationFrame(animate);
-
             const delta = clock.getDelta();
-            const elapsed = clock.getElapsedTime();
-
-            // FPS Measurement
-            frameCount++;
-            const now = performance.now();
-            if (now - lastFpsUpdate >= 500) {
-                const fps = Math.round((frameCount * 1000) / (now - lastFpsUpdate));
-                fpsDisplay.textContent = `${fps} FPS`;
-                frameCount = 0;
-                lastFpsUpdate = now;
+            const time = clock.getElapsedTime() * SPEED_MULT;
+            
+            // Shader Time Update
+            if(material.uniforms && material.uniforms.uTime) {
+                material.uniforms.uTime.value = time;
             }
 
-            // Smooth Scroll Physics (Inertial Lerp)
-            smoothScroll += (targetScroll - smoothScroll) * 0.075;
-            scrollFraction = smoothScroll * totalStages;
+            controls.update();
 
-            const stageIndex = Math.min(Math.floor(scrollFraction), totalStages - 1);
-            const nextStageIndex = Math.min(stageIndex + 1, totalStages);
-            const stageProgress = scrollFraction - Math.floor(scrollFraction);
+            // SWARM LOGIC
+            const count = COUNT; // Alias for user code compatibility
+            for(let i=0; i<COUNT; i++) {
+                 // USER CODE INJECTION START
+                 const blastRadius = addControl("blast", "Blast Radius", 20, 150, 70);
+                 const shockSpeed = addControl("speed", "Expansion Speed", 0, 20, 6);
+                 const coreFlash = addControl("flash", "Core Brightness", 0, 5, 2.5);
+                 const debris = addControl("debris", "Debris Chaos", 0, 5, 1.8);
+                 const shellCount = addControl("shells", "Shockwave Shells", 1, 5, 3);
+                 const orbitGap = addControl("orbit", "Binary Separation", 2, 30, 12);
+                 const orbitSpeed = addControl("orbitspeed", "Binary Orbit Speed", 0, 5, 1.5);
+                 const safeCount = count > 1 ? count : 2;
+                 const fi = i / safeCount;
+                 const isRemnant = fi < 0.03 ? 1 : 0;
+                 const seedA = Math.sin(i * 12.9898) * 43758.5453;
+                 const randA = seedA - Math.floor(seedA);
+                 const seedB = Math.sin(i * 78.233 + 3.1) * 12345.678;
+                 const randB = seedB - Math.floor(seedB);
+                 const seedC = Math.sin(i * 45.164 + 7.7) * 98765.432;
+                 const randC = seedC - Math.floor(seedC);
+                 const starPick = i % 2;
+                 const orbitAngle = time * orbitSpeed + starPick * Math.PI;
+                 const remX = Math.cos(orbitAngle) * orbitGap * starPick;
+                 const remY = Math.sin(orbitAngle * 0.6) * orbitGap * 0.3 * starPick;
+                 const remZ = Math.sin(orbitAngle) * orbitGap * starPick;
+                 const remJitter = (randA - 0.5) * 3;
+                 const phi = randA * Math.PI * 2;
+                 const costh = randB * 2 - 1;
+                 const sinth = Math.sqrt(Math.max(0, 1 - costh * costh));
+                 const dirX = sinth * Math.cos(phi);
+                 const dirY = costh;
+                 const dirZ = sinth * Math.sin(phi);
+                 const shellId = Math.floor(randC * shellCount);
+                 const shellOffset = shellId * (shellThickSafe(shellCount));
+                 const cycleSpan = blastRadius + shellOffset + 10;
+                 const dist = (time * shockSpeed + randC * 10 + shellOffset * 3) % cycleSpan;
+                 const wobble = Math.sin(dist * 0.3 + time * 2 + i * 0.05) * debris * (dist / (blastRadius + 1));
+                 const shockPulse = 0.5 + 0.5 * Math.sin(time * 2 - dist * 0.15 + shellId * 2);
+                 const ejectaX = dirX * dist + wobble;
+                 const ejectaY = dirY * dist + wobble * 0.8;
+                 const ejectaZ = dirZ * dist + wobble;
+                 target.set(
+                 isRemnant ? (remX + remJitter) : ejectaX,
+                 isRemnant ? (remY + remJitter) : ejectaY,
+                 isRemnant ? (remZ + remJitter) : ejectaZ
+                 );
+                 const coreProximity = Math.max(0, 1 - dist / 16);
+                 const shellFactor = Math.max(0, 1 - Math.abs((dist % (cycleSpan / shellCount)) - 8) / 8);
+                 const hue = isRemnant ? (starPick === 0 ? 0.58 : 0.05) : (0.13 - coreProximity * 0.1 - shellFactor * 0.05);
+                 const sat = isRemnant ? 0.85 : Math.max(0.9 - coreProximity * 0.3, 0.4);
+                 const light = isRemnant ? (0.6 + coreFlash * 0.15) : Math.min(0.3 + coreProximity * coreFlash * 0.4 + shellFactor * shockPulse * 0.4, 0.98);
+                 color.setHSL(Math.max(hue, 0.0), sat, light);
+                 function shellThickSafe(n) { return 200 / Math.max(n, 1); }
+                 if (i === 0) {
+                 setInfo("Binary Supernova Remnant", "Twin stellar remnants orbiting amid layered shockwaves from a cataclysmic explosion.");
+                 annotate("remnant", new THREE.Vector3(0, 0, 0), "Binary Core");
+                 }
+                 // USER CODE INJECTION END
 
-            // Smoothstep curve for seamless morphing
-            const blend = stageProgress * stageProgress * (3 - 2 * stageProgress);
-
-            // Update Navigation Pips
-            const currentActivePip = Math.round(scrollFraction);
-            navPips.forEach((pip, idx) => {
-                if (idx === currentActivePip) {
-                    pip.classList.add('active');
-                } else {
-                    pip.classList.remove('active');
-                }
-            });
-            formationDisplay.textContent = STAGE_NAMES[stageIndex] || "IMPERIAL CORE";
-
-            // Dynamic Camera Choreography
-            camera.position.x = Math.sin(smoothScroll * Math.PI) * 16 + mouse.x * 6;
-            camera.position.y = -smoothScroll * 14 + mouse.y * 5;
-            camera.position.z = 85 - Math.sin(smoothScroll * Math.PI) * 10;
-            camera.lookAt(0, -smoothScroll * 4, 0);
-
-            // Smooth mouse lerp
-            mouse.x += (mouse.targetX - mouse.x) * 0.06;
-            mouse.y += (mouse.targetY - mouse.y) * 0.06;
-
-            // Formations
-            const formA = formationList[stageIndex];
-            const formB = formationList[nextStageIndex] || formA;
-
-            const posA = formA.pos;
-            const posB = formB.pos;
-            const colA = formA.col;
-            const colB = formB.col;
-
-            const rotSpeed = 0.25 + smoothScroll * 0.15;
-            const cosT = Math.cos(elapsed * rotSpeed);
-            const sinT = Math.sin(elapsed * rotSpeed);
-
-            // Shockwave parameter
-            const shockAge = elapsed - shockwaveTime;
-            const shockRadius = shockAge * 50;
-
-            // Update Instanced Particles
-            const colorsAttr = instancedMesh.instanceColor.array;
-
-            for (let i = 0; i < COUNT; i++) {
-                const i3 = i * 3;
-
-                // Base morph position
-                const targetX = posA[i3] * (1 - blend) + posB[i3] * blend;
-                const targetY = posA[i3 + 1] * (1 - blend) + posB[i3 + 1] * blend;
-                const targetZ = posA[i3 + 2] * (1 - blend) + posB[i3 + 2] * blend;
-
-                // Position lerp
-                currentPos[i3] += (targetX - currentPos[i3]) * 0.1;
-                currentPos[i3 + 1] += (targetY - currentPos[i3 + 1]) * 0.1;
-                currentPos[i3 + 2] += (targetZ - currentPos[i3 + 2]) * 0.1;
-
-                // Swirl transform
-                let px = currentPos[i3] * cosT - currentPos[i3 + 2] * sinT;
-                let pz = currentPos[i3] * sinT + currentPos[i3 + 2] * cosT;
-                let py = currentPos[i3 + 1] + Math.sin(elapsed * 1.5 + i * 0.02) * 0.35;
-
-                // Cursor Gravitational Interaction
-                const dx = px - mouse.worldX;
-                const dy = py - mouse.worldY;
-                const distMouseSq = dx * dx + dy * dy;
-                if (distMouseSq < 400 && distMouseSq > 1) {
-                    const force = (1 - Math.sqrt(distMouseSq) / 20) * 2.5;
-                    px += (dx / Math.sqrt(distMouseSq)) * force;
-                    py += (dy / Math.sqrt(distMouseSq)) * force;
-                }
-
-                // Shockwave impulse
-                if (shockAge > 0 && shockAge < 1.5) {
-                    const sdx = px - shockwaveOrigin.x;
-                    const sdy = py - shockwaveOrigin.y;
-                    const sdist = Math.sqrt(sdx * sdx + sdy * sdy);
-                    const diff = Math.abs(sdist - shockRadius);
-                    if (diff < 8) {
-                        const waveForce = (1 - diff / 8) * 4;
-                        px += (sdx / (sdist + 0.1)) * waveForce;
-                        py += (sdy / (sdist + 0.1)) * waveForce;
-                        pz += waveForce * 2;
-                    }
-                }
-
-                dummy.position.set(px, py, pz);
-
-                const scale = 0.75 + Math.sin(elapsed * 2 + i * 0.1) * 0.2;
-                dummy.scale.set(scale, scale, scale);
-                dummy.rotation.set(elapsed + i, elapsed * 0.5, 0);
-                dummy.updateMatrix();
-
-                instancedMesh.setMatrixAt(i, dummy.matrix);
-
-                // Blend colors
-                colorsAttr[i3] = colA[i3] * (1 - blend) + colB[i3] * blend;
-                colorsAttr[i3 + 1] = colA[i3 + 1] * (1 - blend) + colB[i3 + 1] * blend;
-                colorsAttr[i3 + 2] = colA[i3 + 2] * (1 - blend) + colB[i3 + 2] * blend;
+                 // LERP & UPDATE
+                 positions[i].lerp(target, 0.1);
+                 dummy.position.copy(positions[i]);
+                 dummy.updateMatrix();
+                 instancedMesh.setMatrixAt(i, dummy.matrix);
+                 instancedMesh.setColorAt(i, color); // Fix: Use 'color' which user modifies
             }
-
             instancedMesh.instanceMatrix.needsUpdate = true;
             instancedMesh.instanceColor.needsUpdate = true;
 
-            // Render Bloom Pass
             composer.render();
         }
-
-        // Start animation loop
         animate();
 
-        // Responsive Resizing
         window.addEventListener('resize', () => {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            camera.aspect = width / height;
+            camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
-            renderer.setSize(width, height);
-            composer.setSize(width, height);
-            bloomPass.setSize(width / 2, height / 2);
-            updateScrollMetrics();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
         });
     </script>
 </body>
