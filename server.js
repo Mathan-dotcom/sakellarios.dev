@@ -18,7 +18,7 @@ app.use(express.static(__dirname));
 
 // Serve primary UI
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'supernova_explotion_2.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Initialize the Autonomous Treasury Agent
