@@ -1,7 +1,7 @@
 {
-  "name": "sakellarios.dev",
+  "name": "sakellarious.dev",
   "version": "1.0.0",
-  "description": "",
+  "description": "sakellarious.dev — Continuous Treasury & Autonomous Business Operator for Arc L1",
   "main": "index.js",
   "directories": {
     "test": "test"
