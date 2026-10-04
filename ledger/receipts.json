@@ -462,5 +462,34 @@
       "liquidUsdcAvailable": 9250
     },
     "txHash": "0xba677f97c47b3cea7c6ed31487bff7df1962797a0a484f96568f6152e3e5cb62"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-04T15:08:24.985Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 120,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-CLOUD-8821",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-04T15:08:23.914Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 880,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 0
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9880
+    },
+    "txHash": "0xc7c9ba63265a3d35cb0dc4f21b7dfb2777ec00b79c42c48b97101fa463512d52"
   }
 ]
