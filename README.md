@@ -30,11 +30,20 @@ npm run seed
 npm run report
 ```
 
-### 5. Start the Backend API Server (for Frontend Integration)
+### 5. Launch the Brutalism UI & Backend Server
 ```bash
 npm start
-# Server listens on http://localhost:4000
+# Server and Interactive Brutalism UI Dashboard are live at http://localhost:4000
 ```
+Visit **`http://localhost:4000`** in your browser to experience the **Imperial Arc Neo-Brutalism Command Deck (v6.0)**:
+- **Asymmetric Bento Vault Deck:** Monumental `$34,880.00` balance readout with dual-tone ratio bar (Liquid Mint vs USYC Violet) and PolicyWallet.sol spending HUD.
+- **Continuous Micro-Yield Ticker:** Real-time fractional cent harvest counter (`+$0.04058/sec`) and Arc L1 block height telemetry.
+- **Interactive Capital Flow Schematic:** Visual circuit schematic with traveling signal pulses and real-time smart contract inspector.
+- **"What-If" Runway & Yield Simulator:** Dual interactive sliders for daily burn and USYC allocation with live runway and 30-day interest projections.
+- **Invoice Processing Workbench:** 4-stage decision pipeline (OpenSanctions → Buffer Forecast → Policy Caps → Paymaster Settlement) with live streaming terminal logs.
+- **On-Chain Escalation Queue:** Supervisor review cards with 1-click approve/reject actions and mathematical override guarantees.
+- **Euthyna Audit Ledger & Multichain Reserves:** Interactive Beancount double-entry viewer, cryptographic JSON-LD receipts, and Circle Gateway 4-chain liquidity table.
+- **Design System Documentation:** Complete specification available in [`STYLEGUIDE-DesignSystem.md`](STYLEGUIDE-DesignSystem.md).
 
 ---
 

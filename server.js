@@ -6,6 +6,7 @@
 
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { VestiarionAgent } = require('./services/agentRunner');
 
 const app = express();
@@ -13,6 +14,7 @@ const PORT = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Initialize the Autonomous Treasury Agent
 const agent = new VestiarionAgent();

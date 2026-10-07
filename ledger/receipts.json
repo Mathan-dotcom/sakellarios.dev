@@ -259,5 +259,208 @@
       "liquidUsdcAvailable": 9765
     },
     "txHash": "0x92eb203e3db5f6d4c28ed8b72a5f2d5f05d3c1b25514bc41fa97075b1a7ef2f6"
+  },
+  {
+    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-06T09:52:13.805Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 120,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-CLOUD-8821",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-06T09:52:13.144Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 880,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 0
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9880
+    },
+    "txHash": "0xd43172face59a2f82642e5daf35439804e8a12cb8284cd8992988cb91d079756"
+  },
+  {
+    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-07T03:23:41.347Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 150,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-INFRA-101",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-07T03:23:40.848Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 850,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 0
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9850
+    },
+    "txHash": "0x77c16063715dffbd344218665eb14a5631ce93a6022cf53fdcaef27eb66707b5"
+  },
+  {
+    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-07T03:23:41.862Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x4444444444444444444444444444444444444444",
+    "amountUsdc": 600,
+    "category": "PAYROLL",
+    "invoiceRef": "INV-PAY-202",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-07T03:23:41.862Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 250,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 1
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9250
+    },
+    "txHash": "0x5e1d5f4b7aca0984892900c0b64b7aa29d0c6284f840721d690672714df90312"
+  },
+  {
+    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-07T03:45:56.293Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 120,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-CLOUD-8821",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-07T03:45:54.548Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 880,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 0
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9880
+    },
+    "txHash": "0x3fcce3bdae0973230b1d8f7c787a339b8d55f7dc2be145c6cf9578e5f45f462c"
+  },
+  {
+    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-07T04:39:08.639Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 120,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-CLOUD-3600",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-07T04:39:08.063Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 760,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 1
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9760
+    },
+    "txHash": "0x04b2237ba44fd9a63dc05dce212f67e8ce6918d8d7e216cf1c13be1220027993"
+  },
+  {
+    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-07T04:46:49.478Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 120,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-CLOUD-3600",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-07T04:46:46.466Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 640,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 1
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9640
+    },
+    "txHash": "0xbc6e2dbf94bc34e39801eb3e03749cac9a6bd75c235f36dcb31541e29a5e239f"
+  },
+  {
+    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-07T05:32:13.210Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 120,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-CLOUD-TEST-99",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-07T05:32:12.621Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 520,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 1
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9520
+    },
+    "txHash": "0x83b6f156dcaf2e443b1002a1145c4f3e766978a201359ddfec8dad00c04c509f"
   }
 ]
