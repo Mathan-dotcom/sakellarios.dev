@@ -14,7 +14,32 @@ const PORT = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
+
+// Serve Sakellarious Byzantine Ledger Editorial UI (v1.0.0) from public/
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Root route - Byzantine Ledger Editorial UI
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Backward-compatible routes for exploratory Codex & Scrollytelling views
+app.get('/frontend', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend.html'));
+});
+
+app.get('/codex', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend.html'));
+});
+
+app.get('/landing', (req, res) => {
+    res.sendFile(path.join(__dirname, 'landing.html'));
+});
+
+// Serve 3D Supernova Integrated Scrollytelling Experience
+app.get('/supernova', (req, res) => {
+    res.sendFile(path.join(__dirname, 'supernova_app.html'));
+});
 
 // Initialize the Autonomous Treasury Agent
 const agent = new VestiarionAgent();
@@ -23,7 +48,7 @@ const agent = new VestiarionAgent();
 // Day-1 Traction Seed Data (PRD Section 11)
 // ----------------------------------------------------
 async function seedInitialState() {
-    console.log("[Vestiarion AI] Initializing Day-1 Traction Seed Operations...");
+    console.log("[sakellarious.dev] Initializing Day-1 Traction Seed Operations...");
     
     // User #1 (Internal Builder Team): Cloud server bill (120 USDC - Standard Payout via Paymaster)
     await agent.processIncomingInvoice({
@@ -43,7 +68,7 @@ async function seedInitialState() {
         reasoning: "External open-source maintainer stipend for Circom ZK-proof optimization."
     });
 
-    console.log("[Vestiarion AI] Seed operations complete. Ready for live operations.");
+    console.log("[sakellarious.dev] Seed operations complete. Ready for live operations.");
 }
 
 // ----------------------------------------------------
@@ -196,7 +221,7 @@ if (require.main === module) {
     seedInitialState().then(() => {
         app.listen(PORT, () => {
             console.log(`\n========================================================`);
-            console.log(`🚀 Vestiarion AI Backend Server running on port ${PORT}`);
+            console.log(`🚀 sakellarious.dev Backend Server running on port ${PORT}`);
             console.log(`   Arc L1 Policy Wallet: ${agent.walletAddress}`);
             console.log(`   API endpoints available at http://localhost:${PORT}/api/`);
             console.log(`========================================================\n`);

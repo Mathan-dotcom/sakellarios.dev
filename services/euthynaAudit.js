@@ -22,12 +22,12 @@ class EuthynaAuditLedger {
             fs.mkdirSync(this.storageDir, { recursive: true });
         }
         if (!fs.existsSync(this.beancountFile)) {
-            const header = `; Vestiarion AI - Euthyna Immutable Audit Ledger
+            const header = `; sakellarious.dev - Euthyna Immutable Audit Ledger
 ; Standard: Beancount v2 Double-Entry Accounting
 ; Operating Chain: Arc L1 (Circle Native)
 ; Settlement Token: USDC
 
-option "title" "Vestiarion AI Continuous Treasury Ledger"
+option "title" "sakellarious.dev Continuous Treasury Ledger"
 option "operating_currency" "USDC"
 
 2026-01-01 open Assets:Arc:PolicyWallet:USDC USDC
@@ -96,7 +96,7 @@ ${dateStr} * "Circle Paymaster / Vendor Settlement" "Paid ${category} Invoice #$
 
         // 2. Generate JSON-LD receipt conforming to PRD Section 8
         const jsonLdReceipt = {
-            "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+            "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
             "type": "AgentExecutionReceipt",
             "timestamp": timestamp,
             "agentId": agentId,
@@ -152,7 +152,7 @@ ${dateStr} * "Vestiarion Treasury Rebalance" "Autonomous Yield Sweep into USYC V
         fs.appendFileSync(this.beancountFile, beancountEntry, 'utf8');
 
         const jsonLdReceipt = {
-            "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+            "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
             "type": "AgentExecutionReceipt",
             "timestamp": timestamp,
             "agentId": agentId,
@@ -190,7 +190,7 @@ ${dateStr} * "Vestiarion JIT Liquidity" "Redeemed USYC to Liquid USDC for ${purp
         fs.appendFileSync(this.beancountFile, beancountEntry, 'utf8');
 
         const jsonLdReceipt = {
-            "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+            "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
             "type": "AgentExecutionReceipt",
             "timestamp": timestamp,
             "agentId": agentId,

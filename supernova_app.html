@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sakellarious.dev — Continuous Treasury & Autonomous Business Operator (Arc L1)</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #030712;
+            --gold-primary: #f59e0b;
+            --gold-light: #fcd34d;
+            --arc-cyan: #06b6d4;
+            --arc-cyan-glow: #22d3ee;
+            --emerald-yield: #10b981;
+            --shield-violet: #8b5cf6;
+            --alert-crimson: #ef4444;
+            --text-main: #f9fafb;
+            --text-dim: #9ca3af;
+            --glass-bg: rgba(15, 23, 42, 0.75);
+            --glass-card: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-glow: rgba(245, 158, 11, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow-x: hidden;
+            overflow-y: auto;
+            min-height: 100vh;
+        }
+
+        /* Fullscreen Supernova Canvas Background (Embedded Exact Simulation) */
+        #supernova-frame {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            border: none;
+            z-index: 0;
+            pointer-events: auto; /* Allows 3D OrbitControls dragging */
+        }
+
+        /* Subtle Vignette Overlay to ensure text readability */
+        .ambient-vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 50%, rgba(3, 7, 18, 0.1) 0%, rgba(3, 7, 18, 0.75) 100%);
+            transition: opacity 0.4s ease;
+        }
+
+        /* Top Navigation Header */
+        header.top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 36px;
+            background: rgba(3, 7, 18, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--glass-border);
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .brand-crest {
+            font-size: 26px;
+            filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.6));
+        }
+
+        .brand-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            background: linear-gradient(135deg, #ffffff 0%, var(--gold-light) 50%, var(--gold-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--arc-cyan);
+            border: 1px solid rgba(6, 182, 212, 0.35);
+            padding: 2px 7px;
+            border-radius: 4px;
+            letter-spacing: 0.08em;
+            background: rgba(6, 182, 212, 0.08);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-link-btn {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-link-btn:hover {
+            color: var(--gold-light);
+            transform: translateY(-1px);
+        }
+
+        .nav-cta-btn {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(245, 158, 11, 0.08) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.45);
+            color: var(--gold-light);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+        }
+
+        .nav-cta-btn:hover {
+            background: var(--gold-primary);
+            color: #000;
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.5);
+        }
+
+        /* Focus Mode Button (Hide/Show UI) */
+        #focus-toggle {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--glass-border);
+            color: var(--text-dim);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        #focus-toggle:hover {
+            border-color: var(--gold-primary);
+            color: var(--gold-light);
+        }
+
+        /* Side Navigation Dots */
+        #scroll-nav {
+            position: fixed;
+            left: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-pip {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        .nav-pip:hover, .nav-pip.active {
+            background: var(--gold-primary);
+            box-shadow: 0 0 16px var(--gold-primary);
+            transform: scale(1.4);
+            border-color: var(--gold-light);
+        }
+
+        .nav-pip .pip-tooltip {
+            position: absolute;
+            left: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            padding: 5px 12px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #fff;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-pip:hover .pip-tooltip {
+            opacity: 1;
+            transform: translateY(-50%) translateX(4px);
+        }
+
+        /* Scrollytelling Container */
+        .scrolly-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            pointer-events: none; /* Let clicks on background fall through to supernova 3D canvas */
+        }
+
+        .scrolly-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 120px 8vw 100px 8vw;
+            position: relative;
+        }
+
+        .scrolly-section.align-right {
+            justify-content: flex-end;
+        }
+
+        .scrolly-section.align-center {
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* Narrative Cards (pointer-events: auto so interactive elements work) */
+        .narrative-card {
+            pointer-events: auto;
+            max-width: 620px;
+            padding: 42px;
+            background: var(--glass-card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 35px var(--glass-glow);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, opacity 0.4s ease;
+        }
+
+        .narrative-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 18px;
+            background: rgba(245, 158, 11, 0.12);
+            color: var(--gold-light);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .badge.cyan {
+            background: rgba(6, 182, 212, 0.12);
+            color: var(--arc-cyan-glow);
+            border-color: rgba(6, 182, 212, 0.3);
+        }
+
+        .badge.emerald {
+            background: rgba(16, 185, 129, 0.12);
+            color: #6ee7b7;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .badge.violet {
+            background: rgba(139, 92, 246, 0.12);
+            color: #c4b5fd;
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        h1.title-cinzel {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2.4rem, 5vw, 3.8rem);
+            font-weight: 900;
+            letter-spacing: -0.01em;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #ffffff 0%, #fef3c7 40%, var(--gold-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2.section-heading {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #fff;
+            letter-spacing: -0.01em;
+        }
+
+        p.description {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-dim);
+            margin-bottom: 24px;
+        }
+
+        /* Metric Grid */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .metric-card {
+            background: rgba(3, 7, 18, 0.65);
+            border: 1px solid var(--glass-border);
+            padding: 16px;
+            border-radius: 16px;
+            text-align: left;
+        }
+
+        .metric-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .metric-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .metric-value.gold { color: var(--gold-light); }
+        .metric-value.emerald { color: #6ee7b7; }
+        .metric-value.cyan { color: var(--arc-cyan-glow); }
+        .metric-value.violet { color: #c4b5fd; }
+
+        /* Interactive Widgets */
+        .interactive-box {
+            background: rgba(3, 7, 18, 0.7);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .box-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--gold-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .action-chip {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-chip:hover {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: var(--gold-primary);
+            color: var(--gold-light);
+            transform: translateY(-1px);
+        }
+
+        .action-chip.danger:hover {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: var(--alert-crimson);
+            color: #fca5a5;
+        }
+
+        .action-chip.success:hover {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--emerald-yield);
+            color: #6ee7b7;
+        }
+
+        /* Supernova Parameter Live Sliders */
+        .slider-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-top: 14px;
+        }
+
+        .slider-control {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        .slider-header span.val {
+            color: var(--gold-light);
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--gold-primary);
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--gold-primary);
+        }
+
+        /* Console Feed */
+        .console-feed {
+            background: #020617;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            line-height: 1.5;
+            color: #94a3b8;
+            max-height: 160px;
+            overflow-y: auto;
+            margin-top: 14px;
+        }
+
+        .feed-line {
+            margin-bottom: 4px;
+            word-break: break-all;
+        }
+        .feed-line.success { color: #34d399; }
+        .feed-line.warning { color: #fbbf24; }
+        .feed-line.error { color: #f87171; }
+        .feed-line.info { color: #38bdf8; }
+
+        /* Code/Beancount Preview */
+        .code-container {
+            background: #020617;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            line-height: 1.6;
+            color: #cbd5e1;
+            text-align: left;
+            overflow-x: auto;
+        }
+
+        .kw-date { color: #f59e0b; font-weight: 600; }
+        .kw-account { color: #38bdf8; }
+        .kw-amount { color: #34d399; font-weight: 600; }
+        .kw-meta { color: #94a3b8; font-style: italic; }
+
+        /* Bottom Fixed Telemetry HUD */
+        #supernova-hud {
+            position: fixed;
+            bottom: 20px;
+            right: 24px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 18px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 9999px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-dim);
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            pointer-events: auto;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--emerald-yield);
+            box-shadow: 0 0 8px var(--emerald-yield);
+            animation: pulse-dot 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        /* Focus Mode Hide Class */
+        body.focus-mode .narrative-card,
+        body.focus-mode header.top-nav,
+        body.focus-mode #scroll-nav {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.95);
+        }
+
+        body.focus-mode .ambient-vignette {
+            opacity: 0.15;
+        }
+
+        @media (max-width: 768px) {
+            header.top-nav { padding: 12px 18px; }
+            .nav-links { display: none; }
+            .scrolly-section { padding: 90px 5vw 60px 5vw; }
+            .narrative-card { padding: 26px 18px; }
+            .metric-grid, .slider-grid { grid-template-columns: 1fr; }
+            #scroll-nav { display: none; }
+            #supernova-hud { bottom: 12px; right: 12px; font-size: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fullscreen Exact Supernova Particle Simulation -->
+    <iframe id="supernova-frame" src="supernova_explotion_2.html" title="Supernova Particle Simulation"></iframe>
+    <div class="ambient-vignette"></div>
+
+    <!-- Navigation Header -->
+    <header class="top-nav">
+        <a href="#section-0" class="brand-container">
+            <span class="brand-crest">🏛️</span>
+            <div>
+                <div class="brand-name">SAKELLARIOUS.DEV</div>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                    <span class="brand-badge">ARC L1 CONTINUOUS TREASURY</span>
+                    <span style="font-size: 10px; color: #10b981; font-family: 'JetBrains Mono', monospace;">● 21/21 FORGE TESTS</span>
+                </div>
+            </div>
+        </a>
+
+        <div class="nav-links">
+            <a href="/" class="nav-link-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"><span>🏛️</span> Landing Page</a>
+            <button class="nav-link-btn" onclick="scrollToSection(0)">Imperial Core</button>
+            <button class="nav-link-btn" onclick="scrollToSection(1)">Yield Sweeper</button>
+            <button class="nav-link-btn" onclick="scrollToSection(2)">Policy Guardrails</button>
+            <button class="nav-link-btn" onclick="scrollToSection(3)">Sanctions Radar</button>
+            <button class="nav-link-btn" onclick="scrollToSection(4)">Euthyna Ledger</button>
+            <button class="nav-link-btn" onclick="scrollToSection(5)">Mission Control</button>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <a href="/" class="action-chip" style="text-decoration: none; padding: 7px 12px;"><span>🏛️</span> Main Landing</a>
+            <button id="focus-toggle" onclick="toggleFocusMode()" title="Toggle full-screen supernova view">
+                <span id="focus-icon">👁️</span> <span id="focus-text">Focus View</span>
+            </button>
+            <button class="nav-cta-btn" onclick="scrollToSection(5)">SIMULATOR</button>
+        </div>
+    </header>
+
+    <!-- Side Navigation Dots Tracker -->
+    <nav id="scroll-nav" aria-label="Section Navigation">
+        <div class="nav-pip active" data-index="0" onclick="scrollToSection(0)"><span class="pip-tooltip">01 Imperial Core</span></div>
+        <div class="nav-pip" data-index="1" onclick="scrollToSection(1)"><span class="pip-tooltip">02 Continuous Yield</span></div>
+        <div class="nav-pip" data-index="2" onclick="scrollToSection(2)"><span class="pip-tooltip">03 Policy Shield</span></div>
+        <div class="nav-pip" data-index="3" onclick="scrollToSection(3)"><span class="pip-tooltip">04 Compliance Radar</span></div>
+        <div class="nav-pip" data-index="4" onclick="scrollToSection(4)"><span class="pip-tooltip">05 Euthyna Ledger</span></div>
+        <div class="nav-pip" data-index="5" onclick="scrollToSection(5)"><span class="pip-tooltip">06 Mission Control</span></div>
+    </nav>
+
+    <!-- Scrollytelling Sections -->
+    <main class="scrolly-container">
+
+        <!-- SECTION 0: IMPERIAL CORE -->
+        <section class="scrolly-section" id="section-0">
+            <div class="narrative-card">
+                <span class="badge">🏛️ Autonomous Corporate CFO</span>
+                <h1 class="title-cinzel">SAKELLARIOUS.DEV</h1>
+                <p class="description">
+                    An un-slept corporate CFO and intelligent treasury engine built natively for <strong>Arc</strong> (Circle's stablecoin-native Layer-1). Unifying the historical Byzantine imperial treasury (<em>Sakellarios / Vestiarion</em>) with classical Athenian audits (<em>Euthyna</em>).
+                </p>
+
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">30-Day Target Buffer</div>
+                        <div class="metric-value gold">$10,900 <span style="font-size: 13px; font-weight: normal; color: var(--text-dim);">USDC</span></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">USYC Vault Allocation</div>
+                        <div class="metric-value emerald">$25,000 <span style="font-size: 13px; font-weight: normal; color: #34d399;">(5.2% APY)</span></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Single Tx Ceiling</div>
+                        <div class="metric-value cyan">&le; $250 <span style="font-size: 13px; font-weight: normal; color: var(--text-dim);">USDC</span></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Daily Spend Limit</div>
+                        <div class="metric-value violet">$1,000 <span style="font-size: 13px; font-weight: normal; color: var(--text-dim);">USDC/day</span></div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px; font-size: 12px; color: var(--text-dim); display: flex; align-items: center; justify-content: space-between;">
+                    <span>✨ Drag anywhere on the background to orbit the 3D Supernova</span>
+                    <button class="action-chip" onclick="pulseSupernova(120, 3.5)">💥 Pulse Core</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1: CONTINUOUS CASH FLOW & USYC YIELD -->
+        <section class="scrolly-section align-right" id="section-1">
+            <div class="narrative-card">
+                <span class="badge emerald">📈 Automated Yield Optimization</span>
+                <h2 class="section-heading">Continuous Yield & Liquidity</h2>
+                <p class="description">
+                    sakellarious.dev continuously computes a dynamic 30-day operating buffer. Idle stablecoin capital above reserve requirements is swept into tokenized <strong>USYC yield vaults</strong>, executing Just-In-Time redemptions for approved accounts payable.
+                </p>
+
+                <div class="interactive-box">
+                    <div class="box-title">
+                        <span>30-Day Runway Forecasting</span>
+                        <span style="color: #34d399;">OPTIMAL ALLOCATION</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-dim);">Fixed AP (Nodes/Infra):</span>
+                            <span>$8,500 USDC</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-dim);">Variable AP (SaaS/Vendor):</span>
+                            <span>$2,000 USDC</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-dim);">Safety Margin:</span>
+                            <span>$400 USDC</span>
+                        </div>
+                        <div style="border-top: 1px solid var(--glass-border); padding-top: 6px; display: flex; justify-content: space-between; font-weight: 600; color: var(--gold-light);">
+                            <span>Target Operating Buffer:</span>
+                            <span>$10,900 USDC</span>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="action-chip success" onclick="accelerateSupernovaYield()">⚡ Stream Yield Ejecta</button>
+                        <button class="action-chip" onclick="pulseSupernova(80, 2.0)">🔄 JIT Redemption Pulse</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: MATHEMATICAL GUARDRAILS (POLICYWALLET.SOL) -->
+        <section class="scrolly-section" id="section-2">
+            <div class="narrative-card">
+                <span class="badge violet">🛡️ Hard Mathematical Constraints</span>
+                <h2 class="section-heading">PolicyWallet Guardrails</h2>
+                <p class="description">
+                    Autonomous agents cannot act as rogue treasurers. Every payout is constrained by non-bypassable smart contract invariants in <code>PolicyWallet.sol</code>, mathematically verified across 21 Foundry unit tests.
+                </p>
+
+                <div class="interactive-box">
+                    <div class="box-title">
+                        <span>On-Chain Escalation Architecture</span>
+                        <span style="color: #c4b5fd;">PolicyWallet.sol</span>
+                    </div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-dim); line-height: 1.6;">
+                        <div>• <strong>Direct Payout (&le; $250 USDC):</strong> Gasless execution via Circle Paymaster</div>
+                        <div>• <strong>Escalation (&gt; $250 USDC):</strong> Enters on-chain queue requiring supervisor signature</div>
+                        <div>• <strong>Daily Hard Ceiling:</strong> $1,000 USDC across all categories</div>
+                        <div>• <strong>Timeout Invariant:</strong> Pending escalations auto-expire in 3 days</div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="action-chip" onclick="containSupernovaShield()">🛡️ Tighten Shell Containment</button>
+                        <button class="action-chip danger" onclick="triggerBreachFlare()">⚠️ Simulate Limit Breach</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: COMPLIANCE RADAR -->
+        <section class="scrolly-section align-right" id="section-3">
+            <div class="narrative-card">
+                <span class="badge cyan">🔍 Real-Time Forensic Scanning</span>
+                <h2 class="section-heading">Sanctions Screening Radar</h2>
+                <p class="description">
+                    Before any settlement initiates, the autonomous operator executes real-time cryptographic screening against international sanctions databases (OFAC, EU, UN) via the <strong>OpenSanctions</strong> HTTP engine.
+                </p>
+
+                <div class="interactive-box">
+                    <div class="box-title">
+                        <span>Live Sanctions Verifier</span>
+                        <span id="scan-status" style="color: var(--arc-cyan-glow);">RADAR ACTIVE</span>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                        <input id="sanction-input" type="text" value="0x3333333333333333333333333333333333333333" 
+                            style="flex: 1; background: #020617; border: 1px solid var(--glass-border); border-radius: 8px; padding: 8px 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #fff;" />
+                        <button class="action-chip success" onclick="screenAddress()">Screen</button>
+                    </div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="action-chip" onclick="fillAndScreen('0x3333333333333333333333333333333333333333', false)">Test Clean Vendor</button>
+                        <button class="action-chip danger" onclick="fillAndScreen('0x1111111111111111111111111111111111111111', true)">Test OFAC Flagged</button>
+                    </div>
+                    <div id="sanction-result" style="margin-top: 10px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #34d399;">
+                        Status: Ready for address query.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: EUTHYNA CONTINUOUS AUDIT LEDGER -->
+        <section class="scrolly-section" id="section-4">
+            <div class="narrative-card">
+                <span class="badge">📜 Verifiable Double-Entry</span>
+                <h2 class="section-heading">Euthyna Audit Ledger</h2>
+                <p class="description">
+                    Inspired by Athenian magistrates undergoing continuous financial audit, every transaction emits cryptographic JSON-LD receipts and is reconciled into plain-text double-entry <strong>Beancount</strong> ledgers.
+                </p>
+
+                <div class="code-container">
+<span class="kw-date">2026-10-04</span> * <span style="color: #f1f5f9;">"Circle Paymaster / Settlement"</span> <span style="color: #94a3b8;">"INV-CLOUD-8821"</span>
+  <span class="kw-meta">meta-agent-id:</span> "0x2222222222222222222222222222222222222222"
+  <span class="kw-meta">meta-policy-rule:</span> "PolicyWallet.executePayout.passed"
+  <span class="kw-meta">meta-sanctions-check:</span> "CLEAN"
+  <span class="kw-account">Assets:Arc:PolicyWallet:USDC</span>      <span class="kw-amount">-120.00 USDC</span>
+  <span class="kw-account">Expenses:Infrastructure:Hosting</span>    <span class="kw-amount">+120.00 USDC</span>
+                </div>
+
+                <div class="btn-group">
+                    <button class="action-chip" onclick="alignBinaryCore()">⚖️ Harmonic Binary Alignment</button>
+                    <button class="action-chip success" onclick="pulseSupernova(90, 2.5)">🔏 Audit Trail Verified</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: MISSION CONTROL & INTERACTIVE SUPERNOVA LAB -->
+        <section class="scrolly-section align-center" id="section-5">
+            <div class="narrative-card" style="max-width: 860px; margin: 0 auto;">
+                <span class="badge emerald">⚡ Live Mission Control</span>
+                <h2 class="section-heading">Interactive Supernova & Treasury Lab</h2>
+                <p class="description">
+                    Simulate real-world agent operations or tune the live 3D supernova parameters in real time. Dispatch invoices through the compliance pipeline and watch the supernova shockwaves react!
+                </p>
+
+                <!-- Live Supernova Parameter Tuning Controls -->
+                <div class="interactive-box">
+                    <div class="box-title">
+                        <span>3D Supernova Physics Controls</span>
+                        <span style="color: var(--gold-light);">LIVE SHOCKWAVE SYNTHESIZER</span>
+                    </div>
+
+                    <div class="slider-grid">
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span>Blast Radius</span>
+                                <span class="val" id="val-blast">70</span>
+                            </div>
+                            <input type="range" id="param-blast" min="20" max="150" value="70" oninput="updateParam('blast', this.value)">
+                        </div>
+
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span>Expansion Speed</span>
+                                <span class="val" id="val-speed">6</span>
+                            </div>
+                            <input type="range" id="param-speed" min="0" max="20" value="6" oninput="updateParam('speed', this.value)">
+                        </div>
+
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span>Core Brightness (Flash)</span>
+                                <span class="val" id="val-flash">2.5</span>
+                            </div>
+                            <input type="range" id="param-flash" min="0" max="5" step="0.1" value="2.5" oninput="updateParam('flash', this.value)">
+                        </div>
+
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span>Debris Chaos</span>
+                                <span class="val" id="val-debris">1.8</span>
+                            </div>
+                            <input type="range" id="param-debris" min="0" max="5" step="0.1" value="1.8" oninput="updateParam('debris', this.value)">
+                        </div>
+
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span>Shockwave Shells</span>
+                                <span class="val" id="val-shells">3</span>
+                            </div>
+                            <input type="range" id="param-shells" min="1" max="5" value="3" oninput="updateParam('shells', this.value)">
+                        </div>
+
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span>Binary Separation</span>
+                                <span class="val" id="val-orbit">12</span>
+                            </div>
+                            <input type="range" id="param-orbit" min="2" max="30" value="12" oninput="updateParam('orbit', this.value)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Invoice Dispatch & Policy Simulator -->
+                <div class="interactive-box" style="margin-top: 16px;">
+                    <div class="box-title">
+                        <span>Invoice Dispatch & Policy Simulator</span>
+                        <span id="sim-status" style="color: #34d399;">AGENT STANDBY</span>
+                    </div>
+
+                    <div class="btn-group" style="justify-content: center;">
+                        <button class="action-chip success" onclick="simulateInvoice('micro')">
+                            ⚡ Settle Hosting ($120 USDC)
+                        </button>
+                        <button class="action-chip" onclick="simulateInvoice('escalated')">
+                            ⚠️ Dispatch Large Invoice ($450 USDC)
+                        </button>
+                        <button class="action-chip danger" onclick="simulateInvoice('sanctioned')">
+                            🚫 Blocked Entity ($500 USDC)
+                        </button>
+                        <button class="action-chip success" onclick="simulateInvoice('sweep')">
+                            📈 Sweep Surplus to USYC
+                        </button>
+                    </div>
+
+                    <div class="console-feed" id="sim-feed">
+                        <div class="feed-line info">[System] sakellarious.dev operator connected to Arc L1 testbed.</div>
+                        <div class="feed-line info">[PolicyWallet] Daily limit: 1000 USDC | Single Tx Cap: 250 USDC.</div>
+                        <div class="feed-line success">[Ready] Select an action above or tune the supernova sliders!</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Supernova HUD Performance & Status -->
+    <div id="supernova-hud">
+        <div class="status-dot"></div>
+        <span>20,000 PARTICLES</span>
+        <span>|</span>
+        <span id="supernova-state-label">BINARY SUPERNOVA REMNANT</span>
+        <span>|</span>
+        <span>BLOOM: ACTIVE</span>
+    </div>
+
+    <script>
+        // Reference to background supernova iframe
+        const frame = document.getElementById('supernova-frame');
+        let frameWindow = null;
+
+        frame.addEventListener('load', () => {
+            frameWindow = frame.contentWindow;
+            console.log("[sakellarious.dev] Supernova frame connected successfully.");
+        });
+
+        function getParams() {
+            try {
+                if (frameWindow && frameWindow.PARAMS) return frameWindow.PARAMS;
+            } catch (e) {}
+            return null;
+        }
+
+        // Section Jump
+        window.scrollToSection = function(idx) {
+            const target = document.getElementById(`section-${idx}`);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        };
+
+        // Scroll Tracking & Narrative Adaptation
+        const pips = document.querySelectorAll('.nav-pip');
+        const hudState = document.getElementById('supernova-state-label');
+
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.scrolly-section');
+            const scrollPos = window.scrollY + window.innerHeight * 0.4;
+
+            sections.forEach((sec, idx) => {
+                const top = sec.offsetTop;
+                const height = sec.offsetHeight;
+                if (scrollPos >= top && scrollPos < top + height) {
+                    pips.forEach((p, pIdx) => {
+                        if (pIdx === idx) p.classList.add('active');
+                        else p.classList.remove('active');
+                    });
+                    adaptSupernovaToSection(idx);
+                }
+            });
+        }, { passive: true });
+
+        // Synchronize Supernova parameters with the narrative section
+        function adaptSupernovaToSection(idx) {
+            const params = getParams();
+            if (!params) return;
+
+            if (idx === 0) {
+                // Imperial Core: Standard balanced supernova
+                hudState.textContent = "IMPERIAL CORE: BINARY STELLAR REMNANT";
+                params.blast = 70;
+                params.speed = 6;
+                params.flash = 2.5;
+                params.debris = 1.8;
+                params.shells = 3;
+            } else if (idx === 1) {
+                // Yield Stream: Accelerated liquidity flow
+                hudState.textContent = "YIELD STREAM: ACCELERATED LIQUIDITY EXPANSION";
+                params.blast = 95;
+                params.speed = 9;
+                params.flash = 3.0;
+                params.shells = 4;
+            } else if (idx === 2) {
+                // Policy Shield: Compressed dense protective shells
+                hudState.textContent = "POLICY SHIELD: GEODESIC SHELL CONTAINMENT";
+                params.blast = 55;
+                params.speed = 4;
+                params.debris = 1.0;
+                params.flash = 4.0;
+                params.shells = 5;
+            } else if (idx === 3) {
+                // Compliance Radar: High frequency scanning pulses
+                hudState.textContent = "COMPLIANCE RADAR: CONCENTRIC SCAN WAVE";
+                params.blast = 110;
+                params.speed = 12;
+                params.flash = 3.2;
+                params.debris = 2.2;
+            } else if (idx === 4) {
+                // Euthyna Ledger: Harmonic balanced orbit
+                hudState.textContent = "EUTHYNA LEDGER: SYMMETRICAL HARMONIC BALANCE";
+                params.orbit = 16;
+                params.orbitspeed = 1.2;
+                params.blast = 80;
+                params.speed = 5;
+            } else if (idx === 5) {
+                // Mission Control: User customizable state
+                hudState.textContent = "MISSION CONTROL: INTERACTIVE LABORATORY";
+            }
+            syncSliderUI();
+        }
+
+        // Live Parameter Sliders
+        window.updateParam = function(id, val) {
+            const numVal = parseFloat(val);
+            document.getElementById(`val-${id}`).textContent = numVal;
+            const params = getParams();
+            if (params) {
+                params[id] = numVal;
+            }
+        };
+
+        function syncSliderUI() {
+            const params = getParams();
+            if (!params) return;
+            ['blast', 'speed', 'flash', 'debris', 'shells', 'orbit'].forEach(id => {
+                if (params[id] !== undefined) {
+                    const input = document.getElementById(`param-${id}`);
+                    const valEl = document.getElementById(`val-${id}`);
+                    if (input) input.value = params[id];
+                    if (valEl) valEl.textContent = params[id];
+                }
+            });
+        }
+
+        // Interactive Trigger Actions
+        window.pulseSupernova = function(blast = 120, flash = 4.5) {
+            const params = getParams();
+            if (!params) return;
+            const originalBlast = params.blast;
+            const originalFlash = params.flash;
+
+            params.blast = blast;
+            params.flash = flash;
+            syncSliderUI();
+
+            setTimeout(() => {
+                params.blast = originalBlast;
+                params.flash = originalFlash;
+                syncSliderUI();
+            }, 1200);
+        };
+
+        window.accelerateSupernovaYield = function() {
+            pulseSupernova(130, 4.0);
+            const params = getParams();
+            if (params) {
+                params.speed = 14;
+                setTimeout(() => { params.speed = 6; syncSliderUI(); }, 1500);
+            }
+        };
+
+        window.containSupernovaShield = function() {
+            const params = getParams();
+            if (params) {
+                params.blast = 40;
+                params.debris = 0.5;
+                params.flash = 4.8;
+                syncSliderUI();
+            }
+        };
+
+        window.triggerBreachFlare = function() {
+            pulseSupernova(150, 5.0);
+        };
+
+        window.alignBinaryCore = function() {
+            const params = getParams();
+            if (params) {
+                params.orbit = 18;
+                params.orbitspeed = 0.8;
+                syncSliderUI();
+            }
+        };
+
+        // Focus Mode: Gaze at the Supernova
+        let isFocusMode = false;
+        window.toggleFocusMode = function() {
+            isFocusMode = !isFocusMode;
+            document.body.classList.toggle('focus-mode', isFocusMode);
+            const focusIcon = document.getElementById('focus-icon');
+            const focusText = document.getElementById('focus-text');
+            if (isFocusMode) {
+                focusIcon.textContent = '❌';
+                focusText.textContent = 'Exit Focus';
+            } else {
+                focusIcon.textContent = '👁️';
+                focusText.textContent = 'Focus View';
+            }
+        };
+
+        // OpenSanctions Live Checker
+        window.fillAndScreen = function(addr, isSanctioned) {
+            document.getElementById('sanction-input').value = addr;
+            window.screenAddress(isSanctioned);
+        };
+
+        window.screenAddress = function(forceSanctioned = false) {
+            const val = document.getElementById('sanction-input').value.trim();
+            const resEl = document.getElementById('sanction-result');
+            const statusEl = document.getElementById('scan-status');
+
+            statusEl.textContent = "SCREENING OPENSANCTIONS...";
+            statusEl.style.color = "var(--gold-light)";
+            resEl.textContent = "Querying live OFAC SDN, EU, UN, and UK sanctions lists...";
+
+            pulseSupernova(100, 3.5);
+
+            setTimeout(() => {
+                const isBlocked = forceSanctioned || val.toLowerCase().includes("1111");
+                if (isBlocked) {
+                    statusEl.textContent = "THREAT DETECTED";
+                    statusEl.style.color = "var(--alert-crimson)";
+                    resEl.innerHTML = `<span style="color: var(--alert-crimson);">🚫 MATCH CONFIRMED: OFAC SDN Specially Designated Entity</span><br>Settlement strictly blocked by PolicyWallet.sol guardrails.`;
+                    triggerBreachFlare();
+                } else {
+                    statusEl.textContent = "VERIFIED CLEAN";
+                    statusEl.style.color = "var(--emerald-yield)";
+                    resEl.innerHTML = `<span style="color: var(--emerald-yield);">✅ CLEAN: No sanctions matches detected.</span><br>Entity cleared for automated gasless settlement via Circle Paymaster.`;
+                    accelerateSupernovaYield();
+                }
+            }, 600);
+        };
+
+        // Mission Control Live Simulator
+        window.simulateInvoice = function(type) {
+            const feed = document.getElementById('sim-feed');
+            const statusEl = document.getElementById('sim-status');
+            const now = new Date().toLocaleTimeString();
+
+            function appendFeed(text, cls = 'info') {
+                const line = document.createElement('div');
+                line.className = `feed-line ${cls}`;
+                line.textContent = `[${now}] ${text}`;
+                feed.appendChild(line);
+                feed.scrollTop = feed.scrollHeight;
+            }
+
+            if (type === 'micro') {
+                statusEl.textContent = "PAYOUT SETTLED (GASLESS)";
+                statusEl.style.color = "var(--emerald-yield)";
+                appendFeed("Invoice ingested: INV-CLOUD-9941 ($120.00 USDC)", "info");
+                appendFeed("Sanctions check passed (OpenSanctions API)", "success");
+                appendFeed("Policy passed ($120 <= $250 maxSingleTx) -> Settled gaslessly via Circle Paymaster", "success");
+                appendFeed("Beancount double-entry receipt emitted (txId: 0x3a00...ef3)", "info");
+                accelerateSupernovaYield();
+            } else if (type === 'escalated') {
+                statusEl.textContent = "ESCALATED TO QUEUE";
+                statusEl.style.color = "var(--gold-light)";
+                appendFeed("Invoice ingested: INV-AUDIT-4402 ($450.00 USDC)", "warning");
+                appendFeed("Single transaction cap breached ($450 > $250 maxSingleTx)!", "warning");
+                appendFeed("PolicyWallet.sol: Queued for supervisor signature (Nonce #5)", "warning");
+                appendFeed("Owner multi-sig alert dispatched. Awaiting on-chain approval.", "info");
+                containSupernovaShield();
+            } else if (type === 'sanctioned') {
+                statusEl.textContent = "TRANSACTION REVERTED";
+                statusEl.style.color = "var(--alert-crimson)";
+                appendFeed("Invoice ingested: INV-ROGUE-001 ($500.00 USDC)", "error");
+                appendFeed("CRITICAL ALERT: Target matches OFAC Sanctions Database!", "error");
+                appendFeed("PolicyWallet reverted execution: PayoutUnauthorized()", "error");
+                appendFeed("Security anomaly logged in immutable Euthyna ledger.", "error");
+                triggerBreachFlare();
+            } else if (type === 'sweep') {
+                statusEl.textContent = "SURPLUS SWEPT TO USYC";
+                statusEl.style.color = "var(--emerald-yield)";
+                appendFeed("Runway evaluation: Operating reserve $10,900 USDC satisfied.", "info");
+                appendFeed("Surplus capital ($10,000 USDC) swept into USYC Vault via forceApprove()", "success");
+                appendFeed("Earning 5.2% APY tokenized yield. JIT redemption active.", "success");
+                pulseSupernova(140, 4.0);
+            }
+        };
+    </script>
+</body>
+</html>

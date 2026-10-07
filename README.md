@@ -1,4 +1,4 @@
-# 🏛️ Vestiarion AI — Continuous Treasury & Autonomous Business Operator
+# 🏛️ sakellarious.dev — Continuous Treasury & Autonomous Business Operator
 
 > **Built natively for Arc L1 (Circle's stablecoin-native Layer-1) with USYC yield primitives, Circle Gateway multichain reserve views, Circle Paymaster gasless execution, non-bypassable on-chain guardrails in `PolicyWallet.sol`, and continuous Euthyna Beancount auditability.**
 
@@ -30,20 +30,49 @@ npm run seed
 npm run report
 ```
 
-### 5. Launch the Brutalism UI & Backend Server
+### 5. Start the Backend API Server & Interactive UI
 ```bash
 npm start
-# Server and Interactive Brutalism UI Dashboard are live at http://localhost:4000
+# Server listens on http://localhost:4000
+# Root (http://localhost:4000/) serves the Sakellarious Byzantine Ledger Editorial UI (v1.0.0)
+# Interactive 3D Codex: http://localhost:4000/codex
+# Landing Page: http://localhost:4000/landing
+# 3D Supernova Universe: http://localhost:4000/supernova
 ```
-Visit **`http://localhost:4000`** in your browser to experience the **Imperial Arc Neo-Brutalism Command Deck (v6.0)**:
-- **Asymmetric Bento Vault Deck:** Monumental `$34,880.00` balance readout with dual-tone ratio bar (Liquid Mint vs USYC Violet) and PolicyWallet.sol spending HUD.
-- **Continuous Micro-Yield Ticker:** Real-time fractional cent harvest counter (`+$0.04058/sec`) and Arc L1 block height telemetry.
-- **Interactive Capital Flow Schematic:** Visual circuit schematic with traveling signal pulses and real-time smart contract inspector.
-- **"What-If" Runway & Yield Simulator:** Dual interactive sliders for daily burn and USYC allocation with live runway and 30-day interest projections.
-- **Invoice Processing Workbench:** 4-stage decision pipeline (OpenSanctions → Buffer Forecast → Policy Caps → Paymaster Settlement) with live streaming terminal logs.
-- **On-Chain Escalation Queue:** Supervisor review cards with 1-click approve/reject actions and mathematical override guarantees.
-- **Euthyna Audit Ledger & Multichain Reserves:** Interactive Beancount double-entry viewer, cryptographic JSON-LD receipts, and Circle Gateway 4-chain liquidity table.
-- **Design System Documentation:** Complete specification available in [`STYLEGUIDE-DesignSystem.md`](STYLEGUIDE-DesignSystem.md).
+Visit **`http://localhost:4000`** in your browser to experience **Sakellarious — Byzantine Ledger Editorial (Arc L1 Continuous Treasury v1.0.0)**:
+- **Chancery Masthead & State of the Purse:** Golden chancery seal, live runway telemetry, and high-contrast parchment/ledger dual theme switcher.
+- **Folio 00 (State of the Purse):** Liquid USDC buffer vs USYC actuarial reserves with real-time yield harvest counter.
+- **Folio 01 (The Routing of Accounts):** 7-node continuous routing matrix with live packet animations and contract inspector.
+- **Folio 02 (The Actuarial Model):** Interactive runway and burn rate simulation sliders with live 30-day interest projections.
+- **Folio 03 (Operational Dispatch):** 4-stage invoice workbench (OpenSanctions → Buffer Forecast → Policy Caps → Paymaster Settlement) with live streaming terminal logs.
+- **Folio 04 (The Escalation Chancery):** Supervisor review cards with 1-click approve/reject actions and mathematical override guarantees.
+- **Folio 05 (Continuous Double-Entry Archive):** Interactive Beancount double-entry viewer, cryptographic JSON-LD receipts, and Circle Gateway multichain liquidity table.
+- **Living Chancery Canvas:** Hairline grid rules, chancery radial aura, and drifting gold-leaf motes with `prefers-reduced-motion` compliance.
+- **Design System Documentation:** Complete specifications available in [`STYLEGUIDE-Sakellarious.md`](STYLEGUIDE-Sakellarious.md) and [`STYLEGUIDE-DesignSystem.md`](STYLEGUIDE-DesignSystem.md).
+
+---
+
+## 🏛️ Byzantine Cyber-Imperial Command Center UI (`frontend.html` / `index.html`)
+
+The primary frontend is built strictly following the **Byzantine Cyber-Imperial Design System** (`STYLEGUIDE-Byzantine-Cyber-Imperial.md`), featuring:
+- **Prestige Sovereign Monolith:** Deep void obsidian substrate (`#07090E`), illuminated Byzantine imperial gold (`#E5B443`), Tyrian purple accents (`#7928CA`), and precision metallic wireframe borders.
+- **Tri-Font Monumental Hierarchy:** Regal monumental inscriptions in `Cinzel`, modern fintech interface controls in `DM Sans`, and raw cryptographic receipts in `JetBrains Mono`.
+- **Holographic 2D Canvas Flow Blueprint:** 7-node orthogonal circuit matrix mapping live radiant packet flows between Arc L1 RPC, sakellarious.dev, OpenSanctions, PolicyWallet, Paymaster, USYC Vault, and Euthyna Ledger.
+- **Sovereign War Room & Policy Guardrail Gate:** Live interactive command plate tracking on-chain $1,000 daily budget limits, $\le \$250$ auto-settlements, multi-sig escalations, and real-time Beancount run-sheets.
+- **Tactile Web Audio Synthesizer:** Integrated procedural audio cues for settlement chimes, escalation bells, and sanctions alerts.
+
+---
+
+## 🌌 Interactive 3D Particle Scrollytelling UI (`supernova_explotion_2.html` / `/supernova`)
+
+The project also features a 60–120 FPS lightweight Three.js particle system whose formations morph dynamically in alignment with the project narrative as you scroll:
+
+1. **Imperial Core:** Celestial twin binary stars representing the sovereign Arc L1 treasury core.
+2. **Yield Stream:** Helical liquidity flow visualizing continuous 30-day runway forecasting & USYC yield sweeping.
+3. **Policy Shield:** Geodesic polyhedral cage demonstrating non-bypassable on-chain guardrails in `PolicyWallet.sol`.
+4. **Compliance Radar:** Real-time concentric radar scanning against global OpenSanctions lists.
+5. **Euthyna Ledger:** Dual-column balanced matrix displaying double-entry Beancount bookkeeping.
+6. **Mission Control:** Live interactive console allowing real-time invoice dispatch, policy evaluation, and audio synthesizer feedback.
 
 ---
 
@@ -51,7 +80,7 @@ Visit **`http://localhost:4000`** in your browser to experience the **Imperial A
 
 ```text
                                +-------------------------------------+
-                               |          Vestiarion Agent           |
+                               |          sakellarious.dev Agent           |
                                +-------------------------------------+
                                   |               |                |
              +--------------------+               |                +--------------------+
@@ -223,3 +252,4 @@ All JSON-LD cryptographic audit receipts conforming to PRD Section 8 schema.
   Assets:Arc:PolicyWallet:USDC                   -120.00 USDC
   Expenses:Infrastructure:Hosting                 120.00 USDC
 ```
+

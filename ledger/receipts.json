@@ -1,6 +1,6 @@
 [
   {
-    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
     "type": "AgentExecutionReceipt",
     "timestamp": "2026-10-03T20:40:21.830Z",
     "agentId": "0x2222222222222222222222222222222222222222",
@@ -29,7 +29,7 @@
     "txHash": "0x456ff3554a294c99a650c3d8245491fb70e7db56ea201ccf709f16cd328b29f9"
   },
   {
-    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
     "type": "AgentExecutionReceipt",
     "timestamp": "2026-10-03T20:40:51.068Z",
     "agentId": "0x2222222222222222222222222222222222222222",
@@ -58,7 +58,7 @@
     "txHash": "0x72f1093f29dfd42e8c3628cad81fc296d7f291b3e15aa0f768cd7bc437390ff3"
   },
   {
-    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
     "type": "AgentExecutionReceipt",
     "timestamp": "2026-10-03T20:40:51.736Z",
     "agentId": "0x2222222222222222222222222222222222222222",
@@ -87,7 +87,7 @@
     "txHash": "0xc9ba02f165a4722080ec1ca782306899b11365cdd92650ff396db2249a614b75"
   },
   {
-    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
     "type": "AgentExecutionReceipt",
     "timestamp": "2026-10-03T20:42:16.668Z",
     "agentId": "0x2222222222222222222222222222222222222222",
@@ -116,7 +116,7 @@
     "txHash": "0x3a0031c9f6c04fc1fb773f41c46fd39415c94636a120432037f87b515d8bfef3"
   },
   {
-    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
     "type": "AgentExecutionReceipt",
     "timestamp": "2026-10-03T20:42:17.112Z",
     "agentId": "0x2222222222222222222222222222222222222222",
@@ -145,7 +145,7 @@
     "txHash": "0x5e1c1cfbced70ec78b2f8aacba7034ea294bb415ce7cf6019176c34f4c643534"
   },
   {
-    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
     "type": "AgentExecutionReceipt",
     "timestamp": "2026-10-03T20:43:12.716Z",
     "agentId": "0x2222222222222222222222222222222222222222",
@@ -174,7 +174,7 @@
     "txHash": "0x592cb715439cdd9323dcef011daa494ced0ebdf5d51062f6045e630d820ea202"
   },
   {
-    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
     "type": "AgentExecutionReceipt",
     "timestamp": "2026-10-03T20:43:13.167Z",
     "agentId": "0x2222222222222222222222222222222222222222",
@@ -203,7 +203,7 @@
     "txHash": "0x7f71462e1ef59ca14652bfca844464f4cc8ccd64456ca17b2f42a4746f9e4d5f"
   },
   {
-    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
     "type": "AgentExecutionReceipt",
     "timestamp": "2026-10-03T20:50:03.646Z",
     "agentId": "0x2222222222222222222222222222222222222222",
@@ -232,7 +232,7 @@
     "txHash": "0xefebb3aedd9ed19dae9def0ceb116fafb68f5355c01e09492bc4bdbe4632ecac"
   },
   {
-    "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
     "type": "AgentExecutionReceipt",
     "timestamp": "2026-10-03T20:50:04.198Z",
     "agentId": "0x2222222222222222222222222222222222222222",
@@ -259,6 +259,354 @@
       "liquidUsdcAvailable": 9765
     },
     "txHash": "0x92eb203e3db5f6d4c28ed8b72a5f2d5f05d3c1b25514bc41fa97075b1a7ef2f6"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-04T09:17:57.142Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 120,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-CLOUD-8821",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-04T09:17:56.239Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 880,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 0
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9880
+    },
+    "txHash": "0x680e3abc7aac4fbe81778e4a1c91373fa175bebe4fe16f72844b9f120aca41bb"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-04T09:40:16.488Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 120,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-CLOUD-8821",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-04T09:40:12.463Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 880,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 0
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9880
+    },
+    "txHash": "0x63b7e3b59006af2d7b0a63bc83637b86da762d2d151753c145c7b8c4c979497e"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-04T10:08:18.430Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 120,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-CLOUD-8821",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-04T10:08:16.385Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 880,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 0
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9880
+    },
+    "txHash": "0x5896364abb054adb40250974f275c6d37d6374e70af21770ea2c2a866dca9ce2"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-04T10:09:45.950Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 120,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-CLOUD-8821",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-04T10:09:42.472Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 880,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 0
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9880
+    },
+    "txHash": "0x3925db73dc0ea9b8ff17542170ed82b5d124331df5a16f8a561502e7e5cef8fd"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-04T14:38:54.704Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 120,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-CLOUD-7189",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-04T14:38:52.303Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 760,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 1
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9760
+    },
+    "txHash": "0x6c9e0602576e0a353f37f69baf1f11a9602d523df0ba1480280bf60f31da4800"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-04T15:06:55.983Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 150,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-INFRA-101",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-04T15:06:54.964Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 850,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 0
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9850
+    },
+    "txHash": "0x72683d8ed7f0e3915daef71b698881c2aa889bba96b2a9a0a4b0f535b2f1a0a9"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-04T15:06:57.068Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x4444444444444444444444444444444444444444",
+    "amountUsdc": 600,
+    "category": "PAYROLL",
+    "invoiceRef": "INV-PAY-202",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-04T15:06:57.068Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 250,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 1
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9250
+    },
+    "txHash": "0xba677f97c47b3cea7c6ed31487bff7df1962797a0a484f96568f6152e3e5cb62"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-04T15:08:24.985Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 120,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-CLOUD-8821",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-04T15:08:23.914Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 880,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 0
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9880
+    },
+    "txHash": "0xc7c9ba63265a3d35cb0dc4f21b7dfb2777ec00b79c42c48b97101fa463512d52"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-04T15:23:51.880Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 150,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-INFRA-101",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-04T15:23:49.975Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 850,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 0
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9850
+    },
+    "txHash": "0x0816fa2372505c40924f1d1a750dab736ace66847f43d7b1d249a921b3b13335"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-04T15:23:52.369Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x4444444444444444444444444444444444444444",
+    "amountUsdc": 600,
+    "category": "PAYROLL",
+    "invoiceRef": "INV-PAY-202",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-04T15:23:52.369Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 250,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 1
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9250
+    },
+    "txHash": "0xc6407328c53392c0eaf0e1a1038a717e8ec1229dc19dd4da887f940d3146656f"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-04T15:48:45.514Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 150,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-INFRA-101",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API (Verified via Pre-flight Engine)",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-04T15:48:44.966Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 850,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 0
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9850
+    },
+    "txHash": "0x0e51f32f3c4b28aa23bd9d563dce0345f9263a9153e94099250287f7f93e11f6"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-04T15:48:46.002Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x4444444444444444444444444444444444444444",
+    "amountUsdc": 600,
+    "category": "PAYROLL",
+    "invoiceRef": "INV-PAY-202",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-04T15:48:46.002Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0x9A48F7d6e5B4e91823b58485Acfe7b08e9D02195",
+      "dailyLimitRemaining": 250,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 1
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 9250
+    },
+    "txHash": "0x81b7dc79ed9b5d10874fa7416c5586f0b9c26acb685584230b5f42925c938b59"
   },
   {
     "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",

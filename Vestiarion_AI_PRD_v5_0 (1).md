@@ -1,4 +1,4 @@
-# PRD — Vestiarion AI
+# PRD — sakellarious.dev
 ## Continuous Treasury & Autonomous Business Operator (RFB 01 + RFB 04)
 **Version 5.0 · Production Specification & Complete Verifiable Test Suite**  
 **Status:** Locked for Arc Testnet / Mainnet Implementation Target (Restores Complete 21-Test Solidity Suite directly in Section 7)
@@ -6,12 +6,12 @@
 ---
 
 ### 1. Product Summary
-**Vestiarion AI** is an autonomous, on-chain business operator and intelligent treasury management engine built natively for **Arc** (Circle’s stablecoin-native Layer-1 blockchain). Tying historical Byzantine financial institutions (*Vestiarion*—the centralized imperial treasury combining currency issuance, asset storage, and payroll) with classical Athenian governance (*Euthyna*—the continuous audit of public officers), Vestiarion AI acts as an un-slept corporate CFO and accounts payable/receivable (AP/AR) manager.
+**sakellarious.dev** is an autonomous, on-chain business operator and intelligent treasury management engine built natively for **Arc** (Circle’s stablecoin-native Layer-1 blockchain). Tying historical Byzantine financial institutions (*Sakellarios / Vestiarion*—the imperial treasury combining currency issuance, asset storage, and payroll) with classical Athenian governance (*Euthyna*—the continuous audit of public officers), sakellarious.dev acts as an un-slept corporate CFO and accounts payable/receivable (AP/AR) manager.
 
 The platform solves the critical missing piece in web3 agentic finance: **a single autonomous agent that aggregates multi-chain operating reserves, sweeps idle liquidity into tokenized yield (USYC), settles accounts payable just-in-time (JIT) via gasless payments, and enforces strict, non-bypassable spending limits through on-chain smart contract guardrails.**
 
 #### Core Differentiator
-Unlike brittle LLM scripts that hold raw private keys or execute unconstrained payments, Vestiarion AI operates within an on-chain **`PolicyWallet.sol` smart contract**. The AI agent autonomously decides *when* and *why* to pay invoices or rebalance capital, but the smart contract mathematically enforces daily budget ceilings, category whitelists, and an on-chain **Agent-Proposed, Owner-Approved Escalation Workflow** for transactions exceeding safety limits. Every action is logged into an immutable, replayable **Euthyna Audit Ledger** (Beancount / JSON-LD).
+Unlike brittle LLM scripts that hold raw private keys or execute unconstrained payments, sakellarious.dev operates within an on-chain **`PolicyWallet.sol` smart contract**. The AI agent autonomously decides *when* and *why* to pay invoices or rebalance capital, but the smart contract mathematically enforces daily budget ceilings, category whitelists, and an on-chain **Agent-Proposed, Owner-Approved Escalation Workflow** for transactions exceeding safety limits. Every action is logged into an immutable, replayable **Euthyna Audit Ledger** (Beancount / JSON-LD).
 
 ---
 
@@ -38,6 +38,7 @@ These architectural parameter values are authoritative for Version 5.0. The hack
 | **Unit Test Coverage** | **100% Verifiable Foundry Suite** | Complete 21-test Solidity code embedded directly in Section 7 (`PolicyWalletTest.t.sol`) |
 | **Hackathon Platform Fee** | **0%** | 100% of yield and capital flows directly to the business user |
 | **Target Deployment** | **Arc Testnet** | Fully functional deployed smart contracts, agent server, and live UI |
+| **Frontend Design System** | **Kiln Neo-Brutalism (`data-theme="kiln"`)** | Loud Poster Neo-Brutalism: warm raw paper `#fff6e0`, 20px dot-grid, 3px solid ink borders, 0px border-radius, hard zero-blur offset shadows, Bricolage Grotesque ExtraBold display, DM Sans UI, JetBrains Mono data, and flat screen-print role colors |
 
 ---
 
@@ -58,6 +59,7 @@ These architectural parameter values are authoritative for Version 5.0. The hack
 * **Speculative DEX Trading:** No yield farming on high-volatility DEX pools; yield is strictly restricted to USYC.
 * **Fiat Banking Ramps:** Direct ACH/SWIFT fiat on-ramps are excluded from the V1 demo path.
 * **Native Mobile Apps:** Target is a mobile-responsive web dashboard.
+* **Skeuomorphism, Neumorphism, or Glassmorphism:** The frontend strictly forbids soft shadows, blurred acrylics, translucency, or rounded pill containers. All UI surfaces must strictly adhere to the Kiln Neo-Brutalism specification with flat role inks, 3px black outlines, zero border-radius, and snap-only mechanical physics.
 
 ---
 
@@ -635,12 +637,12 @@ contract PolicyWalletTest is Test {
 
 ### 8. Audit & Attestation Architecture (The "Euthyna" Ledger)
 
-Every decision made by Vestiarion AI writes an append-only, double-entry financial log entry using the **Beancount** plain-text accounting format and JSON-LD metadata.
+Every decision made by sakellarious.dev writes an append-only, double-entry financial log entry using the **Beancount** plain-text accounting format and JSON-LD metadata.
 
 #### Example Beancount Entry Generated by Agent
 ```beancount
 2026-10-02 * "Circle Paymaster / Vendor Settlement" "Paid Cloud Hosting Invoice #INV-8821"
-  meta-agent-id: "vestiarion-core-v5"
+  meta-agent-id: "sakellarious-core-v5"
   meta-forecast-30d-buffer: "5000.00 USDC"
   meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
   meta-sanctions-check: "OpenSanctions.status200.clean"
@@ -652,7 +654,7 @@ Every decision made by Vestiarion AI writes an append-only, double-entry financi
 #### JSON-LD Audit Payload Schema
 ```json
 {
-  "@context": "https://vestiarion.ai/schemas/audit-v5.jsonld",
+  "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
   "type": "AgentExecutionReceipt",
   "timestamp": "2026-10-02T19:40:00Z",
   "agentId": "0xAgentWalletAddress",
@@ -683,7 +685,57 @@ Every decision made by Vestiarion AI writes an append-only, double-entry financi
 
 ---
 
-### 9. Core User & Agent Flow
+### 9. Frontend & Visual Architecture Specification (Byzantine Cyber-Imperial Design System)
+
+The user interface for sakellarious.dev conforms strictly to the **Byzantine Cyber-Imperial Design System (`data-theme="byzantine"`)**, implementing a **Prestige Sovereign Monolithic Command Center** aesthetic. The design synthesizes ancient Byzantine imperial fiscal custody (*Sakellarios & Vestiarion*) with classical Athenian magistrate audits (*Euthyna*) and Circle's cutting-edge Arc L1 crypto infrastructure, discarding generic cartoonish brutalism in favor of deep obsidian depth, illuminated Byzantine imperial gold, Tyrian purple accents, and precision holographic circuit telemetry.
+
+#### 9.1 Substrate & Color Tokens
+
+```css
+:root, [data-theme="byzantine"] {
+  /* Substrates & Depth */
+  --bg-obsidian:       #07090e;  /* Deep void abyss */
+  --bg-surface:        #0c1018;  /* Recessed command foundation */
+  --bg-card:           rgba(15, 20, 31, 0.88);  /* Monolithic glass plate */
+  --bg-well:           #090d14;  /* Inset terminal wells */
+
+  /* Imperial Sovereign Accents */
+  --gold-primary:      #e5b443;  /* Byzantine Imperial Gold */
+  --gold-light:        #ffe28a;  /* Illuminated Leaf Gold */
+  --gold-dark:         #9a7426;  /* Burnished Solid Coin Gold */
+  --gold-glow:         rgba(229, 180, 67, 0.24);
+  --gold-border:       rgba(229, 180, 67, 0.32);
+
+  /* Imperial Role Accents */
+  --tyrian-purple:     #7928ca;  /* Byzantine Tyrian Imperial Violet */
+  --arc-cyan:          #00e5ff;  /* Circle Arc L1 Electric Cyan */
+  --emerald-pass:      #05ffa1;  /* Athenian Euthyna Verified Audit */
+  --crimson-revert:    #ff2e55;  /* OFAC SDN Sanctions Revert */
+  --amber-warn:        #ffb020;  /* Escalation Threshold Multi-Sig */
+}
+```
+
+#### 9.2 Typography System (Tri-Font Hierarchy)
+Three Google Fonts loaded with `display: swap`:
+* **Imperial Monumental Display (`--font-serif`):** `Cinzel` (600, 700, 800, 900) for authoritative Byzantine headings, regal coin monograms, and brand crests.
+* **Modern High-Fintech UI (`--font-ui`):** `DM Sans` (300, 400, 500, 600, 700) for readable command text, section navigation, and interactive form labels.
+* **Cryptographic & Financial Telemetry (`--font-mono`):** `JetBrains Mono` (400, 500, 600, 700) for transaction hashes, gas metrics, and Beancount accounting records.
+
+#### 9.3 Signature Visual & Interactive Components
+1. **Streaming Imperial Status Marquee:** Real-time sliding banner streaming live protocol metrics (Arc L1 block height, Circle Paymaster status, USYC rate, OpenSanctions radar status).
+2. **2D Canvas Transaction Flow Matrix (`flowCanvas`):** Obsidian & gold orthogonal circuit blueprint connecting 7 core nodes (`ARC L1 RPC`, `SAKELLARIOUS.DEV`, `OPENSANCTIONS`, `POLICYWALLET`, `CIRCLE PAYMASTER`, `USYC VAULT`, `EUTHYNA LEDGER`) with live radiant cyan particle pulses.
+3. **Six Imperial Vault Pillars:** Monolithic cards with subtle gold borders, deep obsidian backing, and corner brackets.
+4. **War Room & Physical Till Receipt Console:**
+   * *PolicyWallet Daily Cap & Guardrail Gauge:* 10-segment crystal indicator tracking real-time daily budget consumption against the 1,000 USDC limit (880 USDC remaining, <= $250 auto-settlement threshold).
+   * *Interactive Dispatch Buttons:* Micro-invoice, cap breach escalation, OFAC sanctions blocking, and USYC yield sweep.
+   * *Euthyna Immutable Audit Run-Sheet:* Monospace terminal stream with cryptographic status stamps (`[PAID]`, `[ESCALATED]`, `[REVERTED]`).
+   * *Imperial Sound Synthesizer:* Web Audio API feedback for tactile settlement chimes and alert cues.
+5. **Foundry Formal Verification Matrix:** Industrial table displaying all 21 passing invariants with green passing badges.
+6. **Toast Notifications (`Toast`):** Slams into the viewport corner on transaction execution and auto-clears.
+
+---
+
+### 10. Core User & Agent Flow
 
 ```text
 [1. Ingest Invoices/AP] ---> [2. OpenSanctions API Check] ---> [3. 30D Forecast & USYC Sweep]
@@ -702,40 +754,41 @@ Every decision made by Vestiarion AI writes an append-only, double-entry financi
 
 ---
 
-### 10. Must-Demo vs Must-Exist Code (Hackathon Scoping)
+### 11. Must-Demo vs Must-Exist Code (Hackathon Scoping)
 
-#### 10.1 MUST DEMO LIVE (In the 3-Minute Presentation)
-1. **Wallet & Reserve Overview:** Real-time dashboard showing consolidated USDC balances via Circle Gateway on Arc testnet.
+#### 11.1 MUST DEMO LIVE (In the 3-Minute Presentation)
+1. **Wallet & Reserve Overview (Kiln UI):** Real-time dashboard showing consolidated USDC balances via Circle Gateway on Arc testnet in the Kiln Neo-Brutalist interface with sliding marquee ticker and 2D circuit blueprint.
 2. **Autonomous USYC Yield Sweep:** Agent executing an automated transaction sweeping surplus USDC into USYC when balance exceeds operating buffer.
 3. **JIT Vendor Payout via Paymaster:** Automated execution of an incoming 120 USDC vendor bill paid gaslessly using Circle Paymaster after live OpenSanctions screening.
-4. **On-Chain Policy Enforcement / Pending Queue:** Submitting a 500 USDC payout (exceeding 250 USDC cap), showing `PolicyWallet.sol` pushing the transaction to the on-chain pending queue, sending a Telegram alert to the supervisor, and executing the supervisor's on-chain owner approval.
+4. **On-Chain Policy Enforcement / Pending Queue:** Submitting a 500 USDC payout (exceeding 250 USDC cap), showing `PolicyWallet.sol` pushing the transaction to the on-chain pending queue with orange escalation badge, sending a Telegram alert to the supervisor, and executing the supervisor's on-chain owner approval with confirmation slam.
 5. **Euthyna Audit Receipt:** Displaying the generated Beancount ledger entry and verifiable transaction hash on Arc Block Explorer.
 
-#### 10.2 MUST EXIST IN CODEBASE
+#### 11.2 MUST EXIST IN CODEBASE
 * Complete `PolicyWallet.sol` smart contract with 100% verifiable unit test coverage (`PolicyWalletTest.t.sol` embedded in Section 7) for limit checks, whitelist logic, USYC vault approvals, escalation nonces, request timeouts, and reentrancy safety.
 * Circle CLI / SDK scripts connecting to Arc Testnet RPC.
 * Forecasting module calculating 30-day cash flow requirements.
 * Beancount ledger generation script and JSON-LD schema validator.
 * Live OpenSanctions REST API integration script.
+* Kiln Neo-Brutalist frontend application with interactive War Room dispatch pad and till receipt tape.
 
-#### 10.3 OUT OF SCOPE FOR V1 DEMO
+#### 11.3 OUT OF SCOPE FOR V1 DEMO
 * Native CCTP mint/burn cross-chain bridging (deferred to V1.1 stretch).
 * Production KYB corporate identity verification.
 * Fiat ACH bank account integrations.
 
 ---
 
-### 11. Real Data & Day-1 Traction Strategy
+### 12. Real Data & Day-1 Traction Strategy
 
 To guarantee maximum scoring under the **30% Genuine Traction** judging criteria:
 * **Zero Mock Data Policy:** All demo and testing transactions execute live on Arc testnet/mainnet with real USDC ERC-20 token contracts.
 * **Dual User Onboarding (Primary + External Alpha Partner):**
-  1. **User #1 (Internal Team):** Vestiarion AI manages the builder team's actual project bills (cloud server fees, LLM API usage, teammate stipends).
-  2. **User #2 (External Partner):** Onboard 1 external open-source maintainer or freelance contractor to process at least 2 real recurring stipends/invoices through Vestiarion AI during the 14-day hackathon submission window.
+  1. **User #1 (Internal Team):** sakellarious.dev manages the builder team's actual project bills (cloud server fees, LLM API usage, teammate stipends).
+  2. **User #2 (External Partner):** Onboard 1 external open-source maintainer or freelance contractor to process at least 2 real recurring stipends/invoices through sakellarious.dev during the 14-day hackathon submission window.
 
 ---
 
-### 12. Arc Build Phases & Implementation Roadmap
+### 13. Arc Build Phases & Implementation Roadmap
 
 ```text
 +-----------------------+     +-----------------------+     +-----------------------+
@@ -745,8 +798,8 @@ To guarantee maximum scoring under the **30% Genuine Traction** judging criteria
                                                                         |
                                                                         v
 +-----------------------+     +-----------------------+     +-----------------------+
-| Phase 6: Demo Video   | <-- |Phase 5: UI & Dashboard| <-- | Phase 4: Euthyna Log  |
-| (3-Min Pitch & Repo)  |     | (Pending Queue & UI)  |     | (Beancount Ledger)    |
+| Phase 6: Demo Video   | <-- |Phase 5: Kiln Dashboard| <-- | Phase 4: Euthyna Log  |
+| (3-Min Pitch & Repo)  |     | (War Room & Receipt)  |     | (Beancount Ledger)    |
 +-----------------------+     +-----------------------+     +-----------------------+
 ```
 
@@ -754,22 +807,22 @@ To guarantee maximum scoring under the **30% Genuine Traction** judging criteria
 * **Phase 2: Agent Core (Days 4–6):** Develop cash flow forecasting logic, invoice ingestion, and live OpenSanctions API integration.
 * **Phase 3: Circle & Arc Integration (Days 7–8):** Connect Circle Gateway read balances, USYC vault calls, and Circle Paymaster gasless infrastructure.
 * **Phase 4: Audit & Ledger System (Days 9–10):** Implement Beancount plain-text ledger parser and JSON-LD receipt generator.
-* **Phase 5: Frontend Dashboard & Telegram Webhook (Days 11–12):** Build React dashboard showing balances, yield stats, active policies, pending escalation queue, and live audit feed.
+* **Phase 5: Kiln Neo-Brutalist Dashboard & Webhooks (Days 11–12):** Build Kiln dashboard (warm paper `#fff6e0`, 3px borders, zero border-radius, Bricolage Grotesque / DM Sans / JetBrains Mono) showing balances, yield stats, active policies, War Room dispatch pad, till receipt tape, and live audit feed.
 * **Phase 6: Dual Traction & Video (Days 13–14):** Execute transactions for User #1 & User #2, record 3-minute video demo, finalize public GitHub repo, and submit.
 
 ---
 
-### 13. Demo Scenario & Script Outline
+### 14. Demo Scenario & Script Outline
 
-* **0:00 - 0:30 (The Problem & Byzantine Heritage):** Introduce Vestiarion AI—combining ancient Byzantine continuous treasury management with Athenian *Euthyna* continuous auditability for autonomous corporate finance on Arc.
-* **0:30 - 1:15 (Yield Sweeping & Gateway Sync):** Show consolidated multi-chain USDC reserves via Circle Gateway. Demonstrate the agent autonomously sweeping surplus capital into USYC to earn yield.
-* **1:15 - 1:45 (JIT Gasless AP Payout & Sanctions Check):** Ingest a vendor bill. Agent runs a live OpenSanctions API check, executes JIT redemption from USYC, and settles the invoice gaslessly via Circle Paymaster.
-* **1:45 - 2:30 (On-Chain Policy Guardrail & Escalation Queue):** Trigger an over-limit transaction (>250 USDC cap). Show `PolicyWallet.sol` pushing the transaction to the on-chain pending queue, sending a Telegram alert to the supervisor, and executing the supervisor's on-chain owner approval.
+* **0:00 - 0:30 (The Problem & Byzantine Heritage):** Introduce sakellarious.dev—combining ancient Byzantine continuous treasury management (*Sakellarios / Vestiarion*) with Athenian *Euthyna* continuous auditability for autonomous corporate finance on Arc.
+* **0:30 - 1:15 (Yield Sweeping & Gateway Sync):** Show consolidated multi-chain USDC reserves via Circle Gateway in the Kiln Neo-Brutalist interface. Demonstrate the agent autonomously sweeping surplus capital into USYC to earn yield.
+* **1:15 - 1:45 (JIT Gasless AP Payout & Sanctions Check):** Ingest a vendor bill. Agent runs a live OpenSanctions API check, executes JIT redemption from USYC, and settles the invoice gaslessly via Circle Paymaster with till receipt confirmation.
+* **1:45 - 2:30 (On-Chain Policy Guardrail & Escalation Queue):** Trigger an over-limit transaction (>250 USDC cap). Show `PolicyWallet.sol` pushing the transaction to the on-chain pending queue, sending a Telegram alert to the supervisor, and executing the supervisor's on-chain owner approval with confirmation slam.
 * **2:30 - 3:00 (Euthyna Audit Trail & Dual Traction Metrics):** Display the machine-readable Beancount ledger, transaction receipts on Arc Explorer, and real USDC volume processed across internal and external partner wallets.
 
 ---
 
-### 14. Acceptance Criteria Checklist
+### 15. Acceptance Criteria Checklist
 
 - [ ] `PolicyWallet.sol` compiled and deployed on Arc Testnet with `ReentrancyGuard` active.
 - [ ] 100% test pass rate on `PolicyWalletTest.t.sol` Foundry test suite (all 21 tests embedded in Section 7 passing).
@@ -787,12 +840,12 @@ To guarantee maximum scoring under the **30% Genuine Traction** judging criteria
 - [ ] JSON-LD audit receipt generated with valid transaction hash.
 - [ ] CCTP cross-chain mint/burn marked as deferred stretch goal (V1.1).
 - [ ] Dual traction established: internal team bills + 1 external partner team stipends processed.
-- [ ] Mobile-responsive React/Next.js dashboard operational with pending escalation queue view.
+- [ ] Mobile-responsive Kiln Neo-Brutalist dashboard (`data-theme="kiln"`, warm paper `#fff6e0`, 3px borders, zero border-radius, Bricolage Grotesque, DM Sans, JetBrains Mono) operational with live War Room dispatch pad, till receipt tape, and pending escalation queue view.
 - [ ] 3-minute video demo recorded and public GitHub repository ready for submission.
 
 ---
 
-### 15. Implementation Guardrails
+### 16. Implementation Guardrails
 The agent and developers must treat the following parameters as immutable:
 
 ```solidity
@@ -806,6 +859,22 @@ DEFAULT_SINGLE_TX_CAP = 250 USDC
 ESCALATION_EXPIRY = 3 days
 PLATFORM_FEE = 0
 SANCTIONS_CHECK = "Live OpenSanctions REST API"
+
+// Kiln Neo-Brutalism Design Guardrails (data-theme="kiln")
+DESIGN_SYSTEM = "Kiln Neo-Brutalism"
+PAGE_SUBSTRATE = "Warm Raw Paper (#fff6e0) with 20px Dot-Grid"
+INK_BORDER = "3px Solid Warm Black (#14110f)"
+BORDER_RADIUS = "0px (Zero Rounded Corners Everywhere)"
+OFFSET_SHADOW = "Hard Zero-Blur (Npx Npx 0 #14110f)"
+DISPLAY_TYPE = "Bricolage Grotesque (800 ExtraBold)"
+UI_TYPE = "DM Sans"
+DATA_TYPE = "JetBrains Mono"
+PRIMARY_INK = "#ffe14d (Yellow)"
+LIVE_INK = "#ff6fae (Pink)"
+INFO_INK = "#4dd8ff (Cyan)"
+SUCCESS_INK = "#b6f23d (Lime)"
+WARNING_INK = "#ff8a3d (Orange)"
+ERROR_INK = "#ff4d4d (Red)"
 ```
 
 ---
