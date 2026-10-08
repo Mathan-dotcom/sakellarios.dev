@@ -984,5 +984,26 @@
       "liquidUsdcAvailable": 9180
     },
     "txHash": "0x8beaa2b62845bb4641c5ede536fb1a95c4f24691cfec9d59214f8d4af8486ee3"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-08T18:44:38.947Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "YIELD_REDEMPTION",
+    "amountUsdc": 20000,
+    "purpose": "Manual / Operator Yield Redemption",
+    "txHash": "0xb4b3628c2f2f5ed10d2141a1a6a22a7420575c6d3cd71ef987e0310f732a2759"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-08T18:44:44.105Z",
+    "agentId": "0x2222222222222222222222222222222222222222",
+    "action": "YIELD_SWEEP",
+    "amountUsdc": 18280,
+    "targetAsset": "USYC",
+    "liquidBalanceAfter": 10900,
+    "txHash": "0xf84a1bb8d485285fb46135804c602a9500b6ee458567c66a62f89fea8bbcbd17"
   }
 ]
