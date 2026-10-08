@@ -81,10 +81,13 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
-/* HIDE SYSTEM CURSOR ON DESKTOP */
+/* HIDE SYSTEM CURSOR ON DESKTOP EXCEPT FORM TEXT FIELDS */
 @media (hover: hover) and (pointer: fine) {
-  html, body, button, a, input, select, textarea, div, span {
+  html, body, button, a, div, span, select {
     cursor: none !important;
+  }
+  input, textarea, [contenteditable="true"] {
+    cursor: text !important;
   }
 }
 

@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { getScrollVelocity } from '../core/SmoothScroll';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -9,7 +10,7 @@ export interface OpticalGovernorCanvasProps {
   isHalted: boolean;
 }
 
-export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = ({ isHalted }) => {
+export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = React.memo(({ isHalted }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const scrollProgressRef = useRef(0);
 
@@ -33,7 +34,7 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = ({ is
       powerPreference: 'high-performance'
     });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
     mount.appendChild(renderer.domElement);
 
     // 3. BACKDROP RADIAL GLSL EMISSION PLANE
@@ -41,6 +42,7 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = ({ is
     const backdropUniforms = {
       uTime: { value: 0.0 },
       uTension: { value: isHalted ? 1.0 : 0.0 },
+      uScrollVelocity: { value: 0.0 },
       uResolution: { value: new THREE.Vector2(width, height) }
     };
 
@@ -169,7 +171,8 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = ({ is
 
     const cloudUniforms = {
       uTime: { value: 0.0 },
-      uTension: { value: isHalted ? 1.0 : 0.0 }
+      uTension: { value: isHalted ? 1.0 : 0.0 },
+      uScrollVelocity: { value: 0.0 }
     };
 
     const cloudVertexShader = `
@@ -178,14 +181,24 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = ({ is
       varying vec3 vColor;
       uniform float uTime;
       uniform float uTension;
+      uniform float uScrollVelocity;
 
       void main() {
         vColor = customColor;
         if (uTension > 0.05) {
           vColor = mix(vColor, vec3(0.784, 0.294, 0.192), uTension * 0.65);
         }
-        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-        gl_PointSize = size * (290.0 / -mvPosition.z);
+
+        // 100% GPU vertex wave undulation driven by uTime & uScrollVelocity
+        vec3 pos = position;
+        float r = length(pos);
+        float wave = sin(r * 4.2 - uTime * 2.0 + pos.y * 3.0) * 0.038;
+        float velPulse = sin(pos.x * 5.0 + uTime * 3.5) * (uScrollVelocity * 0.035);
+        vec3 dir = normalize(pos + vec3(0.0001));
+        pos += dir * (wave + velPulse);
+
+        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+        gl_PointSize = size * (290.0 / -mvPosition.z) * (1.0 + min(0.35, abs(uScrollVelocity) * 0.12));
         gl_Position = projectionMatrix * mvPosition;
       }
     `;
@@ -320,6 +333,7 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = ({ is
     const targetTension = isHalted ? 1.0 : 0.0;
     const startTime = performance.now();
     let lastTime = startTime;
+    let smoothVelocity = 0;
 
     const animate = () => {
       const now = performance.now();
@@ -334,9 +348,17 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = ({ is
       cloudUniforms.uTension.value = currentTension;
       cloudUniforms.uTime.value = elapsedTime;
 
-      // Deterministic kinetic ring rotations
-      kineticRing1.rotation.z += 0.08 * (delta || 0.016);
-      kineticRing2.rotation.z -= 0.06 * (delta || 0.016);
+      // Scroll velocity dynamics
+      const rawVelocity = getScrollVelocity();
+      smoothVelocity += (rawVelocity - smoothVelocity) * 0.08;
+      const speedBoost = Math.min(2.5, Math.abs(smoothVelocity) * 0.18);
+
+      cloudUniforms.uScrollVelocity.value = smoothVelocity;
+      backdropUniforms.uScrollVelocity.value = smoothVelocity;
+
+      // Accelerated rotation speed during scroll, smoothly damping back
+      kineticRing1.rotation.z += (0.08 + speedBoost * 0.35) * (delta || 0.016);
+      kineticRing2.rotation.z -= (0.06 + speedBoost * 0.30) * (delta || 0.016);
 
       // Point cloud deterministic orbit
       pointCloud.rotation.y = elapsedTime * 0.04;
@@ -346,9 +368,9 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = ({ is
       currentTiltX += (targetTiltX - currentTiltX) * 0.05;
       currentTiltY += (targetTiltY - currentTiltY) * 0.05;
 
-      // Scroll progress coupling
+      // Scroll progress coupling with camera Z-perspective shift
       const p = scrollProgressRef.current;
-      camera.position.z = 5.2 - p * 1.4;
+      camera.position.z = 5.2 - p * 1.4 - Math.min(0.3, Math.abs(smoothVelocity) * 0.025);
       const scrollPitch = p * THREE.MathUtils.degToRad(35);
 
       instrumentGroup.rotation.x = currentTiltX + scrollPitch * 0.5;
@@ -361,9 +383,38 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = ({ is
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    animate();
+    // 8. INTERSECTION OBSERVER: PAUSE WEBGL WHEN VIEWPORT 01 IS OFF-SCREEN
+    let isVisible = true;
+    let isLoopRunning = false;
 
-    // 8. RESIZE LISTENER
+    const startLoop = () => {
+      if (!isLoopRunning && isVisible) {
+        isLoopRunning = true;
+        animationFrameId = requestAnimationFrame(animate);
+      }
+    };
+
+    const stopLoop = () => {
+      isLoopRunning = false;
+      cancelAnimationFrame(animationFrameId);
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible) {
+          startLoop();
+        } else {
+          stopLoop();
+        }
+      },
+      { threshold: 0.02 }
+    );
+
+    observer.observe(mount);
+    startLoop();
+
+    // 9. RESIZE LISTENER
     const handleResize = () => {
       if (!mount) return;
       const w = mount.clientWidth;
@@ -371,6 +422,7 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = ({ is
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
       backdropUniforms.uResolution.value.set(w, h);
     };
 
@@ -378,6 +430,8 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = ({ is
 
     // CLEANUP
     return () => {
+      observer.disconnect();
+      stopLoop();
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('pointermove', handlePointerMove);
       cancelAnimationFrame(animationFrameId);
@@ -416,4 +470,4 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = ({ is
       }}
     />
   );
-};
+});

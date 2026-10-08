@@ -1,13 +1,18 @@
 import React from 'react';
-import { useSakellariousEngine } from '../core/useSakellariousEngine';
+import { useSakellariousEngine, useMicroYieldTicker } from '../core/useSakellariousEngine';
+import { useAnimatedNumber } from '../core/useAnimatedNumber';
 import { useLenis } from '../core/SmoothScroll';
 
 export interface CockpitHeaderProps {
   engine: ReturnType<typeof useSakellariousEngine>;
 }
 
-export const CockpitHeader: React.FC<CockpitHeaderProps> = ({ engine }) => {
+export const CockpitHeader: React.FC<CockpitHeaderProps> = React.memo(({ engine }) => {
   const { scrollTo } = useLenis();
+  const { liveHarvestYield, blockHeight } = useMicroYieldTicker();
+
+  const animLiquid = useAnimatedNumber(engine.balances.arcLiquidUsdc);
+  const animUsyc = useAnimatedNumber(engine.balances.arcUsycVault);
 
   const isHalted = engine.escalations.length > 0;
   const pendingAmount = isHalted ? engine.escalations[0].amount : 0;
@@ -106,8 +111,8 @@ export const CockpitHeader: React.FC<CockpitHeaderProps> = ({ engine }) => {
               {isHalted ? 'STATE // HALTED AT DATUM' : 'STATE // CALIBRATED'}
             </span>
             <span className="cell-muted" style={{ color: 'var(--void-text-muted)' }}>■</span>
-            <span className="cell-muted" style={{ color: 'var(--void-text-muted)' }}>
-              BLK #{engine.blockHeight.toLocaleString()}
+            <span className="cell-muted" style={{ color: 'var(--void-text-muted)', fontVariantNumeric: 'tabular-nums' }}>
+              BLK #{blockHeight.toLocaleString()}
             </span>
           </div>
         </div>
@@ -126,7 +131,8 @@ export const CockpitHeader: React.FC<CockpitHeaderProps> = ({ engine }) => {
         style={{
           display: 'flex',
           alignItems: 'stretch',
-          height: '100%'
+          height: '100%',
+          flexShrink: 0
         }}
       >
         {/* CELL 01: BUFFER */}
@@ -161,11 +167,12 @@ export const CockpitHeader: React.FC<CockpitHeaderProps> = ({ engine }) => {
               fontFamily: 'var(--font-mono)',
               fontSize: '11px',
               letterSpacing: '0.04em',
-              whiteSpace: 'nowrap'
+              whiteSpace: 'nowrap',
+              fontVariantNumeric: 'tabular-nums'
             }}
           >
             <span style={{ fontWeight: 500 }}>
-              {engine.balances.arcLiquidUsdc.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC
+              {animLiquid.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC
             </span>
             <span className="cell-muted" style={{ fontSize: '9px', color: 'var(--void-text-muted)', marginLeft: '6px' }}>
               [FLOOR &gt;= 400K]
@@ -211,17 +218,18 @@ export const CockpitHeader: React.FC<CockpitHeaderProps> = ({ engine }) => {
               gap: '6px'
             }}
           >
-            <span style={{ fontWeight: 500 }}>
-              {engine.balances.arcUsycVault.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USYC
+            <span style={{ fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>
+              {animUsyc.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USYC
             </span>
             <span
               style={{
                 fontSize: '9px',
                 color: 'var(--signal-amber)',
-                fontWeight: 500
+                fontWeight: 500,
+                fontVariantNumeric: 'tabular-nums'
               }}
             >
-              +{engine.liveHarvestYield.toFixed(6)}
+              +{liveHarvestYield.toFixed(6)}
             </span>
           </div>
         </div>
@@ -315,4 +323,4 @@ export const CockpitHeader: React.FC<CockpitHeaderProps> = ({ engine }) => {
       </div>
     </header>
   );
-};
+});

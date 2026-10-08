@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSakellariousEngine } from '../core/useSakellariousEngine';
+import { useAnimatedNumber } from '../core/useAnimatedNumber';
 
 export interface Viewport03TreasuryProps {
   engine: ReturnType<typeof useSakellariousEngine>;
 }
 
-export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = ({ engine }) => {
+export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(({ engine }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
-  const [isCanvasHovered, setIsCanvasHovered] = useState(false);
+  const cursorPosRef = useRef<{ x: number; y: number } | null>(null);
+  const isCanvasHoveredRef = useRef(false);
+
+  const animLiquid = useAnimatedNumber(engine.balances.arcLiquidUsdc);
+  const animUsyc = useAnimatedNumber(engine.balances.arcUsycVault);
 
   // Custom obligation form state
   const [customVendor, setCustomVendor] = useState('0x4444444444444444444444444444444444444444');
@@ -30,12 +34,27 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = ({ engine }
     let animationFrameId: number;
     let time = 0;
 
+    // Responsive Canvas & High-DPI (Retina) scaling (Capped strictly at 1.35 for low-end GPU efficiency)
+    const updateSize = () => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.35);
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+    };
+
+    updateSize();
+    window.addEventListener('resize', updateSize);
+
     const render = () => {
       time += 0.025;
-      const width = canvas.width;
-      const height = canvas.height;
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.35);
+      const width = canvas.width / dpr;
+      const height = canvas.height / dpr;
 
-      ctx.clearRect(0, 0, width, height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+      ctx.scale(dpr, dpr);
 
       // Background subtle grid
       ctx.strokeStyle = 'rgba(20, 20, 19, 0.05)';
@@ -87,8 +106,9 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = ({ engine }
       }
 
       // Live Telemetry Crosshair when hovered
-      if (cursorPos && isCanvasHovered) {
-        const { x, y } = cursorPos;
+      const cursor = cursorPosRef.current;
+      if (cursor && isCanvasHoveredRef.current) {
+        const { x, y } = cursor;
         // Vertical Datum Hairline
         ctx.strokeStyle = 'rgba(20, 20, 19, 0.75)';
         ctx.lineWidth = 1;
@@ -117,15 +137,47 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = ({ engine }
         ctx.fillText('CIRCLE GATEWAY TX: 0x7e8c...a88', tagX + 8, tagY + 25);
       }
 
+      ctx.restore();
       animationFrameId = requestAnimationFrame(render);
     };
 
-    render();
+    // IntersectionObserver to pause contour canvas when off-screen
+    let isVisible = true;
+    let isLoopRunning = false;
 
-    return () => {
+    const startLoop = () => {
+      if (!isLoopRunning && isVisible) {
+        isLoopRunning = true;
+        animationFrameId = requestAnimationFrame(render);
+      }
+    };
+
+    const stopLoop = () => {
+      isLoopRunning = false;
       cancelAnimationFrame(animationFrameId);
     };
-  }, [cursorPos, isCanvasHovered, engine.balances.arcLiquidUsdc, engine.forecasting.targetBuffer30D]);
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible) {
+          startLoop();
+        } else {
+          stopLoop();
+        }
+      },
+      { threshold: 0.02 }
+    );
+
+    observer.observe(canvas);
+    startLoop();
+
+    return () => {
+      observer.disconnect();
+      stopLoop();
+      window.removeEventListener('resize', updateSize);
+    };
+  }, [engine.balances.arcLiquidUsdc, engine.forecasting.targetBuffer30D]);
 
   // Handlers for tactical controls
   const handleSweep = async () => {
@@ -213,7 +265,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = ({ engine }
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '16px 32px',
+          padding: '16px 36px',
           borderBottom: '1px solid var(--mineral-hairline)',
           backgroundColor: 'var(--mineral-recess)',
           userSelect: 'none'
@@ -262,7 +314,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = ({ engine }
         <div
           style={{
             borderRight: '1px solid var(--mineral-hairline)',
-            padding: '40px 36px',
+            padding: '36px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
@@ -287,7 +339,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = ({ engine }
             {/* Monumental Syne Numerals with Extreme Scale Contrast */}
             <div
               data-metric="true"
-              data-telemetry="LIQUID BUFFER // 420,000.00 USDC"
+              data-telemetry={`LIQUID BUFFER // $${animLiquid.toFixed(2)} USDC`}
               style={{
                 display: 'flex',
                 alignItems: 'baseline',
@@ -295,18 +347,22 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = ({ engine }
                 marginBottom: '12px'
               }}
             >
-              <div
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(3.25rem, 5.5vw, 6rem)',
-                  fontWeight: 700,
-                  lineHeight: 0.92,
-                  letterSpacing: '-0.04em',
-                  fontVariantNumeric: 'tabular-nums',
-                  color: 'var(--mineral-ink)'
-                }}
-              >
-                ${engine.balances.arcLiquidUsdc.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <div style={{ overflow: 'hidden' }}>
+                <div
+                  className="shutter-reveal"
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: 'clamp(3.25rem, 5.5vw, 6rem)',
+                    fontWeight: 700,
+                    lineHeight: 0.92,
+                    letterSpacing: '-0.04em',
+                    fontVariantNumeric: 'tabular-nums',
+                    color: 'var(--mineral-ink)',
+                    willChange: 'transform'
+                  }}
+                >
+                  ${animLiquid.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
               </div>
               <div
                 style={{
@@ -314,7 +370,8 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = ({ engine }
                   fontSize: '11px',
                   fontWeight: 500,
                   letterSpacing: '0.12em',
-                  color: 'var(--mineral-ink-muted)'
+                  color: 'var(--mineral-ink-muted)',
+                  whiteSpace: 'nowrap'
                 }}
               >
                 USDC [LIQUID]
@@ -385,8 +442,8 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = ({ engine }
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'var(--mineral-ink-muted)', letterSpacing: '0.12em' }}>
                   YIELD-BEARING RESERVE
                 </div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '18px', fontWeight: 500, marginTop: '4px' }}>
-                  ${engine.balances.arcUsycVault.toLocaleString()} USYC
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '18px', fontWeight: 500, fontVariantNumeric: 'tabular-nums', marginTop: '4px', whiteSpace: 'nowrap' }}>
+                  ${animUsyc.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USYC
                 </div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--signal-amber)', marginTop: '4px' }}>
                   5.12% APY // CIRCLE GATEWAY
@@ -441,19 +498,17 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = ({ engine }
               </div>
               <canvas
                 ref={canvasRef}
-                width={640}
-                height={220}
-                onMouseEnter={() => setIsCanvasHovered(true)}
+                onMouseEnter={() => { isCanvasHoveredRef.current = true; }}
                 onMouseLeave={() => {
-                  setIsCanvasHovered(false);
-                  setCursorPos(null);
+                  isCanvasHoveredRef.current = false;
+                  cursorPosRef.current = null;
                 }}
                 onMouseMove={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect();
-                  setCursorPos({
+                  cursorPosRef.current = {
                     x: e.clientX - rect.left,
                     y: e.clientY - rect.top
-                  });
+                  };
                 }}
                 style={{
                   width: '100%',
@@ -517,11 +572,11 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = ({ engine }
         </div>
 
         {/* ====================================================================
-            RIGHT COLUMN (42%): POLICYWALLET RULE BAYS & LIVE OBLIGATION INJECTOR
+            RIGHT COLUMN (50%): POLICYWALLET RULE BAYS & LIVE OBLIGATION INJECTOR
             ==================================================================== */}
         <div
           style={{
-            padding: '40px 32px',
+            padding: '36px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
@@ -862,4 +917,4 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = ({ engine }
       </div>
     </section>
   );
-};
+});

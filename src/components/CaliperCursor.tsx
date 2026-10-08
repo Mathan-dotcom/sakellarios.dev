@@ -1,18 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-export const CaliperCursor: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false);
+export const CaliperCursor: React.FC = React.memo(() => {
   const [isLocked, setIsLocked] = useState(false);
   const [isLightSurface, setIsLightSurface] = useState(false);
   const [telemetry, setTelemetry] = useState<string>('DATUM LOCKED');
-  const [coords, setCoords] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
+  const containerRef = useRef<HTMLDivElement>(null);
   const reticleRef = useRef<HTMLDivElement>(null);
   const caliperRef = useRef<HTMLDivElement>(null);
+  const coordsTextRef = useRef<HTMLSpanElement>(null);
 
   const targetPos = useRef({ x: 0, y: 0 });
   const currentPos = useRef({ x: 0, y: 0 });
+  const hasReceivedPointer = useRef(false);
   const isLockedRef = useRef(false);
+  const telemetryRef = useRef('DATUM LOCKED');
+  const isLightSurfaceRef = useRef(false);
   const animationFrameId = useRef<number | null>(null);
 
   useEffect(() => {
@@ -21,67 +24,98 @@ export const CaliperCursor: React.FC = () => {
       return;
     }
 
+    // Zero-latency raw pointermove listener (NO React setState or getComputedStyle)
     const handlePointerMove = (e: PointerEvent) => {
       const { clientX, clientY } = e;
-      targetPos.current = { x: clientX, y: clientY };
+      targetPos.current.x = clientX;
+      targetPos.current.y = clientY;
 
-      if (!isVisible) {
-        setIsVisible(true);
-        currentPos.current = { x: clientX, y: clientY };
+      if (!hasReceivedPointer.current) {
+        hasReceivedPointer.current = true;
+        currentPos.current.x = clientX;
+        currentPos.current.y = clientY;
+        if (containerRef.current) {
+          containerRef.current.style.opacity = '1';
+        }
       }
 
-      // Detect chamber and polarity inversion for adaptive contrast
-      const targetEl = e.target as Element | null;
-      const chamberEl = targetEl?.closest('[data-chamber]');
-      const isMineralChamber = chamberEl?.getAttribute('data-chamber') === 'mineral';
-
-      // Check whether currently hovering a polarity-inverted container
-      const isCockpitCell = Boolean(targetEl?.closest('.cockpit-cell'));
-      const isDarkInverted = Boolean(
-        targetEl?.closest('.rule-bay, .ledger-row, .tactical-button, [data-invert-dark="true"]')
-      );
-
-      let light = false;
-      if (isCockpitCell) {
-        // Cockpit cell inverts Obsidian Void to Light #F2EFE9
-        light = true;
-      } else if (isMineralChamber) {
-        // Mineral Archive is light, unless inverted to dark #141413
-        light = !isDarkInverted;
-      } else {
-        light = false;
-      }
-      setIsLightSurface(light);
-
-      // 0ms Primary Reticle Position Update
+      // 0ms Primary Reticle Position Update via direct DOM transform
       if (reticleRef.current) {
         reticleRef.current.style.transform = `translate3d(${clientX}px, ${clientY}px, 0)`;
       }
 
-      // Check magnetic snap target
-      const target = targetEl?.closest('[data-datum], [data-metric], [data-telemetry]');
-      if (target) {
-        isLockedRef.current = true;
-        setIsLocked(true);
-        const text =
-          target.getAttribute('data-telemetry') ||
-          (target.getAttribute('data-metric') ? 'METRIC LOCKED' : 'DATUM LOCKED');
-        setTelemetry(text);
-        setCoords({ x: Math.round(clientX), y: Math.round(clientY) });
+      // Direct DOM update for micro-coordinate readout (Zero React re-renders)
+      if (coordsTextRef.current) {
+        coordsTextRef.current.textContent = `X:${Math.round(clientX).toString().padStart(4, '0')}`;
+      }
+    };
+
+    // Event delegation on pointerover for hover targets and chamber polarity detection
+    const handlePointerOver = (e: PointerEvent) => {
+      const targetEl = e.target as Element | null;
+      if (!targetEl) return;
+
+      // 1. Yield / dim cursor when hovering interactive text inputs/textareas
+      const isInput = Boolean(targetEl.closest('input, textarea, [contenteditable="true"]'));
+      if (containerRef.current) {
+        containerRef.current.style.opacity = isInput ? '0.12' : '1';
+      }
+
+      // 2. Chamber polarity detection
+      const chamberEl = targetEl.closest('[data-chamber]');
+      const isMineralChamber = chamberEl?.getAttribute('data-chamber') === 'mineral';
+      const isCockpitCell = Boolean(targetEl.closest('.cockpit-cell'));
+      const isDarkInverted = Boolean(
+        targetEl.closest('.rule-bay, .ledger-row, .tactical-button, [data-invert-dark="true"]')
+      );
+
+      let light = false;
+      if (isCockpitCell) {
+        light = true;
+      } else if (isMineralChamber) {
+        light = !isDarkInverted;
       } else {
+        light = false;
+      }
+
+      if (light !== isLightSurfaceRef.current) {
+        isLightSurfaceRef.current = light;
+        setIsLightSurface(light);
+      }
+
+      // 3. Snap target detection
+      const snapTarget = targetEl.closest('[data-datum], [data-metric], [data-telemetry]');
+      if (snapTarget) {
+        const text =
+          snapTarget.getAttribute('data-telemetry') ||
+          (snapTarget.getAttribute('data-metric') ? 'METRIC LOCKED' : 'DATUM LOCKED');
+
+        if (!isLockedRef.current || telemetryRef.current !== text) {
+          isLockedRef.current = true;
+          telemetryRef.current = text;
+          setIsLocked(true);
+          setTelemetry(text);
+        }
+      } else {
+        if (isLockedRef.current) {
+          isLockedRef.current = false;
+          telemetryRef.current = '';
+          setIsLocked(false);
+          setTelemetry('');
+        }
+      }
+    };
+
+    const handlePointerOut = (e: PointerEvent) => {
+      if (!e.relatedTarget) {
+        if (containerRef.current) {
+          containerRef.current.style.opacity = '0';
+        }
         if (isLockedRef.current) {
           isLockedRef.current = false;
           setIsLocked(false);
         }
       }
-    };
-
-    const handlePointerLeave = () => {
-      setIsVisible(false);
-    };
-
-    const handlePointerEnter = () => {
-      setIsVisible(true);
     };
 
     // Trailing Caliper Frame RAF loop with exact lerp: 0.18
@@ -98,21 +132,19 @@ export const CaliperCursor: React.FC = () => {
     };
 
     window.addEventListener('pointermove', handlePointerMove, { passive: true });
-    document.addEventListener('mouseleave', handlePointerLeave);
-    document.addEventListener('mouseenter', handlePointerEnter);
+    document.addEventListener('pointerover', handlePointerOver, { passive: true });
+    document.addEventListener('pointerout', handlePointerOut, { passive: true });
     animationFrameId.current = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener('pointermove', handlePointerMove);
-      document.removeEventListener('mouseleave', handlePointerLeave);
-      document.removeEventListener('mouseenter', handlePointerEnter);
+      document.removeEventListener('pointerover', handlePointerOver);
+      document.removeEventListener('pointerout', handlePointerOut);
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
     };
-  }, [isVisible]);
-
-  if (!isVisible) return null;
+  }, []);
 
   const frameSize = isLocked ? 44 : 28;
   const halfSize = frameSize / 2;
@@ -133,6 +165,7 @@ export const CaliperCursor: React.FC = () => {
 
   return (
     <div
+      ref={containerRef}
       style={{
         position: 'fixed',
         top: 0,
@@ -140,7 +173,9 @@ export const CaliperCursor: React.FC = () => {
         width: 0,
         height: 0,
         pointerEvents: 'none',
-        zIndex: 9999
+        zIndex: 9999,
+        opacity: 0,
+        transition: 'opacity 0.12s ease'
       }}
       aria-hidden="true"
     >
@@ -289,8 +324,8 @@ export const CaliperCursor: React.FC = () => {
                 boxSizing: 'border-box'
               }}
             >
-              <span style={{ color: 'var(--signal-amber)' }}>
-                X:{coords.x.toString().padStart(4, '0')}
+              <span ref={coordsTextRef} style={{ color: 'var(--signal-amber)' }}>
+                X:0000
               </span>
               <span style={{ color: isLightSurface ? 'rgba(242, 239, 233, 0.45)' : 'var(--void-text-muted)' }}>//</span>
               <span style={{ color: isLightSurface ? 'var(--mineral-bg)' : 'var(--void-text-primary)', fontWeight: 500 }}>
@@ -302,4 +337,4 @@ export const CaliperCursor: React.FC = () => {
       </div>
     </div>
   );
-};
+});

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useSakellariousEngine } from '../core/useSakellariousEngine';
@@ -9,7 +9,7 @@ export interface Viewport04EscalationProps {
   engine: ReturnType<typeof useSakellariousEngine>;
 }
 
-export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = ({ engine }) => {
+export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.memo(({ engine }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const trajectoryRef = useRef<HTMLDivElement>(null);
   const holdButtonRef = useRef<HTMLDivElement>(null);
@@ -31,9 +31,9 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = ({ engi
 
     const anim = gsap.fromTo(
       trajectoryRef.current,
-      { height: '0%' },
+      { scaleY: 0, transformOrigin: 'top center' },
       {
-        height: '100%',
+        scaleY: 1,
         ease: 'none',
         scrollTrigger: {
           trigger: containerRef.current,
@@ -50,7 +50,7 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = ({ engi
   }, []);
 
   // 2. TACTILE 1.2-SECOND PRESS-AND-HOLD SOVEREIGN SEAL PHYSICS
-  const startHold = () => {
+  const startHold = useCallback(() => {
     if (isSealed || !activeEscalation) return;
     setIsHolding(true);
     holdStartTimeRef.current = performance.now();
@@ -66,6 +66,7 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = ({ engi
         setIsHolding(false);
         setIsSealed(true);
         engine.approveEscalation(activeEscalation.id);
+        setTimeout(() => ScrollTrigger.refresh(), 50);
         return;
       }
 
@@ -73,9 +74,9 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = ({ engi
     };
 
     holdRafRef.current = requestAnimationFrame(trackHold);
-  };
+  }, [isSealed, activeEscalation, engine]);
 
-  const endHold = () => {
+  const endHold = useCallback(() => {
     if (isSealed) return;
     setIsHolding(false);
     holdStartTimeRef.current = null;
@@ -93,17 +94,35 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = ({ engi
       });
     };
     requestAnimationFrame(decay);
-  };
+  }, [isSealed]);
+
+  // Window blur listener cancels any active hold
+  useEffect(() => {
+    const handleBlur = () => {
+      endHold();
+    };
+    window.addEventListener('blur', handleBlur);
+    return () => {
+      window.removeEventListener('blur', handleBlur);
+    };
+  }, [endHold]);
+
+  // Refresh ScrollTrigger calculations whenever escalation status changes
+  useEffect(() => {
+    ScrollTrigger.refresh();
+  }, [isHalted, isSealed]);
 
   const handleReject = () => {
     if (!activeEscalation) return;
     engine.cancelEscalation(activeEscalation.id);
+    setTimeout(() => ScrollTrigger.refresh(), 50);
   };
 
   const handleResetDemo = () => {
     setIsSealed(false);
     setHoldProgress(0);
     engine.resetEscalationDemo();
+    setTimeout(() => ScrollTrigger.refresh(), 50);
   };
 
   return (
@@ -127,7 +146,7 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = ({ engi
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '16px 32px',
+          padding: '16px 36px',
           borderBottom: '1px solid var(--void-hairline)',
           backgroundColor: '#070706',
           userSelect: 'none'
@@ -167,7 +186,7 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = ({ engi
         style={{
           maxWidth: '1360px',
           margin: '0 auto',
-          padding: '64px 32px 72px 32px',
+          padding: '64px 36px 72px 36px',
           boxSizing: 'border-box'
         }}
       >
@@ -246,7 +265,10 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = ({ engi
               style={{
                 width: '100%',
                 backgroundColor: isHalted ? 'var(--signal-tension)' : 'var(--signal-verified)',
-                height: '0%'
+                height: '100%',
+                transform: 'scaleY(0)',
+                transformOrigin: 'top center',
+                willChange: 'transform'
               }}
             />
           </div>
@@ -513,11 +535,36 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = ({ engi
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div
                   ref={holdButtonRef}
-                  onMouseDown={startHold}
-                  onMouseUp={endHold}
-                  onMouseLeave={endHold}
-                  onTouchStart={startHold}
-                  onTouchEnd={endHold}
+                  tabIndex={0}
+                  role="button"
+                  aria-label="Press and hold Space or Enter for 1.20 seconds to countersign sovereign seal"
+                  onPointerDown={(e) => {
+                    try {
+                      e.currentTarget.setPointerCapture(e.pointerId);
+                    } catch {}
+                    startHold();
+                  }}
+                  onPointerUp={(e) => {
+                    try {
+                      e.currentTarget.releasePointerCapture(e.pointerId);
+                    } catch {}
+                    endHold();
+                  }}
+                  onPointerLeave={endHold}
+                  onPointerCancel={endHold}
+                  onBlur={endHold}
+                  onKeyDown={(e) => {
+                    if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
+                      e.preventDefault();
+                      startHold();
+                    }
+                  }}
+                  onKeyUp={(e) => {
+                    if (e.key === ' ' || e.key === 'Enter') {
+                      e.preventDefault();
+                      endHold();
+                    }
+                  }}
                   data-datum="true"
                   data-telemetry="ACTION // 1.20S SOVEREIGN SEAL RELEASE"
                   style={{
@@ -533,20 +580,24 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = ({ engi
                     padding: '0 24px',
                     boxSizing: 'border-box',
                     userSelect: 'none',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    outline: 'none'
                   }}
                 >
-                  {/* Dynamic Progress Fill Bar */}
+                  {/* Dynamic Progress Fill Bar (GPU ScaleX) */}
                   <div
                     style={{
                       position: 'absolute',
                       top: 0,
                       left: 0,
                       height: '100%',
-                      width: `${holdProgress * 100}%`,
+                      width: '100%',
                       backgroundColor: 'var(--signal-tension)',
                       pointerEvents: 'none',
-                      transition: isHolding ? 'none' : 'width 0.22s var(--ease-damped-settle)'
+                      transform: `scaleX(${holdProgress})`,
+                      transformOrigin: 'left center',
+                      willChange: 'transform',
+                      transition: isHolding ? 'none' : 'transform 0.22s var(--ease-damped-settle)'
                     }}
                   />
 
@@ -675,4 +726,4 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = ({ engi
       </div>
     </section>
   );
-};
+});

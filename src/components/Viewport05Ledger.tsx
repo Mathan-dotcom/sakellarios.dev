@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useSakellariousEngine, ProcessedInvoice } from '../core/useSakellariousEngine';
 
 export interface Viewport05LedgerProps {
   engine: ReturnType<typeof useSakellariousEngine>;
 }
 
-export const Viewport05Ledger: React.FC<Viewport05LedgerProps> = ({ engine }) => {
+export const Viewport05Ledger: React.FC<Viewport05LedgerProps> = React.memo(({ engine }) => {
   const [expandedFolio, setExpandedFolio] = useState<string | null>('EUTHYNA #00481');
+
+  // Refresh ScrollTrigger whenever forensic drawer expands or collapses
+  useEffect(() => {
+    ScrollTrigger.refresh();
+  }, [expandedFolio]);
 
   const toggleRow = (folio: string) => {
     setExpandedFolio(prev => (prev === folio ? null : folio));
@@ -80,7 +86,7 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '20px 32px',
+          padding: '20px 36px',
           borderBottom: '1px solid var(--mineral-hairline)',
           backgroundColor: 'var(--mineral-recess)',
           userSelect: 'none'
@@ -121,7 +127,7 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
           display: 'grid',
           gridTemplateColumns: '160px 180px 1.4fr 160px 180px 1.2fr',
           borderBottom: '1px solid var(--mineral-hairline)',
-          padding: '12px 32px',
+          padding: '12px 36px',
           fontFamily: 'var(--font-mono)',
           fontSize: '11px',
           letterSpacing: '0.12em',
@@ -157,7 +163,7 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
                 style={{
                   display: 'grid',
                   gridTemplateColumns: '160px 180px 1.4fr 160px 180px 1.2fr',
-                  padding: '18px 32px',
+                  padding: '18px 36px',
                   borderBottom: '1px solid var(--mineral-hairline)',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '11px',
@@ -224,7 +230,7 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
                     backgroundColor: 'var(--void-bg)',
                     color: 'var(--void-text-primary)',
                     borderBottom: '1px solid var(--mineral-hairline)',
-                    padding: '24px 32px',
+                    padding: '24px 36px',
                     display: 'grid',
                     gridTemplateColumns: '1fr 1fr',
                     gap: '24px',
@@ -314,4 +320,4 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
       </div>
     </section>
   );
-};
+});

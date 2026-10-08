@@ -11,7 +11,7 @@
  * Exposes strictly typed data streams, actions, and deterministic fallbacks.
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
 // ============================================================================
 // DATA MODEL CONTRACTS
@@ -252,6 +252,60 @@ export const DETERMINISTIC_FALLBACK: {
 };
 
 // ============================================================================
+// DECOUPLED MICRO-TICKER STORE & SUBSCRIBER HOOK
+// Decouples sub-second micro-yield updates from the root React component tree
+// ============================================================================
+export interface MicroTickerState {
+  liveHarvestYield: number;
+  blockHeight: number;
+}
+
+let globalTickerState: MicroTickerState = {
+  liveHarvestYield: 12.8431,
+  blockHeight: 4892104
+};
+
+const tickerListeners = new Set<(state: MicroTickerState) => void>();
+let tickerTimerStarted = false;
+
+function initGlobalTicker() {
+  if (tickerTimerStarted || typeof window === 'undefined') return;
+  tickerTimerStarted = true;
+
+  // 5.12% APY on 1,000,000 USYC accrues ~0.000162 USDC every 400ms
+  setInterval(() => {
+    globalTickerState = {
+      ...globalTickerState,
+      liveHarvestYield: globalTickerState.liveHarvestYield + 0.000162
+    };
+    tickerListeners.forEach(listener => listener(globalTickerState));
+  }, 400);
+
+  setInterval(() => {
+    globalTickerState = {
+      ...globalTickerState,
+      blockHeight: globalTickerState.blockHeight + 1
+    };
+    tickerListeners.forEach(listener => listener(globalTickerState));
+  }, 2800);
+}
+
+export function useMicroYieldTicker(): MicroTickerState {
+  const [ticker, setTicker] = useState<MicroTickerState>(globalTickerState);
+
+  useEffect(() => {
+    initGlobalTicker();
+    tickerListeners.add(setTicker);
+    setTicker(globalTickerState);
+    return () => {
+      tickerListeners.delete(setTicker);
+    };
+  }, []);
+
+  return ticker;
+}
+
+// ============================================================================
 // HEADLESS ENGINE HOOK
 // ============================================================================
 
@@ -269,8 +323,6 @@ export function useSakellariousEngine() {
   });
 
   const [sanctionsVerdict, setSanctionsVerdict] = useState<SanctionsVerdict | null>(null);
-  const [liveHarvestYield, setLiveHarvestYield] = useState<number>(12.8431);
-  const [blockHeight, setBlockHeight] = useState<number>(4892104);
   const [isLiveBackend, setIsLiveBackend] = useState<boolean>(false);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
@@ -283,25 +335,12 @@ export function useSakellariousEngine() {
 
   const isMountedRef = useRef(true);
 
-  // --------------------------------------------------------------------------
-  // CONTINUOUS MICRO-YIELD ACCRUAL & BLOCK HEIGHT TICKERS
-  // --------------------------------------------------------------------------
+  // Initialize global ticker without binding it to this hook's local state
   useEffect(() => {
     isMountedRef.current = true;
-
-    // 5.12% APY on 1,000,000 USYC accrues ~0.001623 USDC every 1000ms
-    const yieldInterval = setInterval(() => {
-      setLiveHarvestYield(prev => prev + 0.000162);
-    }, 400);
-
-    const blockInterval = setInterval(() => {
-      setBlockHeight(prev => prev + 1);
-    }, 2800);
-
+    initGlobalTicker();
     return () => {
       isMountedRef.current = false;
-      clearInterval(yieldInterval);
-      clearInterval(blockInterval);
     };
   }, []);
 
@@ -788,7 +827,7 @@ export function useSakellariousEngine() {
     }
   }, []);
 
-  return {
+  return useMemo(() => ({
     // Read-only state streams
     balances,
     forecasting,
@@ -798,8 +837,12 @@ export function useSakellariousEngine() {
     invoices,
     audit,
     sanctionsVerdict,
-    liveHarvestYield,
-    blockHeight,
+    get liveHarvestYield() {
+      return globalTickerState.liveHarvestYield;
+    },
+    get blockHeight() {
+      return globalTickerState.blockHeight;
+    },
 
     // Status flags
     isLiveBackend,
@@ -819,5 +862,29 @@ export function useSakellariousEngine() {
     sweepSurplusYield,
     redeemYield,
     resetEscalationDemo
-  };
+  }), [
+    balances,
+    forecasting,
+    policy,
+    reserves,
+    escalations,
+    invoices,
+    audit,
+    sanctionsVerdict,
+    isLiveBackend,
+    isRefreshing,
+    actionState,
+    refreshAll,
+    fetchSummary,
+    fetchReserves,
+    fetchEscalations,
+    fetchAuditLedger,
+    checkSanctions,
+    processInvoice,
+    approveEscalation,
+    cancelEscalation,
+    sweepSurplusYield,
+    redeemYield,
+    resetEscalationDemo
+  ]);
 }

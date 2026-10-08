@@ -1,19 +1,21 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { getScrollVelocity } from '../core/SmoothScroll';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export const Viewport02Thesis: React.FC = () => {
+export const Viewport02Thesis: React.FC = React.memo(() => {
   const containerRef = useRef<HTMLDivElement>(null);
   const wordsContainerRef = useRef<HTMLDivElement>(null);
   const marqueeTrackRef = useRef<HTMLDivElement>(null);
+  const hairlineRef = useRef<HTMLDivElement>(null);
 
   const thesisText =
     "POWER IN AUTONOMOUS FINANCE IS NOT WHAT THE MACHINE CAN SPEND — IT IS THE MATHEMATICAL BOUNDARY IT CANNOT CROSS WITHOUT PROOF.";
   const words = thesisText.split(' ');
 
-  // 1. GSAP SCROLLTRIGGER WORD-BY-WORD OPACITY SCRUBBING (0.25 -> 1.00)
+  // 1. GSAP SCROLLTRIGGER WORD-BY-WORD OPACITY SCRUBBING (0.25 -> 1.00) & SHUTTER/HAIRLINE REVEALS
   useEffect(() => {
     if (!wordsContainerRef.current) return;
 
@@ -34,36 +36,46 @@ export const Viewport02Thesis: React.FC = () => {
       }
     });
 
+    // Animate horizontal structural divider line outward from 50% center meridian
+    if (hairlineRef.current) {
+      gsap.fromTo(
+        hairlineRef.current,
+        { scaleX: 0 },
+        {
+          scaleX: 1,
+          duration: 0.85,
+          ease: 'expo.out',
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    }
+
     return () => {
       trigger.kill();
     };
   }, []);
 
-  // 2. KINETIC COUNTER-SCROLLING TELEMETRY BAND COUPLED TO VELOCITY
+  // 2. KINETIC COUNTER-SCROLLING TELEMETRY BAND DYNAMICALLY BOOSTED BY SCROLL VELOCITY
   useEffect(() => {
     const track = marqueeTrackRef.current;
     if (!track) return;
 
     let animationFrameId: number;
     let offset = 0;
-    let scrollVelocity = 0;
-
-    const velocityTrigger = ScrollTrigger.create({
-      onUpdate: (self) => {
-        scrollVelocity = self.getVelocity();
-      }
-    });
+    let smoothVel = 0;
 
     const updateMarquee = () => {
-      // Base continuous crawl speed: 0.75px per frame
-      // Coupled to counter-scroll velocity
-      const velocityInfluence = scrollVelocity * 0.015;
-      offset -= 0.8 + Math.abs(velocityInfluence);
+      const rawVel = getScrollVelocity();
+      smoothVel += (rawVel - smoothVel) * 0.08;
 
-      // Dampen velocity smoothly
-      scrollVelocity *= 0.92;
+      // Base crawl speed 0.75px + velocity-coupled dynamic surge
+      const boost = Math.abs(smoothVel) * 0.032;
+      offset -= 0.85 + boost;
 
-      // Track width loop calculation
       const singleCycleWidth = track.scrollWidth / 3;
       if (Math.abs(offset) >= singleCycleWidth) {
         offset = 0;
@@ -77,7 +89,6 @@ export const Viewport02Thesis: React.FC = () => {
 
     return () => {
       cancelAnimationFrame(animationFrameId);
-      velocityTrigger.kill();
     };
   }, []);
 
@@ -126,7 +137,6 @@ export const Viewport02Thesis: React.FC = () => {
 
       {/* ======================================================================
           FULL-BLEED 44PX HORIZONTAL KINETIC TELEMETRY BAND
-          (Eliminated borderTop to prevent double-border seam against Viewport 01)
           ====================================================================== */}
       <div
         data-datum="true"
@@ -162,13 +172,13 @@ export const Viewport02Thesis: React.FC = () => {
       </div>
 
       {/* ======================================================================
-          EDITORIAL THESIS STATEMENT CHAMBER (INTRA-BLOCK LUMINANCE MODULATION)
+          EDITORIAL THESIS STATEMENT CHAMBER (GENEROUS 120PX 72PX CEREMONIAL SPACE)
           ====================================================================== */}
       <div
         style={{
           maxWidth: '1360px',
           margin: '0 auto',
-          padding: '100px 32px 90px 32px',
+          padding: '120px 72px 100px 72px',
           boxSizing: 'border-box'
         }}
       >
@@ -251,8 +261,10 @@ export const Viewport02Thesis: React.FC = () => {
           })}
         </div>
 
-        {/* The 3 Structural Invariants Grid (DESIGN.md Section 1.2) */}
+        {/* The 3 Structural Invariants Grid (Clean, Decluttered 2-Line Specs at max-width 34ch) */}
         <div
+          ref={hairlineRef}
+          className="structural-hairline"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
@@ -260,7 +272,9 @@ export const Viewport02Thesis: React.FC = () => {
             borderTop: '1px solid var(--void-hairline)',
             borderLeft: '1px solid var(--void-hairline)',
             borderRight: '1px solid var(--void-hairline)',
-            borderBottom: '1px solid var(--void-hairline)'
+            borderBottom: '1px solid var(--void-hairline)',
+            transformOrigin: '50% 50%',
+            willChange: 'transform'
           }}
         >
           {/* INVARIANT 01 */}
@@ -268,12 +282,12 @@ export const Viewport02Thesis: React.FC = () => {
             data-datum="true"
             data-telemetry="INVARIANT 01 // THE GOVERNANCE DATUM"
             style={{
-              padding: '32px 28px',
+              padding: '32px 36px',
               borderRight: '1px solid var(--void-hairline)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              minHeight: '220px'
+              minHeight: '190px'
             }}
           >
             <div>
@@ -283,7 +297,7 @@ export const Viewport02Thesis: React.FC = () => {
                   fontSize: '10px',
                   letterSpacing: '0.16em',
                   color: 'var(--signal-amber)',
-                  marginBottom: '12px'
+                  marginBottom: '10px'
                 }}
               >
                 01 // THE GOVERNANCE DATUM
@@ -291,10 +305,10 @@ export const Viewport02Thesis: React.FC = () => {
               <h3
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: '18px',
+                  fontSize: '17px',
                   fontWeight: 700,
                   letterSpacing: '-0.01em',
-                  marginBottom: '12px'
+                  marginBottom: '10px'
                 }}
               >
                 ZERO UNANCHORED METRICS
@@ -304,10 +318,11 @@ export const Viewport02Thesis: React.FC = () => {
                   fontFamily: 'var(--font-body)',
                   fontSize: '13px',
                   color: 'var(--void-text-muted)',
-                  lineHeight: 1.6
+                  lineHeight: 1.5,
+                  maxWidth: '34ch'
                 }}
               >
-                Financial values never float arbitrarily in cards. Every consequential quantity touches a visible, persistent structural boundary—approaching, clearing, or physically halting.
+                Every consequential quantity touches a persistent structural boundary—approaching, clearing, or halting.
               </p>
             </div>
             <div
@@ -328,12 +343,12 @@ export const Viewport02Thesis: React.FC = () => {
             data-datum="true"
             data-telemetry="INVARIANT 02 // VALUE-BOUND-PROOF TRIAD"
             style={{
-              padding: '32px 28px',
+              padding: '32px 36px',
               borderRight: '1px solid var(--void-hairline)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              minHeight: '220px'
+              minHeight: '190px'
             }}
           >
             <div>
@@ -343,7 +358,7 @@ export const Viewport02Thesis: React.FC = () => {
                   fontSize: '10px',
                   letterSpacing: '0.16em',
                   color: 'var(--signal-amber)',
-                  marginBottom: '12px'
+                  marginBottom: '10px'
                 }}
               >
                 02 // VALUE — BOUND — PROOF
@@ -351,10 +366,10 @@ export const Viewport02Thesis: React.FC = () => {
               <h3
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: '18px',
+                  fontSize: '17px',
                   fontWeight: 700,
                   letterSpacing: '-0.01em',
-                  marginBottom: '12px'
+                  marginBottom: '10px'
                 }}
               >
                 MANDATORY TRIADIC PROOF
@@ -364,10 +379,11 @@ export const Viewport02Thesis: React.FC = () => {
                   fontFamily: 'var(--font-body)',
                   fontSize: '13px',
                   color: 'var(--void-text-muted)',
-                  lineHeight: 1.6
+                  lineHeight: 1.5,
+                  maxWidth: '34ch'
                 }}
               >
-                No metric is an isolated number. Consequential metrics simultaneously expose the active value, the mathematical policy bound, and the cryptographic settlement hash.
+                Every transaction couples the active value, policy mathematical bound, and cryptographic settlement proof.
               </p>
             </div>
             <div
@@ -388,11 +404,11 @@ export const Viewport02Thesis: React.FC = () => {
             data-datum="true"
             data-telemetry="INVARIANT 03 // MATERIAL FIXEDNESS"
             style={{
-              padding: '32px 28px',
+              padding: '32px 36px',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              minHeight: '220px'
+              minHeight: '190px'
             }}
           >
             <div>
@@ -402,7 +418,7 @@ export const Viewport02Thesis: React.FC = () => {
                   fontSize: '10px',
                   letterSpacing: '0.16em',
                   color: 'var(--signal-amber)',
-                  marginBottom: '12px'
+                  marginBottom: '10px'
                 }}
               >
                 03 // MATERIAL FIXEDNESS
@@ -410,10 +426,10 @@ export const Viewport02Thesis: React.FC = () => {
               <h3
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: '18px',
+                  fontSize: '17px',
                   fontWeight: 700,
                   letterSpacing: '-0.01em',
-                  marginBottom: '12px'
+                  marginBottom: '10px'
                 }}
               >
                 TEMPORAL STATE PHYSICS
@@ -423,10 +439,11 @@ export const Viewport02Thesis: React.FC = () => {
                   fontFamily: 'var(--font-body)',
                   fontSize: '13px',
                   color: 'var(--void-text-muted)',
-                  lineHeight: 1.6
+                  lineHeight: 1.5,
+                  maxWidth: '34ch'
                 }}
               >
-                Materiality encodes irreversibility: low-opacity hairlines during projection, WebGL tension during contact at the datum, and unmoving archival stone in the Euthyna ledger.
+                Materiality reflects irreversibility: projection hairlines, tension collisions, and archival stone receipts.
               </p>
             </div>
             <div
@@ -445,4 +462,4 @@ export const Viewport02Thesis: React.FC = () => {
       </div>
     </section>
   );
-};
+});

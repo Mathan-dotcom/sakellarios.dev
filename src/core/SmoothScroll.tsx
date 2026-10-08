@@ -17,6 +17,9 @@ export const LenisContext = createContext<LenisContextType>({
 
 export const useLenis = () => useContext(LenisContext);
 
+let globalScrollVelocity = 0;
+export const getScrollVelocity = (): number => globalScrollVelocity;
+
 export interface SmoothScrollProps {
   children: React.ReactNode;
 }
@@ -38,12 +41,17 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
 
     lenisRef.current = lenis;
 
-    // Couple Lenis scroll notifications directly to GSAP ScrollTrigger updates
-    lenis.on('scroll', ScrollTrigger.update);
+    // Couple Lenis scroll notifications directly to GSAP ScrollTrigger updates & velocity store
+    lenis.on('scroll', (e: { velocity?: number }) => {
+      globalScrollVelocity = e.velocity ?? 0;
+      ScrollTrigger.update();
+    });
 
     // Couple Lenis step into GSAP ticker
     const tickerUpdate = (time: number) => {
       lenis.raf(time * 1000);
+      globalScrollVelocity *= 0.92;
+      if (Math.abs(globalScrollVelocity) < 0.001) globalScrollVelocity = 0;
     };
 
     gsap.ticker.add(tickerUpdate);
@@ -53,6 +61,7 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
       gsap.ticker.remove(tickerUpdate);
       lenis.destroy();
       lenisRef.current = null;
+      globalScrollVelocity = 0;
     };
   }, []);
 
