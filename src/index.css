@@ -1,0 +1,170 @@
+/**
+ * SAKELLARIOUS CANONICAL DESIGN SYSTEM TOKENS
+ * Specification: DESIGN.md Section 2 (Authoritative v2.0)
+ * Bimodal Chamber Architecture: #0A0A09 Obsidian Void & #F2EFE9 Mineral Archive
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500&family=Syne:wght@700&display=swap');
+
+:root {
+  /* ==========================================================================
+     CHAMBER I: OBSIDIAN VOID (Hero 3D Chamber, Escalation Well, Recessed Wells)
+     ========================================================================== */
+  --void-bg: #0A0A09;
+  --void-surface: #121210;
+  --void-text-primary: #F2EFE9;
+  --void-text-muted: rgba(242, 239, 233, 0.42);
+  --void-hairline: rgba(242, 239, 233, 0.13);
+  --void-datum-line: rgba(242, 239, 233, 0.75);
+
+  /* ==========================================================================
+     CHAMBER II: MINERAL ARCHIVE (Live Treasury Matrix, Policy Engine, Ledger)
+     ========================================================================== */
+  --mineral-bg: #F2EFE9;
+  --mineral-recess: #E7E2D8;
+  --mineral-ink: #141413;
+  --mineral-ink-muted: rgba(20, 20, 19, 0.44);
+  --mineral-hairline: rgba(20, 20, 19, 0.14);
+  --mineral-datum-line: #141413;
+
+  /* ==========================================================================
+     SEMANTIC SIGNAL SPECTRUM (State-Earned Only — Strictly Non-Decorative)
+     ========================================================================== */
+  --signal-tension: #C84B31;     /* Burnt International Orange: Boundary Collision & Override */
+  --signal-amber: #D4943A;       /* Calibrated Amber: 3D Radial Core & Active USDC Sweep */
+  --signal-verified: #2E5A44;    /* Archival Oxide Green: Cryptographic Lock & Proof */
+  --signal-breach: #9E2A2B;      /* Deep Crimson: Sanctions Failure or Rule Invalidation */
+
+  /* ==========================================================================
+     STRUCTURAL & KINETIC CONSTANTS
+     ========================================================================== */
+  --radius-global: 0px;          /* STRICT ZERO RADIUS across all containers and buttons */
+  --border-width: 1px;
+  --ease-mechanical: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-damped-settle: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* ==========================================================================
+     CANONICAL TYPOGRAPHY
+     ========================================================================== */
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* STRICT ZERO-RADIUS & ZERO-SHADOW LAWS (AGENTS.md) */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--radius-global) !important;
+  box-shadow: none !important;
+}
+
+/* Lenis Recommended Inertial Scroll Rules */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* HIDE SYSTEM CURSOR ON DESKTOP */
+@media (hover: hover) and (pointer: fine) {
+  html, body, button, a, input, select, textarea, div, span {
+    cursor: none !important;
+  }
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background-color: var(--void-bg);
+  color: var(--void-text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* COCKPIT HEADER CELL POLARITY INVERSION (180ms cubic-bezier(0.16, 1, 0.3, 1)) */
+.cockpit-cell {
+  background-color: transparent;
+  color: var(--void-text-primary);
+  transition: background-color 180ms var(--ease-mechanical), color 180ms var(--ease-mechanical);
+}
+
+.cockpit-cell:hover {
+  background-color: var(--mineral-bg) !important;
+  color: var(--mineral-ink) !important;
+}
+
+.cockpit-cell:hover .cell-muted {
+  color: var(--mineral-ink-muted) !important;
+}
+
+.cockpit-cell:hover .cell-signal {
+  color: var(--signal-tension) !important;
+}
+
+/* GLOBAL CHASSIS CONTAINER */
+.global-chassis {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  background-color: var(--void-bg);
+}
+
+/* SELECTION STYLING */
+::selection {
+  background-color: var(--signal-amber);
+  color: #0A0A09;
+}
+
+/* TACTICAL BUTTON HOVER INVERSION (180ms mechanical ease) */
+.tactical-button:hover {
+  background-color: var(--mineral-ink) !important;
+  color: var(--mineral-bg) !important;
+}
+
+/* POLICY RULE BAY FULL-VOLUME INVERSION */
+.rule-bay:hover {
+  background-color: var(--mineral-ink) !important;
+  color: var(--mineral-bg) !important;
+}
+.rule-bay:hover .rule-muted {
+  color: rgba(242, 239, 233, 0.6) !important;
+}
+.rule-bay:hover .rule-badge {
+  color: var(--signal-amber) !important;
+}
+
+/* OBLIGATION INJECTOR TRIGGER HOVER */
+.injector-trigger {
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-mechanical), border-color 150ms var(--ease-mechanical);
+}
+.injector-trigger:hover {
+  background-color: #1a1a16 !important;
+}
+
+/* EUTHYNA LEDGER ROW FULL-BAND INVERSION */
+.ledger-row:hover {
+  background-color: var(--mineral-ink) !important;
+  color: var(--mineral-bg) !important;
+}
+.ledger-row:hover .ledger-muted {
+  color: rgba(242, 239, 233, 0.6) !important;
+}
