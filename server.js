@@ -4,6 +4,7 @@
  * Circle Gateway, Circle Paymaster, OpenSanctions, and Euthyna Beancount ledger.
  */
 
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -74,6 +75,29 @@ async function seedInitialState() {
 // ----------------------------------------------------
 // API Routes
 // ----------------------------------------------------
+
+// API Index & Service Discovery
+app.get(['/api', '/api/'], (req, res) => {
+    res.json({
+        service: "sakellarious.dev - Autonomous Treasury API",
+        status: "ONLINE",
+        network: "Arc Testnet (Chain ID 5042002)",
+        policyWallet: agent.walletAddress,
+        endpoints: {
+            treasurySummary: "GET /api/treasury/summary",
+            gatewayReserves: "GET /api/treasury/gateway-reserves",
+            processInvoice: "POST /api/invoices/process",
+            pendingEscalations: "GET /api/escalations",
+            approveEscalation: "POST /api/escalations/:id/approve",
+            cancelEscalation: "POST /api/escalations/:id/cancel",
+            sweepYield: "POST /api/treasury/sweep",
+            redeemYield: "POST /api/treasury/redeem",
+            beancountLedger: "GET /api/audit/beancount",
+            jsonLdReceipts: "GET /api/audit/receipts"
+        },
+        frontendAppUrl: "http://localhost:4000/"
+    });
+});
 
 // 1. Treasury Summary & Health
 app.get('/api/treasury/summary', async (req, res) => {
@@ -218,10 +242,10 @@ app.get('/api/audit/receipts', (req, res) => {
 
 // Start Server
 if (require.main === module) {
-    seedInitialState().then(() => {
+    agent.syncOnChainState().then(() => {
         app.listen(PORT, () => {
             console.log(`\n========================================================`);
-            console.log(`🚀 sakellarious.dev Backend Server running on port ${PORT}`);
+            console.log(`🚀 sakellarious.dev Live Arc Testnet Server running on port ${PORT}`);
             console.log(`   Arc L1 Policy Wallet: ${agent.walletAddress}`);
             console.log(`   API endpoints available at http://localhost:${PORT}/api/`);
             console.log(`========================================================\n`);
