@@ -12,6 +12,7 @@ export interface Viewport04EscalationProps {
 export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.memo(({ engine }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const trajectoryRef = useRef<HTMLDivElement>(null);
+  const collisionReticleRef = useRef<HTMLDivElement>(null);
   const holdButtonRef = useRef<HTMLDivElement>(null);
 
   // Press-and-hold 1.20s state
@@ -44,8 +45,30 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.m
       }
     );
 
+    // Event listener to replay the trajectory vector slamming down upon breach auto-glide
+    const handleReplayCollision = () => {
+      if (!trajectoryRef.current) return;
+      const tl = gsap.timeline();
+      tl.fromTo(
+        trajectoryRef.current,
+        { scaleY: 0, transformOrigin: 'top center' },
+        { scaleY: 1, duration: 0.68, ease: 'power4.in' }
+      );
+      if (collisionReticleRef.current) {
+        tl.fromTo(
+          collisionReticleRef.current,
+          { scale: 2.2, filter: 'brightness(2.5)' },
+          { scale: 1, filter: 'brightness(1)', duration: 0.5, ease: 'elastic.out(1.2, 0.4)' },
+          '-=0.08'
+        );
+      }
+    };
+
+    window.addEventListener('sakellarious:replay-collision', handleReplayCollision);
+
     return () => {
       anim.kill();
+      window.removeEventListener('sakellarious:replay-collision', handleReplayCollision);
     };
   }, []);
 
@@ -332,6 +355,7 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.m
 
           {/* Center Collision Impact Reticle */}
           <div
+            ref={collisionReticleRef}
             style={{
               position: 'absolute',
               top: '-9px',

@@ -8,11 +8,29 @@ export interface Viewport05LedgerProps {
 
 export const Viewport05Ledger: React.FC<Viewport05LedgerProps> = React.memo(({ engine }) => {
   const [expandedFolio, setExpandedFolio] = useState<string | null>('EUTHYNA #00481');
+  const [newlyInscribedFolio, setNewlyInscribedFolio] = useState<string | null>(null);
 
   // Refresh ScrollTrigger whenever forensic drawer expands or collapses
   useEffect(() => {
     ScrollTrigger.refresh();
   }, [expandedFolio]);
+
+  // Listen for newly settled invoice events to highlight top ledger row
+  useEffect(() => {
+    const handleNewInscription = (e: Event) => {
+      const customEvent = e as CustomEvent<{ folio?: string }>;
+      const folio = customEvent.detail?.folio || 'NEW_RECORD';
+      setNewlyInscribedFolio(folio);
+      setTimeout(() => {
+        setNewlyInscribedFolio(null);
+      }, 3500);
+    };
+
+    window.addEventListener('sakellarious:new-inscription', handleNewInscription);
+    return () => {
+      window.removeEventListener('sakellarious:new-inscription', handleNewInscription);
+    };
+  }, []);
 
   const toggleRow = (folio: string) => {
     setExpandedFolio(prev => (prev === folio ? null : folio));
@@ -149,6 +167,7 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
         {engine.invoices.map((item, idx) => {
           const folioKey = item.euthynaFolio || `EUTHYNA #${String(idx).padStart(5, '0')}`;
           const isExpanded = expandedFolio === folioKey;
+          const isTopHighlighted = idx === 0 && Boolean(newlyInscribedFolio);
           const dateStr = new Date(item.timestamp).toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
 
           return (
@@ -165,18 +184,36 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
                   gridTemplateColumns: '160px 180px 1.4fr 160px 180px 1.2fr',
                   padding: '18px 36px',
                   borderBottom: '1px solid var(--mineral-hairline)',
+                  borderLeft: isTopHighlighted ? '3px solid var(--signal-verified)' : 'none',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '11px',
                   alignItems: 'center',
-                  backgroundColor: isExpanded ? 'var(--mineral-recess)' : 'var(--mineral-bg)',
-                  transition: 'background-color 180ms var(--ease-mechanical), color 180ms var(--ease-mechanical)',
+                  backgroundColor: isTopHighlighted
+                    ? 'rgba(46, 90, 68, 0.22)'
+                    : isExpanded
+                    ? 'var(--mineral-recess)'
+                    : 'var(--mineral-bg)',
+                  transition: 'background-color 240ms var(--ease-mechanical), color 240ms var(--ease-mechanical)',
                   cursor: 'pointer',
                   userSelect: 'none'
                 }}
               >
                 {/* 1. EUTHYNA ID */}
-                <div style={{ fontWeight: 500, letterSpacing: '0.06em' }}>
-                  {item.euthynaFolio || folioKey}
+                <div style={{ fontWeight: 500, letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>{item.euthynaFolio || folioKey}</span>
+                  {isTopHighlighted && (
+                    <span
+                      style={{
+                        fontSize: '8px',
+                        backgroundColor: 'var(--signal-verified)',
+                        color: '#F2EFE9',
+                        padding: '1px 5px',
+                        fontWeight: 700
+                      }}
+                    >
+                      NEW
+                    </span>
+                  )}
                 </div>
 
                 {/* 2. UTC TIMESTAMP */}

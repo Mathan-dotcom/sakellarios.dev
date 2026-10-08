@@ -1,18 +1,37 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSakellariousEngine } from '../core/useSakellariousEngine';
 import { useAnimatedNumber } from '../core/useAnimatedNumber';
+import { useLenis } from '../core/SmoothScroll';
 
 export interface Viewport03TreasuryProps {
   engine: ReturnType<typeof useSakellariousEngine>;
 }
 
+type BayStatus = 'idle' | 'checking' | 'passed' | 'breached';
+
 export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(({ engine }) => {
+  const { lenis, scrollTo } = useLenis();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cursorPosRef = useRef<{ x: number; y: number } | null>(null);
   const isCanvasHoveredRef = useRef(false);
 
   const animLiquid = useAnimatedNumber(engine.balances.arcLiquidUsdc);
   const animUsyc = useAnimatedNumber(engine.balances.arcUsycVault);
+
+  // PolicyWallet 4-stage sequential evaluation state
+  const [evalState, setEvalState] = useState<{
+    isEvaluating: boolean;
+    activeBay: number;
+    bayStatuses: [BayStatus, BayStatus, BayStatus, BayStatus];
+    bannerText: string | null;
+    bannerType: 'idle' | 'checking' | 'cleared' | 'breached';
+  }>({
+    isEvaluating: false,
+    activeBay: -1,
+    bayStatuses: ['idle', 'idle', 'idle', 'idle'],
+    bannerText: null,
+    bannerType: 'idle'
+  });
 
   // Custom obligation form state
   const [customVendor, setCustomVendor] = useState('0x4444444444444444444444444444444444444444');
@@ -198,29 +217,148 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
     );
   };
 
+  // --------------------------------------------------------------------------
+  // SEQUENTIAL POLICY EVALUATION PIPELINE (POL-01 -> POL-04, 140ms per bay)
+  // --------------------------------------------------------------------------
+  const runPolicyEvaluation = async (payload: {
+    vendorAddress: string;
+    amountUsdc: number;
+    category: string;
+    invoiceRef: string;
+    reasoning?: string;
+  }) => {
+    if (evalState.isEvaluating) return;
+
+    const isBreach = payload.amountUsdc > 250;
+
+    // Step 1: POL-01 CHECKING (0ms)
+    setEvalState({
+      isEvaluating: true,
+      activeBay: 0,
+      bayStatuses: ['checking', 'idle', 'idle', 'idle'],
+      bannerText: 'EVALUATING POL-01 // 30D OPERATING BUFFER >= 400,000 USDC',
+      bannerType: 'checking'
+    });
+    await new Promise((r) => setTimeout(r, 140));
+
+    // Step 2: POL-01 PASSED, POL-02 CHECKING (140ms)
+    setEvalState({
+      isEvaluating: true,
+      activeBay: 1,
+      bayStatuses: ['passed', 'checking', 'idle', 'idle'],
+      bannerText: 'EVALUATING POL-02 // AUTONOMOUS SINGLE-TX CAP <= 250.00 USDC',
+      bannerType: 'checking'
+    });
+    await new Promise((r) => setTimeout(r, 140));
+
+    if (isBreach) {
+      // Step 2b: POL-02 BREACHED! (Amount > 250 USDC)
+      setEvalState({
+        isEvaluating: true,
+        activeBay: 1,
+        bayStatuses: ['passed', 'breached', 'idle', 'idle'],
+        bannerText: 'BREACH DETECTED AT POL-02 // HALTED AT GOVERNANCE DATUM',
+        bannerType: 'breached'
+      });
+
+      const res = await engine.processInvoice(payload);
+      setSubmissionFeedback(`EXCEPTION HALTED AT DATUM: ${res.message}`);
+
+      // Auto-glide down to Viewport 04 after 200ms
+      setTimeout(() => {
+        if (lenis) {
+          lenis.scrollTo('#viewport-04-escalation', { duration: 1.1 });
+        } else {
+          scrollTo('#viewport-04-escalation');
+        }
+        window.dispatchEvent(
+          new CustomEvent('sakellarious:replay-collision', {
+            detail: { amount: payload.amountUsdc }
+          })
+        );
+      }, 200);
+
+      setTimeout(() => {
+        setEvalState({
+          isEvaluating: false,
+          activeBay: -1,
+          bayStatuses: ['idle', 'idle', 'idle', 'idle'],
+          bannerText: null,
+          bannerType: 'idle'
+        });
+      }, 4000);
+      return;
+    }
+
+    // Step 3: POL-02 PASSED, POL-03 CHECKING (280ms)
+    setEvalState({
+      isEvaluating: true,
+      activeBay: 2,
+      bayStatuses: ['passed', 'passed', 'checking', 'idle'],
+      bannerText: 'EVALUATING POL-03 // OPENSANCTIONS SCREENING SCORE == 0.00',
+      bannerType: 'checking'
+    });
+    await new Promise((r) => setTimeout(r, 140));
+
+    // Step 4: POL-03 PASSED, POL-04 CHECKING (420ms)
+    setEvalState({
+      isEvaluating: true,
+      activeBay: 3,
+      bayStatuses: ['passed', 'passed', 'passed', 'checking'],
+      bannerText: 'EVALUATING POL-04 // CIRCLE PAYMASTER GASLESS SPONSORSHIP',
+      bannerType: 'checking'
+    });
+    await new Promise((r) => setTimeout(r, 140));
+
+    // Step 5: ALL 4 RULES PASSED! Flash #2E5A44 banner (560ms)
+    setEvalState({
+      isEvaluating: true,
+      activeBay: 4,
+      bayStatuses: ['passed', 'passed', 'passed', 'passed'],
+      bannerText: 'AUTONOMOUS EXECUTION CLEARED // ZERO HUMAN INTERVENTION',
+      bannerType: 'cleared'
+    });
+
+    const res = await engine.processInvoice(payload);
+    setSubmissionFeedback(`STATUS: ${res.status} // ${res.message}`);
+
+    // Highlight newly inscribed row at the top of Viewport 05
+    window.dispatchEvent(
+      new CustomEvent('sakellarious:new-inscription', {
+        detail: { folio: res.txHash || payload.invoiceRef }
+      })
+    );
+
+    setTimeout(() => {
+      setEvalState({
+        isEvaluating: false,
+        activeBay: -1,
+        bayStatuses: ['idle', 'idle', 'idle', 'idle'],
+        bannerText: null,
+        bannerType: 'idle'
+      });
+    }, 4000);
+  };
+
   // Handlers for invoice triggers
-  const handleInjectCompliant = async () => {
-    setSubmissionFeedback('Dispatching 120.00 USDC compliant invoice to Circle Paymaster...');
-    const res = await engine.processInvoice({
+  const handleInjectCompliant = () => {
+    runPolicyEvaluation({
       vendorAddress: '0x3333333333333333333333333333333333333333',
       amountUsdc: 120.00,
       category: 'INFRASTRUCTURE',
       invoiceRef: `INV-AUTO-${Math.floor(1000 + Math.random() * 9000)}`,
       reasoning: 'Hetzner Kubernetes bare-metal RPC node cluster'
     });
-    setSubmissionFeedback(`STATUS: ${res.status} // ${res.message}`);
   };
 
-  const handleInjectBreach = async () => {
-    setSubmissionFeedback('Dispatching 500.00 USDC invoice (exceeds $250 cap)...');
-    const res = await engine.processInvoice({
+  const handleInjectBreach = () => {
+    runPolicyEvaluation({
       vendorAddress: '0x6666666666666666666666666666666666666666',
       amountUsdc: 500.00,
       category: 'VENDOR',
       invoiceRef: `INV-BREACH-${Math.floor(1000 + Math.random() * 9000)}`,
       reasoning: 'Enterprise SOC2 penetration test retainer'
     });
-    setSubmissionFeedback(`STATUS: ${res.status} // ${res.message}`);
   };
 
   const handleTestSanctioned = async () => {
@@ -231,20 +369,18 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
     );
   };
 
-  const handleCustomSubmit = async (e: React.FormEvent) => {
+  const handleCustomSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const amt = parseFloat(customAmount);
     if (isNaN(amt) || amt <= 0) return;
 
-    setSubmissionFeedback(`Dispatching ${amt.toFixed(2)} USDC obligation to policy wallet...`);
-    const res = await engine.processInvoice({
+    runPolicyEvaluation({
       vendorAddress: customVendor,
       amountUsdc: amt,
       category: customCategory,
       invoiceRef: customInvoiceRef,
       reasoning: 'Custom Obligation Injection via Operator Console'
     });
-    setSubmissionFeedback(`RESULT: ${res.status} // ${res.message}`);
   };
 
   return (
@@ -597,6 +733,50 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
               02 // POLICYWALLET MATHEMATICAL GUARDRAILS (4 BAYS)
             </div>
 
+            {/* REAL-TIME POLICY EVALUATION BANNER */}
+            {evalState.bannerText && (
+              <div
+                style={{
+                  padding: '10px 16px',
+                  marginBottom: '16px',
+                  backgroundColor:
+                    evalState.bannerType === 'cleared'
+                      ? '#2E5A44'
+                      : evalState.bannerType === 'breached'
+                      ? '#C84B31'
+                      : 'rgba(212, 148, 58, 0.15)',
+                  border:
+                    evalState.bannerType === 'checking'
+                      ? '1px solid var(--signal-amber)'
+                      : 'none',
+                  color:
+                    evalState.bannerType === 'checking'
+                      ? 'var(--signal-amber)'
+                      : '#F2EFE9',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '10px',
+                  fontWeight: 600,
+                  letterSpacing: '0.12em',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  boxSizing: 'border-box'
+                }}
+              >
+                <span>
+                  {evalState.bannerType === 'cleared' && '■ '}
+                  {evalState.bannerType === 'breached' && '▲ '}
+                  {evalState.bannerType === 'checking' && '◌ '}
+                  {evalState.bannerText}
+                </span>
+                <span style={{ fontSize: '9px', opacity: 0.85 }}>
+                  {evalState.bannerType === 'cleared' && 'ARC L1 VALIDATED'}
+                  {evalState.bannerType === 'breached' && 'AUTONOMOUS HALT'}
+                  {evalState.bannerType === 'checking' && 'PIPELINE ACTIVE'}
+                </span>
+              </div>
+            )}
+
             {/* 4 CONTIGUOUS 1PX-BORDERED ARCHITECTURAL RULE BAYS */}
             <div
               style={{
@@ -614,7 +794,13 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                 style={{
                   padding: '14px 18px',
                   borderBottom: '1px solid var(--mineral-hairline)',
-                  transition: 'background-color 180ms var(--ease-mechanical), color 180ms var(--ease-mechanical)',
+                  backgroundColor:
+                    evalState.bayStatuses[0] === 'checking'
+                      ? 'rgba(212, 148, 58, 0.14)'
+                      : evalState.bayStatuses[0] === 'passed'
+                      ? 'rgba(46, 90, 68, 0.10)'
+                      : 'transparent',
+                  transition: 'background-color 140ms var(--ease-mechanical), color 140ms var(--ease-mechanical)',
                   cursor: 'pointer'
                 }}
               >
@@ -622,8 +808,23 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 500 }}>
                     POL-01: 30D OPERATING BUFFER &gt;= 400,000 USDC
                   </span>
-                  <span className="rule-badge" style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'var(--signal-verified)' }}>
-                    [ENFORCED]
+                  <span
+                    className="rule-badge"
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '9px',
+                      color:
+                        evalState.bayStatuses[0] === 'checking'
+                          ? 'var(--signal-amber)'
+                          : 'var(--signal-verified)',
+                      fontWeight: evalState.bayStatuses[0] === 'checking' ? 700 : 500
+                    }}
+                  >
+                    {evalState.bayStatuses[0] === 'checking'
+                      ? '[CHECKING...]'
+                      : evalState.bayStatuses[0] === 'passed'
+                      ? '[PASSED]'
+                      : '[ENFORCED]'}
                   </span>
                 </div>
                 <div className="rule-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--mineral-ink-muted)', marginTop: '4px' }}>
@@ -639,16 +840,50 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                 style={{
                   padding: '14px 18px',
                   borderBottom: '1px solid var(--mineral-hairline)',
-                  transition: 'background-color 180ms var(--ease-mechanical), color 180ms var(--ease-mechanical)',
+                  backgroundColor:
+                    evalState.bayStatuses[1] === 'checking'
+                      ? 'rgba(212, 148, 58, 0.14)'
+                      : evalState.bayStatuses[1] === 'breached'
+                      ? 'rgba(200, 75, 49, 0.16)'
+                      : evalState.bayStatuses[1] === 'passed'
+                      ? 'rgba(46, 90, 68, 0.10)'
+                      : 'transparent',
+                  transition: 'background-color 140ms var(--ease-mechanical), color 140ms var(--ease-mechanical)',
                   cursor: 'pointer'
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 500 }}>
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '11px',
+                      fontWeight: 500,
+                      color: evalState.bayStatuses[1] === 'breached' ? 'var(--signal-tension)' : 'inherit'
+                    }}
+                  >
                     POL-02: AUTONOMOUS SINGLE-TX CAP &lt;= 250.00 USDC
                   </span>
-                  <span className="rule-badge" style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'var(--signal-verified)' }}>
-                    [ENFORCED]
+                  <span
+                    className="rule-badge"
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '9px',
+                      color:
+                        evalState.bayStatuses[1] === 'checking'
+                          ? 'var(--signal-amber)'
+                          : evalState.bayStatuses[1] === 'breached'
+                          ? 'var(--signal-tension)'
+                          : 'var(--signal-verified)',
+                      fontWeight: evalState.bayStatuses[1] !== 'idle' ? 700 : 500
+                    }}
+                  >
+                    {evalState.bayStatuses[1] === 'checking'
+                      ? '[CHECKING...]'
+                      : evalState.bayStatuses[1] === 'breached'
+                      ? '[BREACHED AT POL-02]'
+                      : evalState.bayStatuses[1] === 'passed'
+                      ? '[PASSED]'
+                      : '[ENFORCED]'}
                   </span>
                 </div>
                 <div className="rule-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--mineral-ink-muted)', marginTop: '4px' }}>
@@ -664,7 +899,13 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                 style={{
                   padding: '14px 18px',
                   borderBottom: '1px solid var(--mineral-hairline)',
-                  transition: 'background-color 180ms var(--ease-mechanical), color 180ms var(--ease-mechanical)',
+                  backgroundColor:
+                    evalState.bayStatuses[2] === 'checking'
+                      ? 'rgba(212, 148, 58, 0.14)'
+                      : evalState.bayStatuses[2] === 'passed'
+                      ? 'rgba(46, 90, 68, 0.10)'
+                      : 'transparent',
+                  transition: 'background-color 140ms var(--ease-mechanical), color 140ms var(--ease-mechanical)',
                   cursor: 'pointer'
                 }}
               >
@@ -672,8 +913,23 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 500 }}>
                     POL-03: OPENSANCTIONS SCREENING SCORE == 0.00
                   </span>
-                  <span className="rule-badge" style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'var(--signal-verified)' }}>
-                    [ENFORCED]
+                  <span
+                    className="rule-badge"
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '9px',
+                      color:
+                        evalState.bayStatuses[2] === 'checking'
+                          ? 'var(--signal-amber)'
+                          : 'var(--signal-verified)',
+                      fontWeight: evalState.bayStatuses[2] === 'checking' ? 700 : 500
+                    }}
+                  >
+                    {evalState.bayStatuses[2] === 'checking'
+                      ? '[CHECKING...]'
+                      : evalState.bayStatuses[2] === 'passed'
+                      ? '[PASSED]'
+                      : '[ENFORCED]'}
                   </span>
                 </div>
                 <div className="rule-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--mineral-ink-muted)', marginTop: '4px' }}>
@@ -688,7 +944,13 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                 data-telemetry="RULE POL-04 // CIRCLE PAYMASTER GASLESS"
                 style={{
                   padding: '14px 18px',
-                  transition: 'background-color 180ms var(--ease-mechanical), color 180ms var(--ease-mechanical)',
+                  backgroundColor:
+                    evalState.bayStatuses[3] === 'checking'
+                      ? 'rgba(212, 148, 58, 0.14)'
+                      : evalState.bayStatuses[3] === 'passed'
+                      ? 'rgba(46, 90, 68, 0.10)'
+                      : 'transparent',
+                  transition: 'background-color 140ms var(--ease-mechanical), color 140ms var(--ease-mechanical)',
                   cursor: 'pointer'
                 }}
               >
@@ -696,8 +958,23 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 500 }}>
                     POL-04: CIRCLE PAYMASTER GASLESS SPONSORSHIP
                   </span>
-                  <span className="rule-badge" style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'var(--signal-verified)' }}>
-                    [ENFORCED]
+                  <span
+                    className="rule-badge"
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '9px',
+                      color:
+                        evalState.bayStatuses[3] === 'checking'
+                          ? 'var(--signal-amber)'
+                          : 'var(--signal-verified)',
+                      fontWeight: evalState.bayStatuses[3] === 'checking' ? 700 : 500
+                    }}
+                  >
+                    {evalState.bayStatuses[3] === 'checking'
+                      ? '[CHECKING...]'
+                      : evalState.bayStatuses[3] === 'passed'
+                      ? '[PASSED]'
+                      : '[ENFORCED]'}
                   </span>
                 </div>
                 <div className="rule-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--mineral-ink-muted)', marginTop: '4px' }}>

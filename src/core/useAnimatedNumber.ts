@@ -5,21 +5,32 @@ import { useState, useEffect, useRef } from 'react';
  * Critically Damped Mechanical Numerical Interpolation Hook (Odometer Physics)
  * Easing: 1 - Math.pow(1 - t, 4) (Quartic Out / Critically Damped Mechanical Settle)
  */
-export function useAnimatedNumber(targetValue: number, duration = 420): number {
-  const [currentValue, setCurrentValue] = useState(targetValue);
-  const startValueRef = useRef(targetValue);
+export function useAnimatedNumber(targetValue: number, duration = 420, initialValue?: number): number {
+  const [currentValue, setCurrentValue] = useState(initialValue !== undefined ? initialValue : targetValue);
+  const startValueRef = useRef(initialValue !== undefined ? initialValue : targetValue);
   const startTimeRef = useRef<number | null>(null);
-  const targetRef = useRef(targetValue);
+  const targetRef = useRef(initialValue !== undefined ? initialValue : targetValue);
   const rafRef = useRef<number | null>(null);
+  const isFirstMountRef = useRef(true);
 
   useEffect(() => {
-    if (targetValue === targetRef.current && currentValue === targetValue) {
-      return;
+    if (isFirstMountRef.current) {
+      isFirstMountRef.current = false;
+      if (initialValue !== undefined && initialValue !== targetValue) {
+        startValueRef.current = initialValue;
+        targetRef.current = targetValue;
+        startTimeRef.current = performance.now();
+      } else {
+        return;
+      }
+    } else {
+      if (targetValue === targetRef.current && currentValue === targetValue) {
+        return;
+      }
+      startValueRef.current = currentValue;
+      targetRef.current = targetValue;
+      startTimeRef.current = performance.now();
     }
-
-    startValueRef.current = currentValue;
-    targetRef.current = targetValue;
-    startTimeRef.current = performance.now();
 
     const animate = (now: number) => {
       if (!startTimeRef.current) return;
@@ -48,7 +59,7 @@ export function useAnimatedNumber(targetValue: number, duration = 420): number {
         cancelAnimationFrame(rafRef.current);
       }
     };
-  }, [targetValue, duration]);
+  }, [targetValue, duration, initialValue]);
 
   return currentValue;
 }

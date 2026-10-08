@@ -8,9 +8,10 @@ gsap.registerPlugin(ScrollTrigger);
 
 export interface OpticalGovernorCanvasProps {
   isHalted: boolean;
+  bootProgressRef?: React.MutableRefObject<number>;
 }
 
-export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = React.memo(({ isHalted }) => {
+export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = React.memo(({ isHalted, bootProgressRef }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const scrollProgressRef = useRef(0);
 
@@ -172,7 +173,9 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = React
     const cloudUniforms = {
       uTime: { value: 0.0 },
       uTension: { value: isHalted ? 1.0 : 0.0 },
-      uScrollVelocity: { value: 0.0 }
+      uScrollVelocity: { value: 0.0 },
+      uBootProgress: { value: bootProgressRef ? bootProgressRef.current : 1.0 },
+      uPointer: { value: new THREE.Vector2(-999.0, -999.0) }
     };
 
     const cloudVertexShader = `
@@ -182,6 +185,8 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = React
       uniform float uTime;
       uniform float uTension;
       uniform float uScrollVelocity;
+      uniform float uBootProgress;
+      uniform vec2 uPointer;
 
       void main() {
         vColor = customColor;
@@ -189,16 +194,41 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = React
           vColor = mix(vColor, vec3(0.784, 0.294, 0.192), uTension * 0.65);
         }
 
-        // 100% GPU vertex wave undulation driven by uTime & uScrollVelocity
-        vec3 pos = position;
+        // 1. Dispersion during instrument boot convergence (0.0 -> 1.0)
+        float boot = clamp(uBootProgress, 0.0, 1.0);
+        float dispersion = (1.0 - boot) * 3.4;
+        vec3 radialOffset = normalize(position + vec3(0.0001)) * (dispersion * (1.0 + 0.3 * sin(position.y * 5.0 + position.x * 3.0)));
+        vec3 pos = position + radialOffset;
+
+        // 2. 100% GPU vertex wave undulation driven by uTime & uScrollVelocity
         float r = length(pos);
-        float wave = sin(r * 4.2 - uTime * 2.0 + pos.y * 3.0) * 0.038;
+        float wave = sin(r * 4.2 - uTime * 2.0 + pos.y * 3.0) * (0.038 * boot);
         float velPulse = sin(pos.x * 5.0 + uTime * 3.5) * (uScrollVelocity * 0.035);
         vec3 dir = normalize(pos + vec3(0.0001));
         pos += dir * (wave + velPulse);
 
+        // 3. Projected position & Screen/NDC space cursor inspection field
         vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-        gl_PointSize = size * (290.0 / -mvPosition.z) * (1.0 + min(0.35, abs(uScrollVelocity) * 0.12));
+        vec4 clipPos = projectionMatrix * mvPosition;
+        vec2 ndcPos = clipPos.xy / clipPos.w;
+
+        // Distance in NDC space to caliper cursor
+        float pointerDist = length(ndcPos - uPointer);
+        // Crisp localized radial displacement and amber luminance boost along cursor trajectory
+        float cursorInfluence = smoothstep(0.32, 0.0, pointerDist) * boot;
+
+        // Amber luminance boost along caliper cursor trajectory
+        vec3 amberBoost = vec3(0.96, 0.72, 0.32);
+        vColor = mix(vColor, amberBoost, cursorInfluence * 0.88);
+
+        // Localized radial displacement away from cursor trajectory
+        vec2 displaceDir = normalize(ndcPos - uPointer + vec2(0.0001));
+        pos.xy += displaceDir * (cursorInfluence * 0.22);
+
+        // Re-evaluate model-view position with displacement
+        mvPosition = modelViewMatrix * vec4(pos, 1.0);
+        float pointScale = 290.0 / -mvPosition.z;
+        gl_PointSize = size * pointScale * (1.0 + min(0.35, abs(uScrollVelocity) * 0.12) + cursorInfluence * 0.65);
         gl_Position = projectionMatrix * mvPosition;
       }
     `;
@@ -303,7 +333,7 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = React
     instrumentGroup.add(kineticRing2);
     scene.add(instrumentGroup);
 
-    // MOUSE PARALLAX TRACKER (lerp: 0.05)
+    // MOUSE PARALLAX TRACKER (lerp: 0.05) & CURSOR NDC FIELD
     let targetTiltX = 0;
     let targetTiltY = 0;
     let currentTiltX = 0;
@@ -312,6 +342,7 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = React
     const handlePointerMove = (e: PointerEvent) => {
       const normX = (e.clientX / window.innerWidth) * 2 - 1;
       const normY = -(e.clientY / window.innerHeight) * 2 + 1;
+      cloudUniforms.uPointer.value.set(normX, normY);
       targetTiltX = -normY * 0.16; // subtle pitch tilt
       targetTiltY = normX * 0.22;  // subtle yaw tilt
     };
@@ -348,6 +379,11 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = React
       cloudUniforms.uTension.value = currentTension;
       cloudUniforms.uTime.value = elapsedTime;
 
+      // Boot progress uniform & CAD ring spin-down physics
+      const bootProgress = bootProgressRef ? bootProgressRef.current : 1.0;
+      cloudUniforms.uBootProgress.value = bootProgress;
+      const bootRingBoost = Math.max(0, 1.0 - bootProgress) * 4.2;
+
       // Scroll velocity dynamics
       const rawVelocity = getScrollVelocity();
       smoothVelocity += (rawVelocity - smoothVelocity) * 0.08;
@@ -356,9 +392,9 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = React
       cloudUniforms.uScrollVelocity.value = smoothVelocity;
       backdropUniforms.uScrollVelocity.value = smoothVelocity;
 
-      // Accelerated rotation speed during scroll, smoothly damping back
-      kineticRing1.rotation.z += (0.08 + speedBoost * 0.35) * (delta || 0.016);
-      kineticRing2.rotation.z -= (0.06 + speedBoost * 0.30) * (delta || 0.016);
+      // Accelerated rotation speed during scroll & boot spin-down lock
+      kineticRing1.rotation.z += (0.08 + speedBoost * 0.35 + bootRingBoost) * (delta || 0.016);
+      kineticRing2.rotation.z -= (0.06 + speedBoost * 0.30 + bootRingBoost * 0.75) * (delta || 0.016);
 
       // Point cloud deterministic orbit
       pointCloud.rotation.y = elapsedTime * 0.04;

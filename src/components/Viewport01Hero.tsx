@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import gsap from 'gsap';
 import { useSakellariousEngine } from '../core/useSakellariousEngine';
 import { useAnimatedNumber } from '../core/useAnimatedNumber';
 import { OpticalGovernorCanvas } from './OpticalGovernorCanvas';
@@ -9,7 +10,80 @@ export interface Viewport01HeroProps {
 
 export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engine }) => {
   const isHalted = engine.escalations.length > 0;
-  const animCustody = useAnimatedNumber(engine.balances.totalArcCapital);
+
+  // Refs for 1.35-second choreographed instrument boot sequence
+  const horizontalDatumRef = useRef<HTMLDivElement>(null);
+  const verticalDatumRef = useRef<HTMLDivElement>(null);
+  const topStripRef = useRef<HTMLDivElement>(null);
+  const bottomPlinthRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const bootProgressRef = useRef(0);
+
+  // Critically damped mechanical metric roll-ups from 0
+  const animCustody = useAnimatedNumber(engine.balances.totalArcCapital, 750, 0);
+  const animFloor = useAnimatedNumber(engine.forecasting.targetBuffer30D, 750, 0);
+  const animFolio = useAnimatedNumber(481, 750, 0);
+
+  // 1. CHOREOGRAPHED 1.35-SECOND INSTRUMENT BOOT SEQUENCE
+  useEffect(() => {
+    const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+
+    // 0.00s–0.45s: Hairlines draw outward from center intersection (50%, 50%)
+    if (horizontalDatumRef.current) {
+      tl.fromTo(
+        horizontalDatumRef.current,
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.45, ease: 'expo.out' },
+        0
+      );
+    }
+    if (verticalDatumRef.current) {
+      tl.fromTo(
+        verticalDatumRef.current,
+        { scaleY: 0 },
+        { scaleY: 1, duration: 0.45, ease: 'expo.out' },
+        0
+      );
+    }
+
+    // 0.15s–1.10s: Pass uBootProgress (0.0 -> 1.0) uniform convergence
+    tl.fromTo(
+      bootProgressRef,
+      { current: 0 },
+      { current: 1, duration: 0.95, ease: 'expo.out' },
+      0.15
+    );
+
+    // 0.45s–1.20s: Reveal Top Perimeter Strip, Bottom Plinth, and SAKELLARIOUS display title
+    if (topStripRef.current) {
+      tl.fromTo(
+        topStripRef.current,
+        { opacity: 0, y: -16 },
+        { opacity: 1, y: 0, duration: 0.55, ease: 'expo.out' },
+        0.45
+      );
+    }
+    if (bottomPlinthRef.current) {
+      tl.fromTo(
+        bottomPlinthRef.current,
+        { y: '100%', opacity: 0 },
+        { y: '0%', opacity: 1, duration: 0.75, ease: 'expo.out' },
+        0.45
+      );
+    }
+    if (titleRef.current) {
+      tl.fromTo(
+        titleRef.current,
+        { y: '105%' },
+        { y: '0%', duration: 0.75, ease: 'power4.out' },
+        0.55
+      );
+    }
+
+    return () => {
+      tl.kill();
+    };
+  }, []);
 
   return (
     <section
@@ -35,6 +109,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
           1. TOP PERIMETER STRIP (48px)
           ====================================================================== */}
       <div
+        ref={topStripRef}
         style={{
           height: '48px',
           padding: '0 36px',
@@ -90,6 +165,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
       >
         {/* Subtle Horizontal Datum Hairline */}
         <div
+          ref={horizontalDatumRef}
           style={{
             position: 'absolute',
             top: '50%',
@@ -103,7 +179,9 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             justifyContent: 'space-between',
             alignItems: 'center',
             padding: '0 16px',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            transformOrigin: '50% 50%',
+            willChange: 'transform'
           }}
         >
           <span
@@ -116,7 +194,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
               userSelect: 'none'
             }}
           >
-            DATUM // Y:00
+            AXIS Y:00 // DATUM
           </span>
 
           <span
@@ -135,6 +213,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
 
         {/* Subtle Vertical Datum Meridian (50% Center Axis) */}
         <div
+          ref={verticalDatumRef}
           style={{
             position: 'absolute',
             top: 0,
@@ -143,20 +222,23 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             height: '100%',
             backgroundColor: 'rgba(242, 239, 233, 0.10)',
             zIndex: 3,
-            pointerEvents: 'none'
+            pointerEvents: 'none',
+            transformOrigin: '50% 50%',
+            willChange: 'transform'
           }}
         />
 
         {/* Central 3D Optical Governor Artifact */}
-        <OpticalGovernorCanvas isHalted={isHalted} />
+        <OpticalGovernorCanvas isHalted={isHalted} bootProgressRef={bootProgressRef} />
       </div>
 
       {/* ======================================================================
-          3. BOTTOM ARCHITECTURAL PLINTH (156px)
+          3. BOTTOM ARCHITECTURAL PLINTH (Responsive Laptop Height Guard)
           ====================================================================== */}
       <div
+        ref={bottomPlinthRef}
         style={{
-          height: '156px',
+          height: 'clamp(118px, 17vh, 156px)',
           borderTop: '1px solid rgba(242, 239, 233, 0.13)',
           backgroundColor: 'rgba(10, 10, 9, 0.78)',
           backdropFilter: 'none',
@@ -171,7 +253,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
         <div
           style={{
             width: '50%',
-            padding: '24px 36px',
+            padding: 'clamp(14px, 2.2vh, 24px) 36px',
             borderRight: '1px solid rgba(242, 239, 233, 0.13)',
             display: 'flex',
             flexDirection: 'column',
@@ -192,20 +274,23 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             CALIBRATED AUTHORITY // V2.0
           </div>
 
-          <h1
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(2.2rem, 3.8vw, 3.9rem)',
-              lineHeight: 0.92,
-              letterSpacing: '-0.04em',
-              color: 'var(--void-text-primary)',
-              textTransform: 'uppercase',
-              margin: 0,
-              whiteSpace: 'nowrap'
-            }}
-          >
-            SAKELLARIOUS
-          </h1>
+          <div style={{ overflow: 'hidden' }}>
+            <h1
+              ref={titleRef}
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(1.8rem, 3.4vw, 3.9rem)',
+                lineHeight: 0.92,
+                letterSpacing: '-0.04em',
+                color: 'var(--void-text-primary)',
+                textTransform: 'uppercase',
+                margin: 0,
+                whiteSpace: 'nowrap'
+              }}
+            >
+              SAKELLARIOUS
+            </h1>
+          </div>
 
           <div
             style={{
@@ -234,7 +319,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             data-metric="true"
             data-telemetry={`VALUE // $${animCustody.toLocaleString()} TOTAL CUSTODY`}
             style={{
-              padding: '22px 28px',
+              padding: 'clamp(12px, 1.8vh, 22px) clamp(16px, 1.8vw, 28px)',
               borderRight: '1px solid rgba(242, 239, 233, 0.13)',
               display: 'flex',
               flexDirection: 'column',
@@ -286,7 +371,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             data-metric="true"
             data-telemetry="BOUND // 400K FLOOR & 250 SINGLE-TX CAP"
             style={{
-              padding: '22px 28px',
+              padding: 'clamp(12px, 1.8vh, 22px) clamp(16px, 1.8vw, 28px)',
               borderRight: '1px solid rgba(242, 239, 233, 0.13)',
               display: 'flex',
               flexDirection: 'column',
@@ -309,7 +394,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             <div
               style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(1.5rem, 2.2vw, 2.25rem)',
+                fontSize: 'clamp(1.3rem, 1.9vw, 2.25rem)',
                 fontWeight: 700,
                 lineHeight: 1,
                 letterSpacing: '-0.03em',
@@ -318,7 +403,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
                 whiteSpace: 'nowrap'
               }}
             >
-              400K FLOOR
+              {Math.round(animFloor / 1000)}K FLOOR
             </div>
 
             <div
@@ -338,7 +423,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             data-metric="true"
             data-telemetry="PROOF // EUTHYNA #00481 ARC L1 VERIFIED"
             style={{
-              padding: '22px 28px',
+              padding: 'clamp(12px, 1.8vh, 22px) clamp(16px, 1.8vw, 28px)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
@@ -360,7 +445,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             <div
               style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(1.5rem, 2.2vw, 2.25rem)',
+                fontSize: 'clamp(1.3rem, 1.9vw, 2.25rem)',
                 fontWeight: 700,
                 lineHeight: 1,
                 letterSpacing: '-0.03em',
@@ -369,7 +454,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
                 whiteSpace: 'nowrap'
               }}
             >
-              EUTHYNA #00481
+              EUTHYNA #{String(Math.round(animFolio)).padStart(5, '0')}
             </div>
 
             <div
