@@ -2,12 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useSakellariousEngine, ProcessedInvoice } from '../core/useSakellariousEngine';
 import { scrambleText } from '../core/useAnimatedNumber';
+import { EuthynaDataLoomCanvas } from './EuthynaDataLoomCanvas';
 
 export interface Viewport05LedgerProps {
   engine: ReturnType<typeof useSakellariousEngine>;
 }
 
 export const Viewport05Ledger: React.FC<Viewport05LedgerProps> = React.memo(({ engine }) => {
+  const [viewMode, setViewMode] = useState<'loom' | 'table'>('loom');
   const [expandedFolio, setExpandedFolio] = useState<string | null>('EUTHYNA #00481');
   const [newlyInscribedFolio, setNewlyInscribedFolio] = useState<string | null>(null);
   const [scrambledCells, setScrambledCells] = useState<{
@@ -168,236 +170,292 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
           <span>EUTHYNA DOUBLE-ENTRY ARCHIVE // BEANCOUNT + JSON-LD CRYPTOGRAPHIC RECEIPTS</span>
         </div>
 
-        <div
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '11px',
-            letterSpacing: '0.12em',
-            color: 'var(--mineral-ink-muted)'
-          }}
-        >
-          TOTAL SETTLED CHAPTERS: {engine.invoices.length} // IMMUTABLE LEDGER
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <div
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '11px',
+              letterSpacing: '0.12em',
+              color: 'var(--mineral-ink-muted)'
+            }}
+          >
+            TOTAL SETTLED CHAPTERS: {engine.invoices.length} // IMMUTABLE LEDGER
+          </div>
+
+          {/* SPATIAL LOOM / TABULAR REGISTER SWITCH */}
+          <div
+            style={{
+              display: 'flex',
+              border: '1px solid var(--mineral-hairline)',
+              backgroundColor: 'var(--mineral-bg)'
+            }}
+          >
+            <button
+              onClick={() => setViewMode('loom')}
+              style={{
+                background: viewMode === 'loom' ? 'var(--mineral-ink)' : 'transparent',
+                color: viewMode === 'loom' ? 'var(--mineral-bg)' : 'var(--mineral-ink)',
+                border: 'none',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '10px',
+                letterSpacing: '0.12em',
+                padding: '6px 12px',
+                cursor: 'pointer',
+                transition: 'background 140ms ease, color 140ms ease'
+              }}
+            >
+              [ 3D SPATIAL DATA LOOM ]
+            </button>
+            <button
+              onClick={() => setViewMode('table')}
+              style={{
+                background: viewMode === 'table' ? 'var(--mineral-ink)' : 'transparent',
+                color: viewMode === 'table' ? 'var(--mineral-bg)' : 'var(--mineral-ink)',
+                border: 'none',
+                borderLeft: '1px solid var(--mineral-hairline)',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '10px',
+                letterSpacing: '0.12em',
+                padding: '6px 12px',
+                cursor: 'pointer',
+                transition: 'background 140ms ease, color 140ms ease'
+              }}
+            >
+              [ RAW TABLE ]
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* TABLE COLUMN HEADER ROW */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '160px 180px 1.4fr 160px 180px 1.2fr',
-          borderBottom: '1px solid var(--mineral-hairline)',
-          padding: '12px 36px',
-          fontFamily: 'var(--font-mono)',
-          fontSize: '11px',
-          letterSpacing: '0.12em',
-          color: 'var(--mineral-ink-muted)',
-          backgroundColor: 'rgba(231, 226, 216, 0.5)',
-          userSelect: 'none'
-        }}
-      >
-        <div>EUTHYNA ID</div>
-        <div>UTC TIMESTAMP</div>
-        <div>COUNTERPARTY &amp; OPERATION</div>
-        <div>VALUE (USDC)</div>
-        <div>BOUND CLEARED</div>
-        <div>ARC L1 TX &amp; PROOF</div>
-      </div>
+      {/* VIEWPORT 05 CONTENT: 3D DATA LOOM VS TABULAR REGISTER */}
+      {viewMode === 'loom' ? (
+        <EuthynaDataLoomCanvas
+          invoices={engine.invoices}
+          generateBeancount={generateBeancount}
+          generateJsonLd={generateJsonLd}
+        />
+      ) : (
+        <>
+          {/* TABLE COLUMN HEADER ROW */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '160px 180px 1.4fr 160px 180px 1.2fr',
+              borderBottom: '1px solid var(--mineral-hairline)',
+              padding: '12px 36px',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '11px',
+              letterSpacing: '0.12em',
+              color: 'var(--mineral-ink-muted)',
+              backgroundColor: 'rgba(231, 226, 216, 0.5)',
+              userSelect: 'none'
+            }}
+          >
+            <div>EUTHYNA ID</div>
+            <div>UTC TIMESTAMP</div>
+            <div>COUNTERPARTY &amp; OPERATION</div>
+            <div>VALUE (USDC)</div>
+            <div>BOUND CLEARED</div>
+            <div>ARC L1 TX &amp; PROOF</div>
+          </div>
 
-      {/* ULTRA-DENSE ENGRAVED TABULAR ROWS */}
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        {engine.invoices.map((item, idx) => {
-          const folioKey = item.euthynaFolio || `EUTHYNA #${String(idx).padStart(5, '0')}`;
-          const isExpanded = expandedFolio === folioKey;
-          const isTopHighlighted = idx === 0 && Boolean(newlyInscribedFolio);
-          const dateStr = new Date(item.timestamp).toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+          {/* ULTRA-DENSE ENGRAVED TABULAR ROWS */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {engine.invoices.map((item, idx) => {
+              const folioKey = item.euthynaFolio || `EUTHYNA #${String(idx).padStart(5, '0')}`;
+              const isExpanded = expandedFolio === folioKey;
+              const isTopHighlighted = idx === 0 && Boolean(newlyInscribedFolio);
+              const dateStr = new Date(item.timestamp).toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
 
-          return (
-            <div key={folioKey} style={{ display: 'flex', flexDirection: 'column' }}>
-              {/* INTERACTIVE FULL-WIDTH CHAPTER ROW */}
-              <div
-                onClick={() => toggleRow(folioKey)}
-                className="ledger-row"
-                data-invert-dark="true"
-                data-datum="true"
-                data-telemetry={`${folioKey} // ${item.amountUsdc.toFixed(2)} USDC SETTLED`}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '160px 180px 1.4fr 160px 180px 1.2fr',
-                  padding: '18px 36px',
-                  borderBottom: '1px solid var(--mineral-hairline)',
-                  borderLeft: isTopHighlighted ? '3px solid var(--signal-verified)' : 'none',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '11px',
-                  alignItems: 'center',
-                  backgroundColor: isTopHighlighted
-                    ? 'rgba(46, 90, 68, 0.22)'
-                    : isExpanded
-                    ? 'var(--mineral-recess)'
-                    : 'var(--mineral-bg)',
-                  transition: 'background-color 240ms var(--ease-mechanical), color 240ms var(--ease-mechanical)',
-                  cursor: 'pointer',
-                  userSelect: 'none'
-                }}
-              >
-                {/* 1. EUTHYNA ID */}
-                <div style={{ fontWeight: 500, letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span>{(isTopHighlighted && idx === 0 && scrambledCells.folio) ? scrambledCells.folio : (item.euthynaFolio || folioKey)}</span>
-                  {isTopHighlighted && (
-                    <span
+              return (
+                <div key={folioKey} style={{ display: 'flex', flexDirection: 'column' }}>
+                  {/* INTERACTIVE FULL-WIDTH CHAPTER ROW */}
+                  <div
+                    onClick={() => toggleRow(folioKey)}
+                    className="ledger-row"
+                    data-invert-dark="true"
+                    data-datum="true"
+                    data-telemetry={`${folioKey} // ${item.amountUsdc.toFixed(2)} USDC SETTLED`}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '160px 180px 1.4fr 160px 180px 1.2fr',
+                      padding: '18px 36px',
+                      borderBottom: '1px solid var(--mineral-hairline)',
+                      borderLeft: isTopHighlighted ? '3px solid var(--signal-verified)' : 'none',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '11px',
+                      alignItems: 'center',
+                      backgroundColor: isTopHighlighted
+                        ? 'rgba(46, 90, 68, 0.22)'
+                        : isExpanded
+                        ? 'var(--mineral-recess)'
+                        : 'var(--mineral-bg)',
+                      transition: 'background-color 240ms var(--ease-mechanical), color 240ms var(--ease-mechanical)',
+                      cursor: 'pointer',
+                      userSelect: 'none'
+                    }}
+                  >
+                    {/* 1. EUTHYNA ID */}
+                    <div style={{ fontWeight: 500, letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>{(isTopHighlighted && idx === 0 && scrambledCells.folio) ? scrambledCells.folio : (item.euthynaFolio || folioKey)}</span>
+                      {isTopHighlighted && (
+                        <span
+                          style={{
+                            fontSize: '8px',
+                            backgroundColor: 'var(--signal-verified)',
+                            color: '#F2EFE9',
+                            padding: '1px 5px',
+                            fontWeight: 700
+                          }}
+                        >
+                          NEW
+                        </span>
+                      )}
+                    </div>
+
+                    {/* 2. UTC TIMESTAMP */}
+                    <div className="ledger-muted" style={{ fontSize: '10px', color: 'var(--mineral-ink-muted)' }}>
+                      {(isTopHighlighted && idx === 0 && scrambledCells.date) ? scrambledCells.date : dateStr}
+                    </div>
+
+                    {/* 3. COUNTERPARTY & OPERATION */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontWeight: 500 }}>{item.category}</span>
+                      <span className="ledger-muted" style={{ color: 'var(--mineral-ink-muted)' }}>//</span>
+                      <span className="ledger-muted" style={{ fontSize: '10px', color: 'var(--mineral-ink-muted)' }}>
+                        {item.vendorAddress.slice(0, 8)}...{item.vendorAddress.slice(-6)}
+                      </span>
+                    </div>
+
+                    {/* 4. VALUE */}
+                    <div style={{ fontWeight: 500 }}>
+                      {(isTopHighlighted && idx === 0 && scrambledCells.val) ? scrambledCells.val : `$${item.amountUsdc.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                    </div>
+
+                    {/* 5. BOUND CLEARED */}
+                    <div>
+                      <span
+                        style={{
+                          fontSize: '9px',
+                          color: item.category === 'YIELD_SWEEP' ? 'var(--signal-amber)' : 'var(--signal-verified)',
+                          fontWeight: 500,
+                          letterSpacing: '0.06em'
+                        }}
+                      >
+                        {item.category === 'YIELD_SWEEP' ? 'POL-01 [SWEEP]' : 'POL-02 & POL-03 [PASSED]'}
+                      </span>
+                    </div>
+
+                    {/* 6. ARC L1 TX & PAYMASTER PROOF */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span className="ledger-muted" style={{ fontSize: '10px', color: 'var(--mineral-ink-muted)' }}>
+                        {(isTopHighlighted && idx === 0 && scrambledCells.hash)
+                          ? `${scrambledCells.hash} [0.00 GAS]`
+                          : `${item.txHash ? `${item.txHash.slice(0, 10)}...` : '0xb08127...'} [0.00 GAS]`}
+                      </span>
+                      <span style={{ fontSize: '9px', color: isExpanded ? 'var(--signal-amber)' : 'var(--mineral-ink-muted)' }}>
+                        {isExpanded ? '[-] DRAWER' : '[+] PROOF'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* RECESSED #0A0A09 FORENSIC DRAWER DIRECTLY UNDERNEATH */}
+                  {isExpanded && (
+                    <div
                       style={{
-                        fontSize: '8px',
-                        backgroundColor: 'var(--signal-verified)',
-                        color: '#F2EFE9',
-                        padding: '1px 5px',
-                        fontWeight: 700
+                        backgroundColor: 'var(--void-bg)',
+                        color: 'var(--void-text-primary)',
+                        borderBottom: '1px solid var(--mineral-hairline)',
+                        padding: '24px 36px',
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '24px',
+                        boxSizing: 'border-box'
                       }}
                     >
-                      NEW
-                    </span>
+                      {/* LEFT PANE: EXACT RAW BEANCOUNT DOUBLE-ENTRY INSCRIPTION */}
+                      <div
+                        style={{
+                          border: '1px solid var(--void-hairline)',
+                          backgroundColor: 'var(--void-surface)',
+                          padding: '18px'
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '9px',
+                            letterSpacing: '0.16em',
+                            color: 'var(--signal-amber)',
+                            marginBottom: '12px',
+                            borderBottom: '1px solid var(--void-hairline)',
+                            paddingBottom: '6px',
+                            display: 'flex',
+                            justifyContent: 'space-between'
+                          }}
+                        >
+                          <span>// RAW BEANCOUNT DOUBLE-ENTRY RECORD</span>
+                          <span>UTF-8 // RFC-EUTHYNA</span>
+                        </div>
+                        <pre
+                          style={{
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '11px',
+                            lineHeight: 1.5,
+                            color: 'var(--void-text-primary)',
+                            whiteSpace: 'pre-wrap',
+                            margin: 0
+                          }}
+                        >
+                          {generateBeancount(item)}
+                        </pre>
+                      </div>
+
+                      {/* RIGHT PANE: EXACT SIGNED JSON-LD CRYPTOGRAPHIC RECEIPT */}
+                      <div
+                        style={{
+                          border: '1px solid var(--void-hairline)',
+                          backgroundColor: 'var(--void-surface)',
+                          padding: '18px'
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '9px',
+                            letterSpacing: '0.16em',
+                            color: 'var(--signal-verified)',
+                            marginBottom: '12px',
+                            borderBottom: '1px solid var(--void-hairline)',
+                            paddingBottom: '6px',
+                            display: 'flex',
+                            justifyContent: 'space-between'
+                          }}
+                        >
+                          <span>// SIGNED JSON-LD ATTESTATION</span>
+                          <span>SCHEMA.ORG / FINANCIAL_TRANSACTION</span>
+                        </div>
+                        <pre
+                          style={{
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '11px',
+                            lineHeight: 1.5,
+                            color: 'rgba(242, 239, 233, 0.88)',
+                            whiteSpace: 'pre-wrap',
+                            margin: 0
+                          }}
+                        >
+                          {generateJsonLd(item)}
+                        </pre>
+                      </div>
+                    </div>
                   )}
                 </div>
-
-                {/* 2. UTC TIMESTAMP */}
-                <div className="ledger-muted" style={{ fontSize: '10px', color: 'var(--mineral-ink-muted)' }}>
-                  {(isTopHighlighted && idx === 0 && scrambledCells.date) ? scrambledCells.date : dateStr}
-                </div>
-
-                {/* 3. COUNTERPARTY & OPERATION */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontWeight: 500 }}>{item.category}</span>
-                  <span className="ledger-muted" style={{ color: 'var(--mineral-ink-muted)' }}>//</span>
-                  <span className="ledger-muted" style={{ fontSize: '10px', color: 'var(--mineral-ink-muted)' }}>
-                    {item.vendorAddress.slice(0, 8)}...{item.vendorAddress.slice(-6)}
-                  </span>
-                </div>
-
-                {/* 4. VALUE */}
-                <div style={{ fontWeight: 500 }}>
-                  {(isTopHighlighted && idx === 0 && scrambledCells.val) ? scrambledCells.val : `$${item.amountUsdc.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-                </div>
-
-                {/* 5. BOUND CLEARED */}
-                <div>
-                  <span
-                    style={{
-                      fontSize: '9px',
-                      color: item.category === 'YIELD_SWEEP' ? 'var(--signal-amber)' : 'var(--signal-verified)',
-                      fontWeight: 500,
-                      letterSpacing: '0.06em'
-                    }}
-                  >
-                    {item.category === 'YIELD_SWEEP' ? 'POL-01 [SWEEP]' : 'POL-02 & POL-03 [PASSED]'}
-                  </span>
-                </div>
-
-                {/* 6. ARC L1 TX & PAYMASTER PROOF */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span className="ledger-muted" style={{ fontSize: '10px', color: 'var(--mineral-ink-muted)' }}>
-                    {(isTopHighlighted && idx === 0 && scrambledCells.hash)
-                      ? `${scrambledCells.hash} [0.00 GAS]`
-                      : `${item.txHash ? `${item.txHash.slice(0, 10)}...` : '0xb08127...'} [0.00 GAS]`}
-                  </span>
-                  <span style={{ fontSize: '9px', color: isExpanded ? 'var(--signal-amber)' : 'var(--mineral-ink-muted)' }}>
-                    {isExpanded ? '[-] DRAWER' : '[+] PROOF'}
-                  </span>
-                </div>
-              </div>
-
-              {/* RECESSED #0A0A09 FORENSIC DRAWER DIRECTLY UNDERNEATH */}
-              {isExpanded && (
-                <div
-                  style={{
-                    backgroundColor: 'var(--void-bg)',
-                    color: 'var(--void-text-primary)',
-                    borderBottom: '1px solid var(--mineral-hairline)',
-                    padding: '24px 36px',
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 1fr',
-                    gap: '24px',
-                    boxSizing: 'border-box'
-                  }}
-                >
-                  {/* LEFT PANE: EXACT RAW BEANCOUNT DOUBLE-ENTRY INSCRIPTION */}
-                  <div
-                    style={{
-                      border: '1px solid var(--void-hairline)',
-                      backgroundColor: 'var(--void-surface)',
-                      padding: '18px'
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '9px',
-                        letterSpacing: '0.16em',
-                        color: 'var(--signal-amber)',
-                        marginBottom: '12px',
-                        borderBottom: '1px solid var(--void-hairline)',
-                        paddingBottom: '6px',
-                        display: 'flex',
-                        justifyContent: 'space-between'
-                      }}
-                    >
-                      <span>// RAW BEANCOUNT DOUBLE-ENTRY RECORD</span>
-                      <span>UTF-8 // RFC-EUTHYNA</span>
-                    </div>
-                    <pre
-                      style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '11px',
-                        lineHeight: 1.5,
-                        color: 'var(--void-text-primary)',
-                        whiteSpace: 'pre-wrap',
-                        margin: 0
-                      }}
-                    >
-                      {generateBeancount(item)}
-                    </pre>
-                  </div>
-
-                  {/* RIGHT PANE: EXACT SIGNED JSON-LD CRYPTOGRAPHIC RECEIPT */}
-                  <div
-                    style={{
-                      border: '1px solid var(--void-hairline)',
-                      backgroundColor: 'var(--void-surface)',
-                      padding: '18px'
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '9px',
-                        letterSpacing: '0.16em',
-                        color: 'var(--signal-verified)',
-                        marginBottom: '12px',
-                        borderBottom: '1px solid var(--void-hairline)',
-                        paddingBottom: '6px',
-                        display: 'flex',
-                        justifyContent: 'space-between'
-                      }}
-                    >
-                      <span>// SIGNED JSON-LD ATTESTATION</span>
-                      <span>SCHEMA.ORG / FINANCIAL_TRANSACTION</span>
-                    </div>
-                    <pre
-                      style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '11px',
-                        lineHeight: 1.5,
-                        color: 'rgba(242, 239, 233, 0.88)',
-                        whiteSpace: 'pre-wrap',
-                        margin: 0
-                      }}
-                    >
-                      {generateJsonLd(item)}
-                    </pre>
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+              );
+            })}
+          </div>
+        </>
+      )}
     </section>
   );
 });
