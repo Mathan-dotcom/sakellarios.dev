@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 export const CaliperCursor: React.FC = React.memo(() => {
   const [isLocked, setIsLocked] = useState(false);
+  const [isLensActive, setIsLensActive] = useState(false);
   const [isLightSurface, setIsLightSurface] = useState(false);
   const [telemetry, setTelemetry] = useState<string>('DATUM LOCKED');
 
@@ -14,6 +15,7 @@ export const CaliperCursor: React.FC = React.memo(() => {
   const currentPos = useRef({ x: 0, y: 0 });
   const hasReceivedPointer = useRef(false);
   const isLockedRef = useRef(false);
+  const isLensActiveRef = useRef(false);
   const telemetryRef = useRef('DATUM LOCKED');
   const isLightSurfaceRef = useRef(false);
   const animationFrameId = useRef<number | null>(null);
@@ -50,7 +52,7 @@ export const CaliperCursor: React.FC = React.memo(() => {
       }
     };
 
-    // Event delegation on pointerover for hover targets and chamber polarity detection
+    // Event delegation on pointerover for hover targets, monumental metrics, and polarity
     const handlePointerOver = (e: PointerEvent) => {
       const targetEl = e.target as Element | null;
       if (!targetEl) return;
@@ -83,12 +85,25 @@ export const CaliperCursor: React.FC = React.memo(() => {
         setIsLightSurface(light);
       }
 
-      // 3. Snap target detection
-      const snapTarget = targetEl.closest('[data-datum], [data-metric], [data-telemetry]');
+      // 3. Monumental metric lens detection (expands frame to 80px)
+      const monumentalTarget = targetEl.closest('[data-monumental="true"], .monumental-metric');
+      const isMonumental = Boolean(monumentalTarget);
+
+      if (isMonumental !== isLensActiveRef.current) {
+        isLensActiveRef.current = isMonumental;
+        setIsLensActive(isMonumental);
+      }
+
+      // 4. Snap target detection
+      const snapTarget = targetEl.closest('[data-datum], [data-metric], [data-telemetry], [data-monumental="true"]');
       if (snapTarget) {
         const text =
           snapTarget.getAttribute('data-telemetry') ||
-          (snapTarget.getAttribute('data-metric') ? 'METRIC LOCKED' : 'DATUM LOCKED');
+          (isMonumental
+            ? 'METROLOGICAL LENS // 80MM INVERSION'
+            : snapTarget.getAttribute('data-metric')
+            ? 'METRIC LOCKED'
+            : 'DATUM LOCKED');
 
         if (!isLockedRef.current || telemetryRef.current !== text) {
           isLockedRef.current = true;
@@ -114,6 +129,10 @@ export const CaliperCursor: React.FC = React.memo(() => {
         if (isLockedRef.current) {
           isLockedRef.current = false;
           setIsLocked(false);
+        }
+        if (isLensActiveRef.current) {
+          isLensActiveRef.current = false;
+          setIsLensActive(false);
         }
       }
     };
@@ -146,8 +165,10 @@ export const CaliperCursor: React.FC = React.memo(() => {
     };
   }, []);
 
-  const frameSize = isLocked ? 44 : 28;
+  // Frame sizing: 80px on monumental metrics, 44px on locked datums, 28px standard
+  const frameSize = isLensActive ? 80 : isLocked ? 44 : 28;
   const halfSize = frameSize / 2;
+  const chamfer = isLensActive ? 8 : isLocked ? 6 : 4;
 
   const reticleColor = isLightSurface
     ? (isLocked ? 'var(--signal-tension)' : 'var(--mineral-ink)')
@@ -238,6 +259,7 @@ export const CaliperCursor: React.FC = React.memo(() => {
           willChange: 'transform'
         }}
       >
+        {/* METROLOGICAL INVERSION LENS (backdrop-filter: invert(1)) */}
         <div
           style={{
             position: 'absolute',
@@ -245,7 +267,34 @@ export const CaliperCursor: React.FC = React.memo(() => {
             top: `${-halfSize}px`,
             width: `${frameSize}px`,
             height: `${frameSize}px`,
-            transition: 'width 0.18s cubic-bezier(0.16, 1, 0.3, 1), height 0.18s cubic-bezier(0.16, 1, 0.3, 1), left 0.18s cubic-bezier(0.16, 1, 0.3, 1), top 0.18s cubic-bezier(0.16, 1, 0.3, 1)'
+            backdropFilter: 'invert(1)',
+            WebkitBackdropFilter: 'invert(1)',
+            backgroundColor: 'transparent',
+            clipPath: `polygon(
+              ${chamfer}px 0%,
+              calc(100% - ${chamfer}px) 0%,
+              100% ${chamfer}px,
+              100% calc(100% - ${chamfer}px),
+              calc(100% - ${chamfer}px) 100%,
+              ${chamfer}px 100%,
+              0% calc(100% - ${chamfer}px),
+              0% ${chamfer}px
+            )`,
+            pointerEvents: 'none',
+            zIndex: 1,
+            transition: 'width 0.2s cubic-bezier(0.16, 1, 0.3, 1), height 0.2s cubic-bezier(0.16, 1, 0.3, 1), left 0.2s cubic-bezier(0.16, 1, 0.3, 1), top 0.2s cubic-bezier(0.16, 1, 0.3, 1), clip-path 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+          }}
+        />
+
+        <div
+          style={{
+            position: 'absolute',
+            left: `${-halfSize}px`,
+            top: `${-halfSize}px`,
+            width: `${frameSize}px`,
+            height: `${frameSize}px`,
+            zIndex: 2,
+            transition: 'width 0.2s cubic-bezier(0.16, 1, 0.3, 1), height 0.2s cubic-bezier(0.16, 1, 0.3, 1), left 0.2s cubic-bezier(0.16, 1, 0.3, 1), top 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
           }}
         >
           {/* SVG Chamfered Frame with Corner Ticks */}
@@ -259,14 +308,14 @@ export const CaliperCursor: React.FC = React.memo(() => {
             {/* Outer Chamfered Path */}
             <path
               d={`
-                M 4 0
-                H ${frameSize - 4}
-                L ${frameSize} 4
-                V ${frameSize - 4}
-                L ${frameSize - 4} ${frameSize}
-                H 4
-                L 0 ${frameSize - 4}
-                V 4
+                M ${chamfer} 0
+                H ${frameSize - chamfer}
+                L ${frameSize} ${chamfer}
+                V ${frameSize - chamfer}
+                L ${frameSize - chamfer} ${frameSize}
+                H ${chamfer}
+                L 0 ${frameSize - chamfer}
+                V ${chamfer}
                 Z
               `}
               stroke={frameStroke}
@@ -276,32 +325,41 @@ export const CaliperCursor: React.FC = React.memo(() => {
 
             {/* Corner Precision Ticks */}
             {/* Top-Left */}
-            <line x1="0" y1="0" x2="4" y2="0" stroke={tickStroke} strokeWidth="1" style={{ transition: 'stroke 0.12s ease' }} />
-            <line x1="0" y1="0" x2="0" y2="4" stroke={tickStroke} strokeWidth="1" style={{ transition: 'stroke 0.12s ease' }} />
+            <line x1="0" y1="0" x2={chamfer} y2="0" stroke={tickStroke} strokeWidth="1" style={{ transition: 'stroke 0.12s ease' }} />
+            <line x1="0" y1="0" x2="0" y2={chamfer} stroke={tickStroke} strokeWidth="1" style={{ transition: 'stroke 0.12s ease' }} />
 
             {/* Top-Right */}
-            <line x1={frameSize - 4} y1="0" x2={frameSize} y2="0" stroke={tickStroke} strokeWidth="1" style={{ transition: 'stroke 0.12s ease' }} />
-            <line x1={frameSize} y1="0" x2={frameSize} y2="4" stroke={tickStroke} strokeWidth="1" style={{ transition: 'stroke 0.12s ease' }} />
+            <line x1={frameSize - chamfer} y1="0" x2={frameSize} y2="0" stroke={tickStroke} strokeWidth="1" style={{ transition: 'stroke 0.12s ease' }} />
+            <line x1={frameSize} y1="0" x2={frameSize} y2={chamfer} stroke={tickStroke} strokeWidth="1" style={{ transition: 'stroke 0.12s ease' }} />
 
             {/* Bottom-Right */}
-            <line x1={frameSize - 4} y1={frameSize} x2={frameSize} y2={frameSize} stroke={tickStroke} strokeWidth="1" style={{ transition: 'stroke 0.12s ease' }} />
-            <line x1={frameSize} y1={frameSize - 4} x2={frameSize} y2={frameSize} stroke={tickStroke} strokeWidth="1" style={{ transition: 'stroke 0.12s ease' }} />
+            <line x1={frameSize - chamfer} y1={frameSize} x2={frameSize} y2={frameSize} stroke={tickStroke} strokeWidth="1" style={{ transition: 'stroke 0.12s ease' }} />
+            <line x1={frameSize} y1={frameSize - chamfer} x2={frameSize} y2={frameSize} stroke={tickStroke} strokeWidth="1" style={{ transition: 'stroke 0.12s ease' }} />
 
             {/* Bottom-Left */}
-            <line x1="0" y1={frameSize} x2="4" y2={frameSize} stroke={tickStroke} strokeWidth="1" style={{ transition: 'stroke 0.12s ease' }} />
-            <line x1="0" y1={frameSize - 4} x2="0" y2={frameSize} stroke={tickStroke} strokeWidth="1" style={{ transition: 'stroke 0.12s ease' }} />
+            <line x1="0" y1={frameSize} x2={chamfer} y2={frameSize} stroke={tickStroke} strokeWidth="1" style={{ transition: 'stroke 0.12s ease' }} />
+            <line x1="0" y1={frameSize - chamfer} x2="0" y2={frameSize} stroke={tickStroke} strokeWidth="1" style={{ transition: 'stroke 0.12s ease' }} />
 
             {/* Micro center calibration ticks when locked */}
-            {isLocked && (
+            {isLocked && !isLensActive && (
               <>
                 <line x1={halfSize - 3} y1={halfSize} x2={halfSize + 3} y2={halfSize} stroke={isLightSurface ? 'var(--signal-tension)' : 'var(--signal-amber)'} strokeWidth="1" strokeDasharray="1 1" />
                 <line x1={halfSize} y1={halfSize - 3} x2={halfSize} y2={halfSize + 3} stroke={isLightSurface ? 'var(--signal-tension)' : 'var(--signal-amber)'} strokeWidth="1" strokeDasharray="1 1" />
               </>
             )}
+
+            {/* 80mm Metrological Inspection Reticle Crosshairs */}
+            {isLensActive && (
+              <>
+                <line x1="12" y1={halfSize} x2={frameSize - 12} y2={halfSize} stroke={tickStroke} strokeWidth="1" strokeDasharray="2 3" opacity="0.65" />
+                <line x1={halfSize} y1="12" x2={halfSize} y2={frameSize - 12} stroke={tickStroke} strokeWidth="1" strokeDasharray="2 3" opacity="0.65" />
+                <circle cx={halfSize} cy={halfSize} r="18" stroke={tickStroke} strokeWidth="1" strokeDasharray="2 2" fill="none" opacity="0.45" />
+              </>
+            )}
           </svg>
 
           {/* Micro Telemetry Readout Beside Cursor */}
-          {isLocked && (
+          {(isLocked || isLensActive) && (
             <div
               style={{
                 position: 'absolute',

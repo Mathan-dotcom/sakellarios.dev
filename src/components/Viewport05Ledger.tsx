@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useSakellariousEngine, ProcessedInvoice } from '../core/useSakellariousEngine';
+import { scrambleText } from '../core/useAnimatedNumber';
 
 export interface Viewport05LedgerProps {
   engine: ReturnType<typeof useSakellariousEngine>;
@@ -9,18 +10,45 @@ export interface Viewport05LedgerProps {
 export const Viewport05Ledger: React.FC<Viewport05LedgerProps> = React.memo(({ engine }) => {
   const [expandedFolio, setExpandedFolio] = useState<string | null>('EUTHYNA #00481');
   const [newlyInscribedFolio, setNewlyInscribedFolio] = useState<string | null>(null);
+  const [scrambledCells, setScrambledCells] = useState<{
+    folio?: string;
+    date?: string;
+    hash?: string;
+    val?: string;
+  }>({});
+
+  const prevCountRef = useRef(engine.invoices.length);
 
   // Refresh ScrollTrigger whenever forensic drawer expands or collapses
   useEffect(() => {
     ScrollTrigger.refresh();
   }, [expandedFolio]);
 
-  // Listen for newly settled invoice events to highlight top ledger row
+  // Cryptographic cipher decode transition helper for newly inscribed rows
+  const triggerRowCipherDecode = (topRecord?: ProcessedInvoice, targetFolio?: string) => {
+    const item = topRecord || engine.invoices[0];
+    if (!item) return;
+
+    const folioText = item.euthynaFolio || targetFolio || 'EUTHYNA #00482';
+    const dateText = new Date(item.timestamp).toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+    const hashText = `${item.txHash ? item.txHash.slice(0, 10) : '0xb0812702'}...`;
+    const valText = `$${item.amountUsdc.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+
+    scrambleText((t) => setScrambledCells(prev => ({ ...prev, folio: t })), folioText, 250);
+    scrambleText((t) => setScrambledCells(prev => ({ ...prev, date: t })), dateText, 250);
+    scrambleText((t) => setScrambledCells(prev => ({ ...prev, hash: t })), hashText, 250);
+    scrambleText((t) => setScrambledCells(prev => ({ ...prev, val: t })), valText, 250, () => {
+      setScrambledCells({});
+    });
+  };
+
+  // Listen for newly settled invoice events to scramble & highlight top ledger row
   useEffect(() => {
     const handleNewInscription = (e: Event) => {
       const customEvent = e as CustomEvent<{ folio?: string }>;
       const folio = customEvent.detail?.folio || 'NEW_RECORD';
       setNewlyInscribedFolio(folio);
+      triggerRowCipherDecode(engine.invoices[0], folio);
       setTimeout(() => {
         setNewlyInscribedFolio(null);
       }, 3500);
@@ -30,7 +58,20 @@ export const Viewport05Ledger: React.FC<Viewport05LedgerProps> = React.memo(({ e
     return () => {
       window.removeEventListener('sakellarious:new-inscription', handleNewInscription);
     };
-  }, []);
+  }, [engine.invoices]);
+
+  // Auto-scramble if new invoice array prepends an item
+  useEffect(() => {
+    if (engine.invoices.length > prevCountRef.current) {
+      const top = engine.invoices[0];
+      setNewlyInscribedFolio(top?.euthynaFolio || 'NEW');
+      triggerRowCipherDecode(top);
+      setTimeout(() => {
+        setNewlyInscribedFolio(null);
+      }, 3500);
+    }
+    prevCountRef.current = engine.invoices.length;
+  }, [engine.invoices]);
 
   const toggleRow = (folio: string) => {
     setExpandedFolio(prev => (prev === folio ? null : folio));
@@ -200,7 +241,7 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
               >
                 {/* 1. EUTHYNA ID */}
                 <div style={{ fontWeight: 500, letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span>{item.euthynaFolio || folioKey}</span>
+                  <span>{(isTopHighlighted && idx === 0 && scrambledCells.folio) ? scrambledCells.folio : (item.euthynaFolio || folioKey)}</span>
                   {isTopHighlighted && (
                     <span
                       style={{
@@ -218,7 +259,7 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
 
                 {/* 2. UTC TIMESTAMP */}
                 <div className="ledger-muted" style={{ fontSize: '10px', color: 'var(--mineral-ink-muted)' }}>
-                  {dateStr}
+                  {(isTopHighlighted && idx === 0 && scrambledCells.date) ? scrambledCells.date : dateStr}
                 </div>
 
                 {/* 3. COUNTERPARTY & OPERATION */}
@@ -232,7 +273,7 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
 
                 {/* 4. VALUE */}
                 <div style={{ fontWeight: 500 }}>
-                  ${item.amountUsdc.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  {(isTopHighlighted && idx === 0 && scrambledCells.val) ? scrambledCells.val : `$${item.amountUsdc.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
                 </div>
 
                 {/* 5. BOUND CLEARED */}
@@ -252,7 +293,9 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
                 {/* 6. ARC L1 TX & PAYMASTER PROOF */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span className="ledger-muted" style={{ fontSize: '10px', color: 'var(--mineral-ink-muted)' }}>
-                    {item.txHash ? `${item.txHash.slice(0, 10)}...` : '0xb08127...'} [0.00 GAS]
+                    {(isTopHighlighted && idx === 0 && scrambledCells.hash)
+                      ? `${scrambledCells.hash} [0.00 GAS]`
+                      : `${item.txHash ? `${item.txHash.slice(0, 10)}...` : '0xb08127...'} [0.00 GAS]`}
                   </span>
                   <span style={{ fontSize: '9px', color: isExpanded ? 'var(--signal-amber)' : 'var(--mineral-ink-muted)' }}>
                     {isExpanded ? '[-] DRAWER' : '[+] PROOF'}

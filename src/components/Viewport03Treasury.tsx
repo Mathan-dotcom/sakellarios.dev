@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSakellariousEngine } from '../core/useSakellariousEngine';
-import { useAnimatedNumber } from '../core/useAnimatedNumber';
+import { useAnimatedNumber, scrambleText } from '../core/useAnimatedNumber';
 import { useLenis } from '../core/SmoothScroll';
 
 export interface Viewport03TreasuryProps {
@@ -19,6 +19,12 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
   const animUsyc = useAnimatedNumber(engine.balances.arcUsycVault);
 
   // PolicyWallet 4-stage sequential evaluation state
+  const [bayLabels, setBayLabels] = useState<[string, string, string, string]>([
+    '[ENFORCED]',
+    '[ENFORCED]',
+    '[ENFORCED]',
+    '[ENFORCED]'
+  ]);
   const [evalState, setEvalState] = useState<{
     isEvaluating: boolean;
     activeBay: number;
@@ -218,7 +224,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
   };
 
   // --------------------------------------------------------------------------
-  // SEQUENTIAL POLICY EVALUATION PIPELINE (POL-01 -> POL-04, 140ms per bay)
+  // SEQUENTIAL POLICY EVALUATION PIPELINE (POL-01 -> POL-04 with 250ms Cryptographic Hex Scramble)
   // --------------------------------------------------------------------------
   const runPolicyEvaluation = async (payload: {
     vendorAddress: string;
@@ -231,7 +237,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
 
     const isBreach = payload.amountUsdc > 250;
 
-    // Step 1: POL-01 CHECKING (0ms)
+    // Step 1: POL-01 CHECKING
     setEvalState({
       isEvaluating: true,
       activeBay: 0,
@@ -239,9 +245,20 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
       bannerText: 'EVALUATING POL-01 // 30D OPERATING BUFFER >= 400,000 USDC',
       bannerType: 'checking'
     });
-    await new Promise((r) => setTimeout(r, 140));
+    setBayLabels(['[CHECKING...]', '[ENFORCED]', '[ENFORCED]', '[ENFORCED]']);
+    await new Promise((r) => setTimeout(r, 120));
 
-    // Step 2: POL-01 PASSED, POL-02 CHECKING (140ms)
+    // Scramble POL-01 into [PASSED]
+    await new Promise<void>((resolve) => {
+      scrambleText(
+        (txt) => setBayLabels(prev => [txt, prev[1], prev[2], prev[3]]),
+        '[PASSED]',
+        250,
+        resolve
+      );
+    });
+
+    // Step 2: POL-02 CHECKING
     setEvalState({
       isEvaluating: true,
       activeBay: 1,
@@ -249,10 +266,20 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
       bannerText: 'EVALUATING POL-02 // AUTONOMOUS SINGLE-TX CAP <= 250.00 USDC',
       bannerType: 'checking'
     });
-    await new Promise((r) => setTimeout(r, 140));
+    setBayLabels(prev => [prev[0], '[CHECKING...]', prev[2], prev[3]]);
+    await new Promise((r) => setTimeout(r, 120));
 
     if (isBreach) {
       // Step 2b: POL-02 BREACHED! (Amount > 250 USDC)
+      await new Promise<void>((resolve) => {
+        scrambleText(
+          (txt) => setBayLabels(prev => [prev[0], txt, prev[2], prev[3]]),
+          '[BREACHED AT POL-02]',
+          250,
+          resolve
+        );
+      });
+
       setEvalState({
         isEvaluating: true,
         activeBay: 1,
@@ -286,11 +313,22 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
           bannerText: null,
           bannerType: 'idle'
         });
+        setBayLabels(['[ENFORCED]', '[ENFORCED]', '[ENFORCED]', '[ENFORCED]']);
       }, 4000);
       return;
     }
 
-    // Step 3: POL-02 PASSED, POL-03 CHECKING (280ms)
+    // Step 2c: POL-02 PASSED (Compliant)
+    await new Promise<void>((resolve) => {
+      scrambleText(
+        (txt) => setBayLabels(prev => [prev[0], txt, prev[2], prev[3]]),
+        '[PASSED]',
+        250,
+        resolve
+      );
+    });
+
+    // Step 3: POL-03 CHECKING
     setEvalState({
       isEvaluating: true,
       activeBay: 2,
@@ -298,9 +336,20 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
       bannerText: 'EVALUATING POL-03 // OPENSANCTIONS SCREENING SCORE == 0.00',
       bannerType: 'checking'
     });
-    await new Promise((r) => setTimeout(r, 140));
+    setBayLabels(prev => [prev[0], prev[1], '[CHECKING...]', prev[3]]);
+    await new Promise((r) => setTimeout(r, 120));
 
-    // Step 4: POL-03 PASSED, POL-04 CHECKING (420ms)
+    // Scramble POL-03 into [PASSED]
+    await new Promise<void>((resolve) => {
+      scrambleText(
+        (txt) => setBayLabels(prev => [prev[0], prev[1], txt, prev[3]]),
+        '[PASSED]',
+        250,
+        resolve
+      );
+    });
+
+    // Step 4: POL-04 CHECKING
     setEvalState({
       isEvaluating: true,
       activeBay: 3,
@@ -308,9 +357,20 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
       bannerText: 'EVALUATING POL-04 // CIRCLE PAYMASTER GASLESS SPONSORSHIP',
       bannerType: 'checking'
     });
-    await new Promise((r) => setTimeout(r, 140));
+    setBayLabels(prev => [prev[0], prev[1], prev[2], '[CHECKING...]']);
+    await new Promise((r) => setTimeout(r, 120));
 
-    // Step 5: ALL 4 RULES PASSED! Flash #2E5A44 banner (560ms)
+    // Scramble POL-04 into [PASSED]
+    await new Promise<void>((resolve) => {
+      scrambleText(
+        (txt) => setBayLabels(prev => [prev[0], prev[1], prev[2], txt]),
+        '[PASSED]',
+        250,
+        resolve
+      );
+    });
+
+    // Step 5: ALL 4 RULES PASSED! Flash #2E5A44 banner
     setEvalState({
       isEvaluating: true,
       activeBay: 4,
@@ -337,6 +397,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
         bannerText: null,
         bannerType: 'idle'
       });
+      setBayLabels(['[ENFORCED]', '[ENFORCED]', '[ENFORCED]', '[ENFORCED]']);
     }, 4000);
   };
 
@@ -475,15 +536,37 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
             {/* Monumental Syne Numerals with Extreme Scale Contrast */}
             <div
               data-metric="true"
+              data-monumental="true"
               data-telemetry={`LIQUID BUFFER // $${animLiquid.toFixed(2)} USDC`}
               style={{
                 display: 'flex',
                 alignItems: 'baseline',
                 gap: '16px',
-                marginBottom: '12px'
+                marginBottom: '12px',
+                position: 'relative'
               }}
             >
-              <div style={{ overflow: 'hidden' }}>
+              {/* Hidden JetBrains Mono Telemetry Underlay - Physical Inversion via 80px Metrological Lens */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '4px',
+                  left: '2px',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '10px',
+                  lineHeight: 1.35,
+                  letterSpacing: '0.12em',
+                  color: 'rgba(20, 20, 19, 0.04)',
+                  pointerEvents: 'none',
+                  userSelect: 'none',
+                  zIndex: 0
+                }}
+              >
+                ARC L1 // LIQUIDITY BUFFER: 420,000.00 USDC<br />
+                MANDATORY FLOOR: 400,000.00 USDC // SURPLUS: 20,000.00 USDC
+              </div>
+
+              <div style={{ overflow: 'hidden', position: 'relative', zIndex: 1 }}>
                 <div
                   className="shutter-reveal"
                   style={{
@@ -820,11 +903,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                       fontWeight: evalState.bayStatuses[0] === 'checking' ? 700 : 500
                     }}
                   >
-                    {evalState.bayStatuses[0] === 'checking'
-                      ? '[CHECKING...]'
-                      : evalState.bayStatuses[0] === 'passed'
-                      ? '[PASSED]'
-                      : '[ENFORCED]'}
+                    {bayLabels[0]}
                   </span>
                 </div>
                 <div className="rule-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--mineral-ink-muted)', marginTop: '4px' }}>
@@ -877,13 +956,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                       fontWeight: evalState.bayStatuses[1] !== 'idle' ? 700 : 500
                     }}
                   >
-                    {evalState.bayStatuses[1] === 'checking'
-                      ? '[CHECKING...]'
-                      : evalState.bayStatuses[1] === 'breached'
-                      ? '[BREACHED AT POL-02]'
-                      : evalState.bayStatuses[1] === 'passed'
-                      ? '[PASSED]'
-                      : '[ENFORCED]'}
+                    {bayLabels[1]}
                   </span>
                 </div>
                 <div className="rule-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--mineral-ink-muted)', marginTop: '4px' }}>
@@ -925,11 +998,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                       fontWeight: evalState.bayStatuses[2] === 'checking' ? 700 : 500
                     }}
                   >
-                    {evalState.bayStatuses[2] === 'checking'
-                      ? '[CHECKING...]'
-                      : evalState.bayStatuses[2] === 'passed'
-                      ? '[PASSED]'
-                      : '[ENFORCED]'}
+                    {bayLabels[2]}
                   </span>
                 </div>
                 <div className="rule-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--mineral-ink-muted)', marginTop: '4px' }}>
@@ -970,11 +1039,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                       fontWeight: evalState.bayStatuses[3] === 'checking' ? 700 : 500
                     }}
                   >
-                    {evalState.bayStatuses[3] === 'checking'
-                      ? '[CHECKING...]'
-                      : evalState.bayStatuses[3] === 'passed'
-                      ? '[PASSED]'
-                      : '[ENFORCED]'}
+                    {bayLabels[3]}
                   </span>
                 </div>
                 <div className="rule-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--mineral-ink-muted)', marginTop: '4px' }}>

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useSakellariousEngine } from '../core/useSakellariousEngine';
+import { getScrollVelocity } from '../core/SmoothScroll';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,6 +15,7 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.m
   const trajectoryRef = useRef<HTMLDivElement>(null);
   const collisionReticleRef = useRef<HTMLDivElement>(null);
   const holdButtonRef = useRef<HTMLDivElement>(null);
+  const marqueeRef = useRef<HTMLDivElement>(null);
 
   // Press-and-hold 1.20s state
   const [holdProgress, setHoldProgress] = useState(0); // 0 to 1
@@ -70,6 +72,35 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.m
       anim.kill();
       window.removeEventListener('sakellarious:replay-collision', handleReplayCollision);
     };
+  }, []);
+
+  // 1b. MONUMENTAL KINETIC MARQUEE SCROLL-VELOCITY COUPLING
+  useEffect(() => {
+    let marqueeX = 0;
+    let rafId: number;
+    const baseSpeed = -0.75; // steady mechanical leftward drift at rest
+
+    const updateMarquee = () => {
+      const vel = getScrollVelocity();
+      // Accelerate dynamically with scroll wheel velocity, damping back smoothly
+      marqueeX += baseSpeed - vel * 0.45;
+
+      if (marqueeRef.current) {
+        const totalWidth = marqueeRef.current.scrollWidth;
+        const loopThreshold = totalWidth / 2 || 2400;
+        if (marqueeX <= -loopThreshold) {
+          marqueeX += loopThreshold;
+        } else if (marqueeX >= 0) {
+          marqueeX -= loopThreshold;
+        }
+        marqueeRef.current.style.transform = `translate3d(${marqueeX}px, 0, 0)`;
+      }
+
+      rafId = requestAnimationFrame(updateMarquee);
+    };
+
+    rafId = requestAnimationFrame(updateMarquee);
+    return () => cancelAnimationFrame(rafId);
   }, []);
 
   // 2. TACTILE 1.2-SECOND PRESS-AND-HOLD SOVEREIGN SEAL PHYSICS
@@ -200,7 +231,54 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.m
             color: 'var(--void-text-muted)'
           }}
         >
-          {isHalted ? 'STATUS: EXCEPTION HALTED AT DATUM' : 'STATUS: SOVEREIGN SEAL REGISTERED'}
+          {isHalted ? 'STATUS: AWAITING SOVEREIGN SEAL' : 'STATUS: SOVEREIGN SEAL REGISTERED'}
+        </div>
+      </div>
+
+      {/* ======================================================================
+          MONUMENTAL KINETIC MARQUEE (Obsidian Void Edge-to-Edge)
+          Text: ESCALATION // AWAITING SOVEREIGN SEAL in Syne (clamp 6rem to 12rem)
+          Scroll-Velocity Coupled Translation
+          ====================================================================== */}
+      <div
+        style={{
+          width: '100%',
+          overflow: 'hidden',
+          borderBottom: '1px solid var(--void-hairline)',
+          backgroundColor: '#070706',
+          padding: '14px 0',
+          position: 'relative',
+          userSelect: 'none',
+          pointerEvents: 'none'
+        }}
+      >
+        <div
+          ref={marqueeRef}
+          style={{
+            display: 'flex',
+            whiteSpace: 'nowrap',
+            willChange: 'transform'
+          }}
+        >
+          {[0, 1, 2, 3].map((key) => (
+            <div
+              key={key}
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(6rem, 10vw, 12rem)',
+                fontWeight: 800,
+                lineHeight: 0.9,
+                letterSpacing: '-0.05em',
+                textTransform: 'uppercase',
+                color: 'rgba(242, 239, 233, 0.05)',
+                WebkitTextStroke: '1px rgba(242, 239, 233, 0.16)',
+                paddingRight: '72px',
+                flexShrink: 0
+              }}
+            >
+              ESCALATION // AWAITING SOVEREIGN SEAL —
+            </div>
+          ))}
         </div>
       </div>
 
@@ -451,7 +529,7 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.m
                     letterSpacing: '0.1em'
                   }}
                 >
-                  HALTED AT GOVERNANCE DATUM
+                  // AWAITING SOVEREIGN SEAL
                 </div>
               </div>
 
@@ -467,14 +545,40 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.m
                 {/* 1. VALUE */}
                 <div
                   data-metric="true"
-                  data-telemetry="VALUE // 500.00 USDC VENDOR OBLIGATION"
+                  data-monumental="true"
+                  data-telemetry="BREACH LENS // 500.00 USDC > 250.00 CAP"
                   style={{
                     padding: '24px',
                     border: '1px solid var(--void-hairline)',
-                    backgroundColor: 'var(--void-bg)'
+                    backgroundColor: 'var(--void-bg)',
+                    position: 'relative',
+                    overflow: 'hidden'
                   }}
                 >
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--void-text-muted)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                  {/* Hidden JetBrains Mono Telemetry Layer Underneath (Revealed by 80px Invert Lens) */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: '24px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '11px',
+                      letterSpacing: '0.14em',
+                      lineHeight: 1.4,
+                      color: 'rgba(242, 239, 233, 0.04)',
+                      userSelect: 'none',
+                      pointerEvents: 'none',
+                      zIndex: 0
+                    }}
+                  >
+                    <div>ARC L1 // POL-02 CAP EXCEEDED: 500.00 USDC</div>
+                    <div>EXCEPTION ID: 0x9A48F7 // STATUS: DEADLOCK</div>
+                    <div>TIMELOCK: 72H // MULTISIG SOVEREIGN SEAL</div>
+                  </div>
+
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--void-text-muted)', letterSpacing: '0.12em', textTransform: 'uppercase', position: 'relative', zIndex: 1 }}>
                     01 // VALUE [PENDING EXECUTION]
                   </div>
                   <div
@@ -486,12 +590,14 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.m
                       letterSpacing: '-0.04em',
                       fontVariantNumeric: 'tabular-nums',
                       color: 'var(--void-text-primary)',
-                      marginTop: '8px'
+                      marginTop: '8px',
+                      position: 'relative',
+                      zIndex: 1
                     }}
                   >
                     ${activeEscalation.amount.toFixed(2)}
                   </div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--void-text-muted)', marginTop: '6px', letterSpacing: '0.12em' }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--void-text-muted)', marginTop: '6px', letterSpacing: '0.12em', position: 'relative', zIndex: 1 }}>
                     CATEGORY: {activeEscalation.category} // TIMELOCK: 72H
                   </div>
                 </div>

@@ -317,23 +317,51 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
           {/* Column 1: VALUE */}
           <div
             data-metric="true"
-            data-telemetry={`VALUE // $${animCustody.toLocaleString()} TOTAL CUSTODY`}
+            data-monumental="true"
+            data-telemetry="CUSTODY LENS // $1,420,000 ARC L1 RESERVE"
             style={{
               padding: 'clamp(12px, 1.8vh, 22px) clamp(16px, 1.8vw, 28px)',
               borderRight: '1px solid rgba(242, 239, 233, 0.13)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              boxSizing: 'border-box'
+              boxSizing: 'border-box',
+              position: 'relative',
+              overflow: 'hidden'
             }}
           >
+            {/* Hidden JetBrains Mono Telemetry Layer Underneath (Revealed by 80px Invert Lens) */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 'clamp(12px, 1.8vh, 22px) clamp(16px, 1.8vw, 28px)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '10px',
+                letterSpacing: '0.14em',
+                lineHeight: 1.4,
+                color: 'rgba(242, 239, 233, 0.04)',
+                userSelect: 'none',
+                pointerEvents: 'none',
+                zIndex: 0
+              }}
+            >
+              <div>ARC L1 // TOTAL CUSTODY: $1,420,000</div>
+              <div>CHAIN ID: 42111 // MULTISIG QUORUM: 3/5</div>
+              <div>USYC VAULT: $1,000,000 // 5.12% APY</div>
+            </div>
+
             <div
               style={{
                 fontFamily: 'var(--font-mono)',
                 fontSize: '10px',
                 letterSpacing: '0.14em',
                 color: 'var(--void-text-muted)',
-                textTransform: 'uppercase'
+                textTransform: 'uppercase',
+                position: 'relative',
+                zIndex: 1
               }}
             >
               01 // VALUE — CUSTODY
@@ -348,7 +376,9 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
                 letterSpacing: '-0.03em',
                 fontVariantNumeric: 'tabular-nums',
                 color: 'var(--void-text-primary)',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                position: 'relative',
+                zIndex: 1
               }}
             >
               ${Math.round(animCustody).toLocaleString()}
@@ -359,7 +389,9 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
                 fontFamily: 'var(--font-mono)',
                 fontSize: '10px',
                 letterSpacing: '0.08em',
-                color: 'var(--void-text-muted)'
+                color: 'var(--void-text-muted)',
+                position: 'relative',
+                zIndex: 1
               }}
             >
               USDC + USYC RESERVE
