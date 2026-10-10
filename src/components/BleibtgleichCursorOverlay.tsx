@@ -141,13 +141,10 @@ void main () {
   // Fluid density driving the viscous reveal tear
   float fluidDensity = clamp(d + length(vel) * 0.25, 0.0, 1.0);
 
-  // Sharp water meniscus alpha tear calculation
-  float fluidEdge = smoothstep(0.02, 0.06, fluidDensity);
+  // Clean, organic alpha transparency based purely on density (pure invisible Bleibtgleich alpha mask)
+  float alpha = 1.0 - smoothstep(0.0, 0.08, fluidDensity);
 
-  // Sharp silvery-water edge glint simulating high surface tension
-  vec3 edgeGlint = vec3(0.95, 0.98, 1.0) * smoothstep(0.01, 0.03, fluidDensity) * (1.0 - smoothstep(0.03, 0.06, fluidDensity));
-
-  fragColor = vec4(baseColor + (edgeGlint * 1.5), 1.0 - fluidEdge);
+  fragColor = vec4(baseColor, alpha);
 }
 `;
 
@@ -357,8 +354,8 @@ const BleibtgleichCursorCanvas: React.FC<BleibtgleichCursorOverlayProps> = ({
     const VELOCITY_FACTOR = 1.35;
     const FRICTION = 4.2;
     const SPREAD = 0.35;
-    const DECAY = 4.8;           // Fast decay so the fluid wake closes quickly behind the cursor
-    const SPLAT_RADIUS = 0.0025; // Tight, precise reveal footprint
+    const DECAY = 3.5;           // High decay so the window closes organically behind the cursor without lingering
+    const SPLAT_RADIUS = 0.003;  // Tight reveal footprint
     const DENSITY_IMPULSE = 1.5; // Controlled impulse preventing outward bleeding
     const WOBBLE = 0.6;
     const GRAIN = 0.20;
