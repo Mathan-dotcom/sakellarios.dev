@@ -124,7 +124,8 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
           position: 'relative',
           zIndex: 10,
           boxSizing: 'border-box',
-          userSelect: 'none'
+          userSelect: 'none',
+          pointerEvents: 'none'
         }}
       >
         <div
@@ -135,7 +136,8 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             fontSize: '10px',
             opacity: 0.45,
             letterSpacing: '0.14em',
-            color: 'var(--void-text-primary)'
+            color: 'var(--void-text-primary)',
+            pointerEvents: 'auto'
           }}
         >
           SYS // 01 — AUTONOMOUS TREASURY GOVERNOR
@@ -149,7 +151,8 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             fontSize: '10px',
             opacity: 0.45,
             letterSpacing: '0.14em',
-            color: 'var(--void-text-primary)'
+            color: 'var(--void-text-primary)',
+            pointerEvents: 'auto'
           }}
         >
           ARC L1 POLICYWALLET // 21 MATHEMATICAL GUARDRAILS
@@ -157,14 +160,16 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
       </div>
 
       {/* ======================================================================
-          2. CENTRAL 3D ARENA (flex: 1, pure unobstructed 3D visual space)
+          LAYER 0: CENTRAL 3D ARENA & OPTICAL GOVERNOR (Z-INDEX: 0)
+          The hidden base layer. 3D Governor spins underneath the dark shroud.
           ====================================================================== */}
       <div
         style={{
           flex: 1,
           position: 'relative',
           width: '100%',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          zIndex: 0
         }}
       >
         {/* Subtle Horizontal Datum Hairline */}
@@ -237,33 +242,38 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
       </div>
 
       {/* ======================================================================
-          3. BOTTOM ARCHITECTURAL PLINTH (Responsive Laptop Height Guard)
+          3. ARCHITECTURAL PLINTH FOOTER (Anchored Structural Plinth)
           ====================================================================== */}
-      <div
+      <footer
         ref={bottomPlinthRef}
         style={{
-          height: 'clamp(118px, 17vh, 156px)',
-          borderTop: '1px solid rgba(242, 239, 233, 0.13)',
-          backgroundColor: 'rgba(10, 10, 9, 0.78)',
-          backdropFilter: 'none',
-          display: 'flex',
+          display: 'grid',
+          gridTemplateColumns: '2fr 1fr 1fr 1fr',
+          gap: '2rem',
+          alignItems: 'end',
           width: '100%',
-          position: 'relative',
-          zIndex: 10,
-          boxSizing: 'border-box'
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          padding: '2rem',
+          background: 'rgba(10, 10, 9, 0.5)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          zIndex: 20,
+          boxSizing: 'border-box',
+          userSelect: 'none',
+          pointerEvents: 'none'
         }}
       >
-        {/* Bottom-Left Bay (50%) */}
+        {/* Column 1: Brand & Authority (2fr) */}
         <div
           style={{
-            width: '50%',
-            height: '100%',
-            padding: 'clamp(14px, 2.2vh, 24px) 36px',
-            borderRight: '1px solid rgba(242, 239, 233, 0.13)',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'space-between',
-            boxSizing: 'border-box'
+            gap: '0.5rem',
+            background: 'transparent',
+            pointerEvents: 'auto'
           }}
         >
           <div
@@ -273,24 +283,26 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
               fontFamily: 'var(--font-mono)',
               fontSize: '10px',
               letterSpacing: '0.14em',
-              color: 'var(--signal-amber)'
+              color: '#D4943A',
+              background: 'transparent'
             }}
           >
             CALIBRATED AUTHORITY // V2.0
           </div>
 
-          <div style={{ overflow: 'hidden' }}>
+          <div style={{ overflow: 'hidden', background: 'transparent' }}>
             <h1
               ref={titleRef}
               style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(1.8rem, 3.4vw, 3.9rem)',
-                lineHeight: 0.92,
+                fontSize: 'clamp(1.8rem, 3.2vw, 3.6rem)',
+                lineHeight: 0.95,
                 letterSpacing: '-0.04em',
-                color: 'var(--void-text-primary)',
+                color: '#FFFFFF',
                 textTransform: 'uppercase',
                 margin: 0,
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                background: 'transparent'
               }}
             >
               SAKELLARIOUS
@@ -302,233 +314,196 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
               fontFamily: 'var(--font-body)',
               fontSize: '13px',
               lineHeight: 1.4,
-              letterSpacing: '0.01em'
+              letterSpacing: '0.01em',
+              background: 'transparent'
             }}
           >
-            <span style={{ color: '#F2EFE9' }}>Autonomous corporate liquidity </span>
-            <span style={{ color: 'rgba(242, 239, 233, 0.42)' }}>governed by cryptographic proof.</span>
+            <span style={{ color: '#FFFFFF', opacity: 0.85 }}>Autonomous corporate liquidity </span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.42)' }}>governed by cryptographic proof.</span>
           </div>
         </div>
 
-        {/* Bottom-Right Bay (50%, 3 equal 1px-bordered columns for VALUE / BOUND / PROOF) */}
+        {/* Column 2: VALUE (1fr) */}
         <div
+          data-metric="true"
+          data-monumental="true"
+          data-telemetry="CUSTODY LENS // $1,420,000 ARC L1 RESERVE"
           style={{
-            width: '50%',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            height: '100%',
-            boxSizing: 'border-box'
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.5rem',
+            background: 'transparent',
+            pointerEvents: 'auto'
           }}
         >
-          {/* Column 1: VALUE */}
           <div
-            data-metric="true"
-            data-monumental="true"
-            data-telemetry="CUSTODY LENS // $1,420,000 ARC L1 RESERVE"
             style={{
-              height: '100%',
-              padding: 'clamp(12px, 1.8vh, 22px) clamp(16px, 1.8vw, 28px)',
-              borderRight: '1px solid rgba(242, 239, 233, 0.13)',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              boxSizing: 'border-box',
-              position: 'relative',
-              overflow: 'hidden'
+              fontFamily: 'var(--font-mono)',
+              fontSize: '10px',
+              letterSpacing: '0.14em',
+              color: 'rgba(255, 255, 255, 0.45)',
+              textTransform: 'uppercase',
+              background: 'transparent'
             }}
           >
-            {/* Hidden JetBrains Mono Telemetry Layer Underneath (Revealed by 80px Invert Lens) */}
-            <div
-              style={{
-                position: 'absolute',
-                inset: 'clamp(12px, 1.8vh, 22px) clamp(16px, 1.8vw, 28px)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '10px',
-                letterSpacing: '0.14em',
-                lineHeight: 1.4,
-                color: 'rgba(242, 239, 233, 0.04)',
-                userSelect: 'none',
-                pointerEvents: 'none',
-                zIndex: 0
-              }}
-            >
-              <div>ARC L1 // TOTAL CUSTODY: $1,420,000</div>
-              <div>CHAIN ID: 42111 // MULTISIG QUORUM: 3/5</div>
-              <div>USYC VAULT: $1,000,000 // 5.12% APY</div>
-            </div>
-
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '10px',
-                letterSpacing: '0.14em',
-                color: 'var(--void-text-muted)',
-                textTransform: 'uppercase',
-                position: 'relative',
-                zIndex: 1
-              }}
-            >
-              01 // VALUE — CUSTODY
-            </div>
-
-            <div
-              className="hero-syne-metric"
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(1.5rem, 2.2vw, 2.25rem)',
-                fontWeight: 700,
-                lineHeight: 1,
-                margin: 0,
-                display: 'block',
-                letterSpacing: '-0.03em',
-                fontVariantNumeric: 'tabular-nums',
-                color: 'var(--void-text-primary)',
-                whiteSpace: 'nowrap',
-                position: 'relative',
-                zIndex: 1
-              }}
-            >
-              ${Math.round(animCustody).toLocaleString()}
-            </div>
-
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '10px',
-                letterSpacing: '0.08em',
-                color: 'var(--void-text-muted)',
-                position: 'relative',
-                zIndex: 1
-              }}
-            >
-              USDC + USYC RESERVE
-            </div>
+            01 // VALUE — CUSTODY
           </div>
 
-          {/* Column 2: BOUND */}
           <div
-            data-metric="true"
-            data-telemetry="BOUND // 400K FLOOR & 250 SINGLE-TX CAP"
+            className="hero-syne-metric"
             style={{
-              height: '100%',
-              padding: 'clamp(12px, 1.8vh, 22px) clamp(16px, 1.8vw, 28px)',
-              borderRight: '1px solid rgba(242, 239, 233, 0.13)',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              boxSizing: 'border-box'
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(1.4rem, 2.2vw, 2.25rem)',
+              fontWeight: 700,
+              lineHeight: 1,
+              margin: 0,
+              display: 'block',
+              letterSpacing: '-0.03em',
+              fontVariantNumeric: 'tabular-nums',
+              color: '#FFFFFF',
+              whiteSpace: 'nowrap',
+              background: 'transparent'
             }}
           >
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '10px',
-                letterSpacing: '0.14em',
-                color: 'var(--void-text-muted)',
-                textTransform: 'uppercase'
-              }}
-            >
-              02 // BOUND — TOLERANCE
-            </div>
-
-            <div
-              className="hero-syne-metric"
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(1.3rem, 1.9vw, 2.25rem)',
-                fontWeight: 700,
-                lineHeight: 1,
-                margin: 0,
-                display: 'block',
-                letterSpacing: '-0.03em',
-                fontVariantNumeric: 'tabular-nums',
-                color: 'var(--void-text-primary)',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              {Math.round(animFloor / 1000)}K FLOOR
-            </div>
-
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '10px',
-                letterSpacing: '0.08em',
-                color: 'var(--void-text-muted)'
-              }}
-            >
-              250 USDC SINGLE-TX CAP
-            </div>
+            ${Math.round(animCustody).toLocaleString()}
           </div>
 
-          {/* Column 3: PROOF */}
           <div
-            data-metric="true"
-            data-telemetry="PROOF // EUTHYNA #00481 ARC L1 VERIFIED"
             style={{
-              height: '100%',
-              padding: 'clamp(12px, 1.8vh, 22px) clamp(16px, 1.8vw, 28px)',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              boxSizing: 'border-box'
+              fontFamily: 'var(--font-mono)',
+              fontSize: '10px',
+              letterSpacing: '0.08em',
+              color: 'rgba(255, 255, 255, 0.45)',
+              background: 'transparent'
             }}
           >
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '10px',
-                letterSpacing: '0.14em',
-                color: 'var(--void-text-muted)',
-                textTransform: 'uppercase'
-              }}
-            >
-              03 // PROOF — ARCHIVE
-            </div>
-
-            <div
-              className="hero-syne-metric"
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(1.3rem, 1.9vw, 2.25rem)',
-                fontWeight: 700,
-                lineHeight: 1,
-                margin: 0,
-                display: 'block',
-                letterSpacing: '-0.03em',
-                fontVariantNumeric: 'tabular-nums',
-                color: 'var(--void-text-primary)',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              EUTHYNA #{String(Math.round(animFolio)).padStart(5, '0')}
-            </div>
-
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '10px',
-                letterSpacing: '0.08em',
-                color: 'var(--signal-amber)'
-              }}
-            >
-              ARC L1 VERIFIED
-            </div>
+            USDC + USYC RESERVE
           </div>
         </div>
-      </div>
+
+        {/* Column 3: BOUND (1fr) */}
+        <div
+          data-metric="true"
+          data-telemetry="BOUND // 400K FLOOR & 250 SINGLE-TX CAP"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.5rem',
+            background: 'transparent',
+            pointerEvents: 'auto'
+          }}
+        >
+          <div
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '10px',
+              letterSpacing: '0.14em',
+              color: 'rgba(255, 255, 255, 0.45)',
+              textTransform: 'uppercase',
+              background: 'transparent'
+            }}
+          >
+            02 // BOUND — TOLERANCE
+          </div>
+
+          <div
+            className="hero-syne-metric"
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(1.3rem, 1.9vw, 2.25rem)',
+              fontWeight: 700,
+              lineHeight: 1,
+              margin: 0,
+              display: 'block',
+              letterSpacing: '-0.03em',
+              fontVariantNumeric: 'tabular-nums',
+              color: '#FFFFFF',
+              whiteSpace: 'nowrap',
+              background: 'transparent'
+            }}
+          >
+            {Math.round(animFloor / 1000)}K FLOOR
+          </div>
+
+          <div
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '10px',
+              letterSpacing: '0.08em',
+              color: 'rgba(255, 255, 255, 0.45)',
+              background: 'transparent'
+            }}
+          >
+            250 USDC SINGLE-TX CAP
+          </div>
+        </div>
+
+        {/* Column 4: PROOF (1fr) */}
+        <div
+          data-metric="true"
+          data-telemetry="PROOF // EUTHYNA #00481 ARC L1 VERIFIED"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.5rem',
+            background: 'transparent',
+            pointerEvents: 'auto'
+          }}
+        >
+          <div
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '10px',
+              letterSpacing: '0.14em',
+              color: 'rgba(255, 255, 255, 0.45)',
+              textTransform: 'uppercase',
+              background: 'transparent'
+            }}
+          >
+            03 // PROOF — ARCHIVE
+          </div>
+
+          <div
+            className="hero-syne-metric"
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(1.3rem, 1.9vw, 2.25rem)',
+              fontWeight: 700,
+              lineHeight: 1,
+              margin: 0,
+              display: 'block',
+              letterSpacing: '-0.03em',
+              fontVariantNumeric: 'tabular-nums',
+              color: '#FFFFFF',
+              whiteSpace: 'nowrap',
+              background: 'transparent'
+            }}
+          >
+            EUTHYNA #{String(Math.round(animFolio)).padStart(5, '0')}
+          </div>
+
+          <div
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '10px',
+              letterSpacing: '0.08em',
+              color: '#D4943A',
+              background: 'transparent'
+            }}
+          >
+            ARC L1 VERIFIED
+          </div>
+        </div>
+      </footer>
 
       {/* ======================================================================
-          4. SCOPED BLEIBTGLEICH WEBGL FLUID GLASS OVERLAY (Z-INDEX: 5)
-             Stacking Order:
-             1. OpticalGovernorCanvas (zIndex: 1, Bottom)
-             2. BleibtgleichCursorOverlay (zIndex: 5, Middle glass lens over 3D model)
-             3. Hero Typography/UI Grids (zIndex: 10, Top - text is never distorted)
+          LAYER 1: BLEIBTGLEICH REVEALER SHROUD OVERLAY (Z-INDEX: 1)
+          Stacking Order:
+          1. OpticalGovernorCanvas (zIndex: 0, Hidden base layer)
+          2. BleibtgleichCursorOverlay (zIndex: 1, Dark shroud & fluid eraser)
+          3. Hero Typography/UI Grids (zIndex: 10, Strictly floating on top)
           ====================================================================== */}
-      <BleibtgleichCursorOverlay zIndex={5} />
+      <BleibtgleichCursorOverlay zIndex={1} />
     </section>
   );
 });

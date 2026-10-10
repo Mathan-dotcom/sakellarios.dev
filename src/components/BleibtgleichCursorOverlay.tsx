@@ -16,7 +16,7 @@ import React, { Component, ErrorInfo, ReactNode, useEffect, useRef } from 'react
 
 const VS_QUAD = `#version 300 es
 precision highp float;
-in vec2 aPos;
+layout(location = 0) in vec2 aPos;
 out vec2 vUv;
 void main () {
   vUv = aPos * 0.5 + 0.5;
@@ -129,53 +129,25 @@ void main () {
   float d = field.r;
   vec2 vel = field.gb;
 
-  // Background is 100% transparent when field is quiescent
-  if (d < 0.0003 && length(vel) < 0.0003) {
-    fragColor = vec4(0.0);
+  // Solid dark background matching app void theme (#0A0A09)
+  vec3 baseColor = vec3(10.0 / 255.0, 10.0 / 255.0, 9.0 / 255.0);
+
+  // Quiescent state: Output solid dark background to visually hide the 3D Governor
+  if (d < 0.0001 && length(vel) < 0.0001) {
+    fragColor = vec4(baseColor, 1.0);
     return;
   }
 
-  // Compute spatial finite-difference gradients of displacement field
-  float dL = texture(uField, vUv - vec2(texelSize.x, 0.0)).r;
-  float dR = texture(uField, vUv + vec2(texelSize.x, 0.0)).r;
-  float dT = texture(uField, vUv + vec2(0.0, texelSize.y)).r;
-  float dB = texture(uField, vUv - vec2(0.0, texelSize.y)).r;
+  // Fluid density driving the viscous reveal tear
+  float fluidDensity = clamp(d + length(vel) * 0.25, 0.0, 1.0);
 
-  vec2 grad = vec2(dR - dL, dT - dB);
-  float slope = length(grad);
+  // Crisp liquid glass edge replacing soft linear clamp
+  float fluidEdge = smoothstep(0.1, 0.3, fluidDensity);
 
-  // Surface normal vector of clear water membrane
-  vec3 normal = normalize(vec3(-grad * 32.0, 1.0));
+  // High-exposure silver/amber highlight exactly at the boundary line
+  vec3 edgeGlint = vec3(1.0, 0.8, 0.5) * smoothstep(0.05, 0.15, fluidDensity) * (1.0 - smoothstep(0.15, 0.25, fluidDensity));
 
-  // Lighting directions: overhead key light
-  vec3 lightDir = normalize(vec3(-0.3, 0.6, 0.75));
-  vec3 viewDir = vec3(0.0, 0.0, 1.0);
-  vec3 halfDir = normalize(lightDir + viewDir);
-
-  // Specular reflection crest on ripple contours
-  float NdotH = max(dot(normal, halfDir), 0.0);
-  float spec = pow(NdotH, 36.0);
-
-  // Optical Fresnel edge glint (clear water / glass lens meniscus)
-  float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 3.5);
-
-  // Edge curvature highlight
-  float edgeGlint = smoothstep(0.015, 0.14, slope);
-
-  // Specular highlight tinted towards Arc L1 brand amber (#D4943A: 0.831, 0.580, 0.227)
-  // Physically lit by the glowing 3D governor core underneath the glass
-  vec3 amberCore = vec3(0.831, 0.580, 0.227);
-  vec3 whiteGlint = vec3(1.0, 0.98, 0.94);
-  vec3 specularColor = mix(whiteGlint, amberCore, 0.38);
-  vec3 rimColor = mix(vec3(0.95, 0.97, 1.0), amberCore, 0.28);
-  vec3 color = mix(rimColor, specularColor, clamp(spec * 1.4, 0.0, 1.0));
-
-  // Fluid body is 100% transparent (alpha 0.0 for flat areas).
-  // Only specular glints and refractive normal-map edges define volume.
-  float alpha = spec * 1.25 + fresnel * 0.45 + edgeGlint * 0.35;
-  alpha = clamp(alpha, 0.0, 0.9);
-
-  fragColor = vec4(color * alpha, alpha);
+  fragColor = vec4(baseColor + edgeGlint, 1.0 - fluidEdge);
 }
 `;
 
@@ -202,7 +174,7 @@ export interface BleibtgleichCursorOverlayProps {
  */
 const BleibtgleichCursorCanvas: React.FC<BleibtgleichCursorOverlayProps> = ({
   style,
-  zIndex = 5,
+  zIndex = 1,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -213,12 +185,12 @@ const BleibtgleichCursorCanvas: React.FC<BleibtgleichCursorOverlayProps> = ({
     let isMounted = true;
     let animFrameId: number | null = null;
 
-    // Initialize WebGL2 context safely
+    // Initialize WebGL2 context safely with DOM transparency enabled (premultipliedAlpha: false)
     let gl: WebGL2RenderingContext | null = null;
     try {
       gl = canvas.getContext('webgl2', {
         alpha: true,
-        premultipliedAlpha: true,
+        premultipliedAlpha: false,
         antialias: false,
         depth: false,
         stencil: false,
@@ -379,18 +351,18 @@ const BleibtgleichCursorCanvas: React.FC<BleibtgleichCursorOverlayProps> = ({
       }
     };
 
-    // Subtlety & Glass Refraction Parameters
+    // Bleibtgleich Revealer Shroud Parameters
     const BASE_SIM_RES = 512;
     const MAX_SIM_RES = 1440;
-    const VELOCITY_FACTOR = 1.2;
-    const FRICTION = 4.8;
-    const SPREAD = 0.45;
-    const DECAY = 4.8;           // Fast dissipation rate
-    const SPLAT_RADIUS = 0.0014; // Tight, precise trail (reduced >60% from 0.004)
-    const DENSITY_IMPULSE = 1.35;
-    const WOBBLE = 1.1;
-    const GRAIN = 0.4;
-    const MAX_VELOCITY = 3.0;
+    const VELOCITY_FACTOR = 1.35;
+    const FRICTION = 3.6;
+    const SPREAD = 0.50;
+    const DECAY = 1.8;           // Allows revealed aperture to linger comfortably for inspection (~1.5s)
+    const SPLAT_RADIUS = 0.014;  // Generously wide reveal window over 3D Governor
+    const DENSITY_IMPULSE = 3.0; // High density impulse to decisively punch transparent hole
+    const WOBBLE = 1.0;
+    const GRAIN = 0.35;
+    const MAX_VELOCITY = 3.6;
 
     let fboRead: FramebufferTarget | null = null;
     let fboWrite: FramebufferTarget | null = null;
@@ -443,6 +415,7 @@ const BleibtgleichCursorCanvas: React.FC<BleibtgleichCursorOverlayProps> = ({
 
     const drawQuad = (target: FramebufferTarget | null) => {
       if (!gl || gl.isContextLost()) return;
+      if (vao) gl.bindVertexArray(vao);
       if (target) {
         gl.bindFramebuffer(gl.FRAMEBUFFER, target.fbo);
         gl.viewport(0, 0, target.w, target.h);
@@ -486,7 +459,7 @@ const BleibtgleichCursorCanvas: React.FC<BleibtgleichCursorOverlayProps> = ({
       const vx = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, cursor.vx)) * VELOCITY_FACTOR;
       const vy = Math.max(-MAX_VELOCITY, Math.min(MAX_VELOCITY, cursor.vy)) * VELOCITY_FACTOR;
       const dist = Math.hypot((cursor.x - cursor.px) * aspect, cursor.y - cursor.py);
-      const steps = Math.max(1, Math.ceil(dist / (0.45 * Math.sqrt(SPLAT_RADIUS))));
+      const steps = Math.max(1, Math.ceil(dist / (0.35 * Math.sqrt(SPLAT_RADIUS))));
 
       for (let i = 0; i < steps; i++) {
         const factor = steps === 1 ? 1 : i / (steps - 1);
@@ -501,18 +474,16 @@ const BleibtgleichCursorCanvas: React.FC<BleibtgleichCursorOverlayProps> = ({
     };
 
     // Track mouse coordinates strictly relative to this local Hero container
-    const recordPointer = (clientX: number, clientY: number) => {
+    const recordPointerCoords = (clientX: number, clientY: number) => {
       if (!canvas) return;
       const rect = canvas.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+
+      if (rect.width <= 0 || rect.height <= 0) return;
 
       // If cursor is outside the Hero container bounds, stop tracking
-      const isInside =
-        clientX >= rect.left &&
-        clientX <= rect.right &&
-        clientY >= rect.top &&
-        clientY <= rect.bottom;
-
-      if (!isInside) {
+      if (x < 0 || x > rect.width || y < 0 || y > rect.height) {
         if (cursor.init) {
           cursor.init = false;
           cursor.moved = false;
@@ -524,19 +495,24 @@ const BleibtgleichCursorCanvas: React.FC<BleibtgleichCursorOverlayProps> = ({
       const dt = Math.max((now - prevMoveTime) / 1000, 0.004);
       prevMoveTime = now;
 
-      // Local normalized coordinates (0 to 1) relative to this specific container
-      const normX = (clientX - rect.left) / Math.max(rect.width, 1);
-      const normY = 1 - (clientY - rect.top) / Math.max(rect.height, 1);
+      // Local normalized coordinates (0 to 1) relative to this specific canvas
+      const normX = x / rect.width;
+      const normY = 1 - (y / rect.height);
 
       if (!cursor.init) {
         cursor.px = normX;
         cursor.py = normY;
+        cursor.x = normX;
+        cursor.y = normY;
+        cursor.vx = 0;
+        cursor.vy = 0;
         cursor.init = true;
-      } else {
-        cursor.px = cursor.x;
-        cursor.py = cursor.y;
+        cursor.moved = true;
+        return;
       }
 
+      cursor.px = cursor.x;
+      cursor.py = cursor.y;
       cursor.vx = (normX - cursor.px) / dt;
       cursor.vy = (normY - cursor.py) / dt;
       cursor.x = normX;
@@ -544,13 +520,13 @@ const BleibtgleichCursorCanvas: React.FC<BleibtgleichCursorOverlayProps> = ({
       cursor.moved = true;
     };
 
-    const handleMouseMove = (e: MouseEvent) => {
-      recordPointer(e.clientX, e.clientY);
+    const handlePointerMove = (e: PointerEvent | MouseEvent) => {
+      recordPointerCoords(e.clientX, e.clientY);
     };
 
     const handleTouchMove = (e: TouchEvent) => {
       if (e.touches[0]) {
-        recordPointer(e.touches[0].clientX, e.touches[0].clientY);
+        recordPointerCoords(e.touches[0].clientX, e.touches[0].clientY);
       }
     };
 
@@ -558,7 +534,8 @@ const BleibtgleichCursorCanvas: React.FC<BleibtgleichCursorOverlayProps> = ({
       cursor.init = false;
     };
 
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('pointermove', handlePointerMove, { passive: true });
+    window.addEventListener('mousemove', handlePointerMove, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
     window.addEventListener('mouseleave', handleMouseLeave);
 
@@ -627,16 +604,16 @@ const BleibtgleichCursorCanvas: React.FC<BleibtgleichCursorOverlayProps> = ({
           pingPong.swap();
         }
 
-        // 3. Render Pass: Refractive Water Surface Normal & Specular Fresnel Glint
+        // 3. Render Pass: Dark Shroud & Fluid Revealer Mask
         if (pingPong.read) {
           gl.bindFramebuffer(gl.FRAMEBUFFER, null);
           gl.viewport(0, 0, canvas.width, canvas.height);
           gl.clearColor(0, 0, 0, 0);
           gl.clear(gl.COLOR_BUFFER_BIT);
 
-          gl.enable(gl.BLEND);
-          gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+          gl.disable(gl.BLEND);
 
+          if (vao) gl.bindVertexArray(vao);
           gl.useProgram(renderProgram.p);
           gl.uniform1i(renderProgram.uniforms.uField, pingPong.read.attach(0));
           gl.uniform2f(renderProgram.uniforms.texelSize, texelX, texelY);
@@ -653,7 +630,8 @@ const BleibtgleichCursorCanvas: React.FC<BleibtgleichCursorOverlayProps> = ({
     return () => {
       isMounted = false;
       if (animFrameId) cancelAnimationFrame(animFrameId);
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('mousemove', handlePointerMove);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('mouseleave', handleMouseLeave);
       window.removeEventListener('resize', resize);
@@ -696,8 +674,6 @@ const BleibtgleichCursorCanvas: React.FC<BleibtgleichCursorOverlayProps> = ({
         zIndex,
         pointerEvents: 'none',
         display: 'block',
-        mixBlendMode: 'screen',
-        opacity: 0.45,
         ...style,
       }}
       aria-hidden="true"

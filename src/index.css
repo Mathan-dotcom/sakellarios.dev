@@ -136,6 +136,11 @@ html, body {
   color: #0A0A09;
 }
 
+#viewport-01, #viewport-01 * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
 /* TACTICAL BUTTON HOVER INVERSION (180ms mechanical ease) */
 .tactical-button:hover {
   background-color: var(--mineral-ink) !important;
