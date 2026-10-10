@@ -141,13 +141,13 @@ void main () {
   // Fluid density driving the viscous reveal tear
   float fluidDensity = clamp(d + length(vel) * 0.25, 0.0, 1.0);
 
-  // Crisp liquid glass edge replacing soft linear clamp
-  float fluidEdge = smoothstep(0.1, 0.3, fluidDensity);
+  // Sharp water meniscus alpha tear calculation
+  float fluidEdge = smoothstep(0.02, 0.06, fluidDensity);
 
-  // High-exposure silver/amber highlight exactly at the boundary line
-  vec3 edgeGlint = vec3(1.0, 0.8, 0.5) * smoothstep(0.05, 0.15, fluidDensity) * (1.0 - smoothstep(0.15, 0.25, fluidDensity));
+  // Sharp silvery-water edge glint simulating high surface tension
+  vec3 edgeGlint = vec3(0.95, 0.98, 1.0) * smoothstep(0.01, 0.03, fluidDensity) * (1.0 - smoothstep(0.03, 0.06, fluidDensity));
 
-  fragColor = vec4(baseColor + edgeGlint, 1.0 - fluidEdge);
+  fragColor = vec4(baseColor + (edgeGlint * 1.5), 1.0 - fluidEdge);
 }
 `;
 
@@ -351,17 +351,17 @@ const BleibtgleichCursorCanvas: React.FC<BleibtgleichCursorOverlayProps> = ({
       }
     };
 
-    // Bleibtgleich Revealer Shroud Parameters
+    // Bleibtgleich Revealer Shroud Parameters — Viscous Water Profile
     const BASE_SIM_RES = 512;
     const MAX_SIM_RES = 1440;
     const VELOCITY_FACTOR = 1.35;
-    const FRICTION = 3.6;
-    const SPREAD = 0.50;
-    const DECAY = 1.8;           // Allows revealed aperture to linger comfortably for inspection (~1.5s)
-    const SPLAT_RADIUS = 0.014;  // Generously wide reveal window over 3D Governor
-    const DENSITY_IMPULSE = 3.0; // High density impulse to decisively punch transparent hole
-    const WOBBLE = 1.0;
-    const GRAIN = 0.35;
+    const FRICTION = 4.2;
+    const SPREAD = 0.35;
+    const DECAY = 4.8;           // Fast decay so the fluid wake closes quickly behind the cursor
+    const SPLAT_RADIUS = 0.0025; // Tight, precise reveal footprint
+    const DENSITY_IMPULSE = 1.5; // Controlled impulse preventing outward bleeding
+    const WOBBLE = 0.6;
+    const GRAIN = 0.20;
     const MAX_VELOCITY = 3.6;
 
     let fboRead: FramebufferTarget | null = null;

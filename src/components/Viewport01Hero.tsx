@@ -242,13 +242,81 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
       </div>
 
       {/* ======================================================================
-          3. ARCHITECTURAL PLINTH FOOTER (Anchored Structural Plinth)
+          2. THE DEAD-CENTER MONUMENT (Main Title floating in the void)
+          ====================================================================== */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          textAlign: 'center',
+          pointerEvents: 'none',
+          width: '100%',
+          zIndex: 10,
+          boxSizing: 'border-box',
+          padding: '0 2rem'
+        }}
+      >
+        <div
+          data-datum="true"
+          data-telemetry="CALIBRATED AUTHORITY // V2.0"
+          style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '11px',
+            letterSpacing: '0.18em',
+            color: '#D4943A',
+            marginBottom: '0.75rem',
+            textTransform: 'uppercase'
+          }}
+        >
+          CALIBRATED AUTHORITY // V2.0
+        </div>
+
+        <div style={{ overflow: 'hidden' }}>
+          <h1
+            ref={titleRef}
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(2.8rem, 6.2vw, 6.5rem)',
+              lineHeight: 0.92,
+              letterSpacing: '-0.04em',
+              color: '#FFFFFF',
+              textTransform: 'uppercase',
+              margin: 0,
+              whiteSpace: 'nowrap'
+            }}
+          >
+            SAKELLARIOUS
+          </h1>
+        </div>
+
+        <div
+          style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: 'clamp(13px, 1.1vw, 15px)',
+            lineHeight: 1.45,
+            letterSpacing: '0.015em',
+            marginTop: '0.9rem',
+            maxWidth: '520px'
+          }}
+        >
+          <span style={{ color: '#FFFFFF', opacity: 0.88 }}>Autonomous corporate liquidity </span>
+          <span style={{ color: 'rgba(255, 255, 255, 0.45)' }}>governed by cryptographic proof.</span>
+        </div>
+      </div>
+
+      {/* ======================================================================
+          3. THE PURE DATA PLINTH (Bottom Footer)
           ====================================================================== */}
       <footer
         ref={bottomPlinthRef}
         style={{
           display: 'grid',
-          gridTemplateColumns: '2fr 1fr 1fr 1fr',
+          gridTemplateColumns: 'repeat(3, 1fr)',
           gap: '2rem',
           alignItems: 'end',
           width: '100%',
@@ -266,64 +334,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
           pointerEvents: 'none'
         }}
       >
-        {/* Column 1: Brand & Authority (2fr) */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.5rem',
-            background: 'transparent',
-            pointerEvents: 'auto'
-          }}
-        >
-          <div
-            data-datum="true"
-            data-telemetry="CALIBRATED AUTHORITY // V2.0"
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '10px',
-              letterSpacing: '0.14em',
-              color: '#D4943A',
-              background: 'transparent'
-            }}
-          >
-            CALIBRATED AUTHORITY // V2.0
-          </div>
-
-          <div style={{ overflow: 'hidden', background: 'transparent' }}>
-            <h1
-              ref={titleRef}
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(1.8rem, 3.2vw, 3.6rem)',
-                lineHeight: 0.95,
-                letterSpacing: '-0.04em',
-                color: '#FFFFFF',
-                textTransform: 'uppercase',
-                margin: 0,
-                whiteSpace: 'nowrap',
-                background: 'transparent'
-              }}
-            >
-              SAKELLARIOUS
-            </h1>
-          </div>
-
-          <div
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '13px',
-              lineHeight: 1.4,
-              letterSpacing: '0.01em',
-              background: 'transparent'
-            }}
-          >
-            <span style={{ color: '#FFFFFF', opacity: 0.85 }}>Autonomous corporate liquidity </span>
-            <span style={{ color: 'rgba(255, 255, 255, 0.42)' }}>governed by cryptographic proof.</span>
-          </div>
-        </div>
-
-        {/* Column 2: VALUE (1fr) */}
+        {/* Column 1: VALUE (Left-aligned) */}
         <div
           data-metric="true"
           data-monumental="true"
@@ -333,7 +344,8 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             flexDirection: 'column',
             gap: '0.5rem',
             background: 'transparent',
-            pointerEvents: 'auto'
+            pointerEvents: 'auto',
+            textAlign: 'left'
           }}
         >
           <div
@@ -381,16 +393,18 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
           </div>
         </div>
 
-        {/* Column 3: BOUND (1fr) */}
+        {/* Column 2: BOUND (Center-aligned) */}
         <div
           data-metric="true"
           data-telemetry="BOUND // 400K FLOOR & 250 SINGLE-TX CAP"
           style={{
             display: 'flex',
             flexDirection: 'column',
+            alignItems: 'center',
             gap: '0.5rem',
             background: 'transparent',
-            pointerEvents: 'auto'
+            pointerEvents: 'auto',
+            textAlign: 'center'
           }}
         >
           <div
@@ -438,16 +452,18 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
           </div>
         </div>
 
-        {/* Column 4: PROOF (1fr) */}
+        {/* Column 3: PROOF (Right-aligned) */}
         <div
           data-metric="true"
           data-telemetry="PROOF // EUTHYNA #00481 ARC L1 VERIFIED"
           style={{
             display: 'flex',
             flexDirection: 'column',
+            alignItems: 'flex-end',
             gap: '0.5rem',
             background: 'transparent',
-            pointerEvents: 'auto'
+            pointerEvents: 'auto',
+            textAlign: 'right'
           }}
         >
           <div
