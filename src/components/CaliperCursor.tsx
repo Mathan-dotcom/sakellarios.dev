@@ -100,7 +100,7 @@ export const CaliperCursor: React.FC = React.memo(() => {
         const text =
           snapTarget.getAttribute('data-telemetry') ||
           (isMonumental
-            ? 'METROLOGICAL LENS // 80MM INVERSION'
+            ? 'METROLOGICAL LENS // 48MM INVERSION'
             : snapTarget.getAttribute('data-metric')
             ? 'METRIC LOCKED'
             : 'DATUM LOCKED');
@@ -165,10 +165,10 @@ export const CaliperCursor: React.FC = React.memo(() => {
     };
   }, []);
 
-  // Frame sizing: 80px on monumental metrics, 44px on locked datums, 28px standard
-  const frameSize = isLensActive ? 80 : isLocked ? 44 : 28;
+  // Frame sizing: shrunk down to 48px on monumental metrics, 40px on locked datums, 24px standard
+  const frameSize = isLensActive ? 48 : isLocked ? 40 : 24;
   const halfSize = frameSize / 2;
-  const chamfer = isLensActive ? 8 : isLocked ? 6 : 4;
+  const chamfer = isLensActive ? 6 : isLocked ? 5 : 4;
 
   const reticleColor = isLightSurface
     ? (isLocked ? 'var(--signal-tension)' : 'var(--mineral-ink)')
@@ -348,12 +348,12 @@ export const CaliperCursor: React.FC = React.memo(() => {
               </>
             )}
 
-            {/* 80mm Metrological Inspection Reticle Crosshairs */}
+            {/* 48mm Metrological Inspection Reticle Crosshairs */}
             {isLensActive && (
               <>
-                <line x1="12" y1={halfSize} x2={frameSize - 12} y2={halfSize} stroke={tickStroke} strokeWidth="1" strokeDasharray="2 3" opacity="0.65" />
-                <line x1={halfSize} y1="12" x2={halfSize} y2={frameSize - 12} stroke={tickStroke} strokeWidth="1" strokeDasharray="2 3" opacity="0.65" />
-                <circle cx={halfSize} cy={halfSize} r="18" stroke={tickStroke} strokeWidth="1" strokeDasharray="2 2" fill="none" opacity="0.45" />
+                <line x1="8" y1={halfSize} x2={frameSize - 8} y2={halfSize} stroke={tickStroke} strokeWidth="1" strokeDasharray="2 2" opacity="0.65" />
+                <line x1={halfSize} y1="8" x2={halfSize} y2={frameSize - 8} stroke={tickStroke} strokeWidth="1" strokeDasharray="2 2" opacity="0.65" />
+                <circle cx={halfSize} cy={halfSize} r="10" stroke={tickStroke} strokeWidth="1" strokeDasharray="2 2" fill="none" opacity="0.45" />
               </>
             )}
           </svg>

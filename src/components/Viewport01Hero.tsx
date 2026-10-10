@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { useSakellariousEngine } from '../core/useSakellariousEngine';
 import { useAnimatedNumber } from '../core/useAnimatedNumber';
 import { OpticalGovernorCanvas } from './OpticalGovernorCanvas';
+import { BleibtgleichCursorOverlay } from './BleibtgleichCursorOverlay';
 
 export interface Viewport01HeroProps {
   engine: ReturnType<typeof useSakellariousEngine>;
@@ -12,12 +13,14 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
   const isHalted = engine.escalations.length > 0;
 
   // Refs for 1.35-second choreographed instrument boot sequence
+  const heroRef = useRef<HTMLElement>(null);
   const horizontalDatumRef = useRef<HTMLDivElement>(null);
   const verticalDatumRef = useRef<HTMLDivElement>(null);
   const topStripRef = useRef<HTMLDivElement>(null);
   const bottomPlinthRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const bootProgressRef = useRef(0);
+
 
   // Critically damped mechanical metric roll-ups from 0
   const animCustody = useAnimatedNumber(engine.balances.totalArcCapital, 750, 0);
@@ -88,6 +91,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
   return (
     <section
       id="viewport-01"
+      ref={heroRef}
       data-chamber="void"
       style={{
         position: 'relative',
@@ -253,6 +257,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
         <div
           style={{
             width: '50%',
+            height: '100%',
             padding: 'clamp(14px, 2.2vh, 24px) 36px',
             borderRight: '1px solid rgba(242, 239, 233, 0.13)',
             display: 'flex',
@@ -311,6 +316,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             width: '50%',
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
+            height: '100%',
             boxSizing: 'border-box'
           }}
         >
@@ -320,6 +326,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             data-monumental="true"
             data-telemetry="CUSTODY LENS // $1,420,000 ARC L1 RESERVE"
             style={{
+              height: '100%',
               padding: 'clamp(12px, 1.8vh, 22px) clamp(16px, 1.8vw, 28px)',
               borderRight: '1px solid rgba(242, 239, 233, 0.13)',
               display: 'flex',
@@ -368,11 +375,14 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             </div>
 
             <div
+              className="hero-syne-metric"
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: 'clamp(1.5rem, 2.2vw, 2.25rem)',
                 fontWeight: 700,
                 lineHeight: 1,
+                margin: 0,
+                display: 'block',
                 letterSpacing: '-0.03em',
                 fontVariantNumeric: 'tabular-nums',
                 color: 'var(--void-text-primary)',
@@ -403,6 +413,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             data-metric="true"
             data-telemetry="BOUND // 400K FLOOR & 250 SINGLE-TX CAP"
             style={{
+              height: '100%',
               padding: 'clamp(12px, 1.8vh, 22px) clamp(16px, 1.8vw, 28px)',
               borderRight: '1px solid rgba(242, 239, 233, 0.13)',
               display: 'flex',
@@ -424,11 +435,14 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             </div>
 
             <div
+              className="hero-syne-metric"
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: 'clamp(1.3rem, 1.9vw, 2.25rem)',
                 fontWeight: 700,
                 lineHeight: 1,
+                margin: 0,
+                display: 'block',
                 letterSpacing: '-0.03em',
                 fontVariantNumeric: 'tabular-nums',
                 color: 'var(--void-text-primary)',
@@ -455,6 +469,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             data-metric="true"
             data-telemetry="PROOF // EUTHYNA #00481 ARC L1 VERIFIED"
             style={{
+              height: '100%',
               padding: 'clamp(12px, 1.8vh, 22px) clamp(16px, 1.8vw, 28px)',
               display: 'flex',
               flexDirection: 'column',
@@ -475,11 +490,14 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
             </div>
 
             <div
+              className="hero-syne-metric"
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: 'clamp(1.3rem, 1.9vw, 2.25rem)',
                 fontWeight: 700,
                 lineHeight: 1,
+                margin: 0,
+                display: 'block',
                 letterSpacing: '-0.03em',
                 fontVariantNumeric: 'tabular-nums',
                 color: 'var(--void-text-primary)',
@@ -502,6 +520,15 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
           </div>
         </div>
       </div>
+
+      {/* ======================================================================
+          4. SCOPED BLEIBTGLEICH WEBGL FLUID GLASS OVERLAY (Z-INDEX: 5)
+             Stacking Order:
+             1. OpticalGovernorCanvas (zIndex: 1, Bottom)
+             2. BleibtgleichCursorOverlay (zIndex: 5, Middle glass lens over 3D model)
+             3. Hero Typography/UI Grids (zIndex: 10, Top - text is never distorted)
+          ====================================================================== */}
+      <BleibtgleichCursorOverlay zIndex={5} />
     </section>
   );
 });

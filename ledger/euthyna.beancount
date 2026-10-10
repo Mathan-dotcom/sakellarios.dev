@@ -344,3 +344,30 @@ option "operating_currency" "USDC"
   meta-timestamp: "2026-10-08T18:59:17.891Z"
   Assets:Arc:PolicyWallet:USDC                   -120.00 USDC
   Expenses:Infrastructure:Hosting            120.00 USDC
+
+2026-10-10 * "Circle Paymaster / Vendor Settlement" "Paid INFRASTRUCTURE Invoice #INV-CLOUD-8821"
+  meta-agent-id: "0x2222222222222222222222222222222222222222"
+  meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
+  meta-sanctions-check: "CLEAN"
+  meta-tx-hash: "0x0da5b3a43922150105b7355526eb507bdd68c7c64a6986a75f762545f1d63b26"
+  meta-timestamp: "2026-10-10T07:31:03.457Z"
+  Assets:Arc:PolicyWallet:USDC                   -120.00 USDC
+  Expenses:Infrastructure:Hosting            120.00 USDC
+
+2026-10-10 * "Circle Paymaster / Vendor Settlement" "Paid INFRASTRUCTURE Invoice #INV-CLOUD-8821"
+  meta-agent-id: "0x2222222222222222222222222222222222222222"
+  meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
+  meta-sanctions-check: "CLEAN"
+  meta-tx-hash: "0x7c3d0cded5bb1e22bb07753ca951df5ef459cabc35484845272794fcb8c326a8"
+  meta-timestamp: "2026-10-10T07:31:37.226Z"
+  Assets:Arc:PolicyWallet:USDC                   -120.00 USDC
+  Expenses:Infrastructure:Hosting            120.00 USDC
+
+2026-10-10 * "Circle Paymaster / Vendor Settlement" "Paid SAAS Invoice #INV-CUSTOM-012"
+  meta-agent-id: "0x2222222222222222222222222222222222222222"
+  meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
+  meta-sanctions-check: "CLEAN"
+  meta-tx-hash: "0x5baf7796d1b396fcd15391fd8f76648da682c0134b4429f5b8e4a6cb68b2ac91"
+  meta-timestamp: "2026-10-10T07:41:44.942Z"
+  Assets:Arc:PolicyWallet:USDC                   -180.00 USDC
+  Expenses:SaaS:APIs            180.00 USDC

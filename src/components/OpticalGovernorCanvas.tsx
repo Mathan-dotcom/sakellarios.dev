@@ -174,8 +174,7 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = React
       uTime: { value: 0.0 },
       uTension: { value: isHalted ? 1.0 : 0.0 },
       uScrollVelocity: { value: 0.0 },
-      uBootProgress: { value: bootProgressRef ? bootProgressRef.current : 1.0 },
-      uPointer: { value: new THREE.Vector2(-999.0, -999.0) }
+      uBootProgress: { value: bootProgressRef ? bootProgressRef.current : 1.0 }
     };
 
     const cloudVertexShader = `
@@ -186,7 +185,6 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = React
       uniform float uTension;
       uniform float uScrollVelocity;
       uniform float uBootProgress;
-      uniform vec2 uPointer;
 
       void main() {
         vColor = customColor;
@@ -207,28 +205,10 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = React
         vec3 dir = normalize(pos + vec3(0.0001));
         pos += dir * (wave + velPulse);
 
-        // 3. Projected position & Screen/NDC space cursor inspection field
+        // 3. Projected position (vertices completely ignore cursor)
         vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-        vec4 clipPos = projectionMatrix * mvPosition;
-        vec2 ndcPos = clipPos.xy / clipPos.w;
-
-        // Distance in NDC space to caliper cursor
-        float pointerDist = length(ndcPos - uPointer);
-        // Crisp localized radial displacement and amber luminance boost along cursor trajectory
-        float cursorInfluence = smoothstep(0.32, 0.0, pointerDist) * boot;
-
-        // Amber luminance boost along caliper cursor trajectory
-        vec3 amberBoost = vec3(0.96, 0.72, 0.32);
-        vColor = mix(vColor, amberBoost, cursorInfluence * 0.88);
-
-        // Localized radial displacement away from cursor trajectory
-        vec2 displaceDir = normalize(ndcPos - uPointer + vec2(0.0001));
-        pos.xy += displaceDir * (cursorInfluence * 0.22);
-
-        // Re-evaluate model-view position with displacement
-        mvPosition = modelViewMatrix * vec4(pos, 1.0);
         float pointScale = 290.0 / -mvPosition.z;
-        gl_PointSize = size * pointScale * (1.0 + min(0.35, abs(uScrollVelocity) * 0.12) + cursorInfluence * 0.65);
+        gl_PointSize = size * pointScale * (1.0 + min(0.35, abs(uScrollVelocity) * 0.12));
         gl_Position = projectionMatrix * mvPosition;
       }
     `;
@@ -342,7 +322,6 @@ export const OpticalGovernorCanvas: React.FC<OpticalGovernorCanvasProps> = React
     const handlePointerMove = (e: PointerEvent) => {
       const normX = (e.clientX / window.innerWidth) * 2 - 1;
       const normY = -(e.clientY / window.innerHeight) * 2 + 1;
-      cloudUniforms.uPointer.value.set(normX, normY);
       targetTiltX = -normY * 0.16; // subtle pitch tilt
       targetTiltY = normX * 0.22;  // subtle yaw tilt
     };

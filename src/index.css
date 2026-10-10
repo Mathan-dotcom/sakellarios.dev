@@ -171,3 +171,16 @@ html, body {
 .ledger-row:hover .ledger-muted {
   color: rgba(242, 239, 233, 0.6) !important;
 }
+
+/* HERO WATER REFRACTION LENS CIRCLE OVERRIDE */
+.hero-water-lens {
+  border-radius: 50% !important;
+}
+
+/* HERO PLINTH SYNE METRICS */
+.hero-syne-metric {
+  line-height: 1 !important;
+  margin: 0 !important;
+  display: block !important;
+}
+

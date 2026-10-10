@@ -15,30 +15,37 @@ export const Viewport02Thesis: React.FC = React.memo(() => {
     "POWER IN AUTONOMOUS FINANCE IS NOT WHAT THE MACHINE CAN SPEND — IT IS THE MATHEMATICAL BOUNDARY IT CANNOT CROSS WITHOUT PROOF.";
   const words = thesisText.split(' ');
 
-  // 1. GSAP SCROLLTRIGGER WORD-BY-WORD OPACITY SCRUBBING (0.25 -> 1.00) & SHUTTER/HAIRLINE REVEALS
+  // 1. GSAP SCROLLTRIGGER MASKED WORD-BY-WORD KINETIC REVEAL & SHUTTER/HAIRLINE REVEALS
   useEffect(() => {
     if (!wordsContainerRef.current) return;
 
     const wordSpans = wordsContainerRef.current.querySelectorAll<HTMLSpanElement>('.thesis-word');
 
-    const trigger = gsap.to(wordSpans, {
-      opacity: 1,
-      color: '#F2EFE9',
-      stagger: {
-        each: 0.08,
-        ease: 'none'
+    // High-end masking reveal: words slide up from y: "105%" with opacity fade behind hidden overflow mask
+    const trigger = gsap.fromTo(
+      wordSpans,
+      {
+        y: '105%',
+        opacity: 0
       },
-      scrollTrigger: {
-        trigger: wordsContainerRef.current,
-        start: 'top 78%',
-        end: 'bottom 35%',
-        scrub: 0.8
+      {
+        y: '0%',
+        opacity: 1,
+        duration: 0.8,
+        ease: 'expo.out',
+        stagger: 0.03,
+        scrollTrigger: {
+          trigger: wordsContainerRef.current,
+          start: 'top 82%',
+          toggleActions: 'play none none none'
+        }
       }
-    });
+    );
 
     // Animate horizontal structural divider line outward from 50% center meridian
+    let hairlineAnim: gsap.core.Tween | null = null;
     if (hairlineRef.current) {
-      gsap.fromTo(
+      hairlineAnim = gsap.fromTo(
         hairlineRef.current,
         { scaleX: 0 },
         {
@@ -56,6 +63,7 @@ export const Viewport02Thesis: React.FC = React.memo(() => {
 
     return () => {
       trigger.kill();
+      if (hairlineAnim) hairlineAnim.kill();
     };
   }, []);
 
@@ -246,16 +254,23 @@ export const Viewport02Thesis: React.FC = React.memo(() => {
             return (
               <span
                 key={index}
-                className="thesis-word"
                 style={{
                   display: 'inline-block',
-                  marginRight: '0.28em',
-                  opacity: 0.25,
-                  color: isEmphasized ? 'var(--signal-amber)' : 'rgba(242, 239, 233, 0.45)',
-                  transition: 'opacity 0.2s ease-out'
+                  overflow: 'hidden',
+                  verticalAlign: 'top',
+                  marginRight: '0.28em'
                 }}
               >
-                {word}
+                <span
+                  className="thesis-word"
+                  style={{
+                    display: 'inline-block',
+                    color: isEmphasized ? 'var(--signal-amber)' : 'var(--void-text-primary)',
+                    willChange: 'transform, opacity'
+                  }}
+                >
+                  {word}
+                </span>
               </span>
             );
           })}
