@@ -85,10 +85,10 @@ The backend is an Express-based autonomous treasury and Accounts Payable (AP) / 
 
 - **Blockchain Network:** Arc Testnet (Real Chain ID in code: `5042002`; note: `.env.example:5` has stale template value `42111`).
 - **Code Citations on `origin/main`:**
-  - `services/agentRunner.js:34`: `this.chainId = parseInt(process.env.ARC_CHAIN_ID || "5042002");`
-  - `services/circleStack.js:15`: `this.chainId = parseInt(process.env.ARC_CHAIN_ID || "5042002");`
-  - `server.js:84`: `network: "Arc Testnet (Chain ID 5042002)"`
-  - `scripts/setupRealtimeArc.js:20`: `const chainId = 5042002;`
+  - `services/agentRunner.js:34` (in `VestiarionAgent.prototype.constructor`): `this.chainId = parseInt(process.env.ARC_CHAIN_ID || "5042002");`
+  - `services/circleStack.js:15` (in `CircleStackService.prototype.constructor`): `this.chainId = parseInt(process.env.ARC_CHAIN_ID || "5042002");`
+  - `server.js:84` (in route handler `app.get(['/api', '/api/'])`): `network: "Arc Testnet (Chain ID 5042002)"`
+  - `scripts/setupRealtimeArc.js:20` (in top-level script execution): `const chainId = 5042002;`
 - **RPC Endpoint:** `https://rpc.testnet.arc.io` / `https://rpc.testnet.arc.circle.com`.
 - **Settlement Tokens:**
   - Circle USDC (Native 6 decimals).

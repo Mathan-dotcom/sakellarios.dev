@@ -113,7 +113,17 @@ graph TD
 - **Files Touched:** `src/components/EuthynaDataLoomCanvas.tsx`.
 - **Scope:**
   - Binds canvas cards to `slabs` view model from props when `USE_LIVE_DATA === true`.
-  - **Slab Cap Enforcement:** Caps rendered WebGL slabs at **50 items** (`slabs.slice(0, 50)`). Generating dynamic 2048x700 canvas textures for >50 items risks GPU VRAM exhaustion on mobile/integrated GPUs.
+  - **Real Texture Memory & Dynamic Cap:**
+    - Each slab has CSS dimensions $1080\text{ px} \times 235\text{ px}$.
+    - With the DPR cap of 2 (`Math.min(window.devicePixelRatio || 1, 2)`), each canvas texture is rendered at $2160\text{ px} \times 470\text{ px} = 1,015,200\text{ pixels}$.
+    - At 4 bytes per pixel (RGBA), each slab texture consumes:
+      $$1,015,200 \times 4\text{ bytes} = 4,060,800\text{ bytes} \approx 3.872\text{ MB (3.87 MiB VRAM)}$$
+    - Real memory consumption for $N$ slabs:
+      - $N = 18$ slabs (baseline default): $\approx 69.7\text{ MB}$
+      - $N = 25$ slabs (100 MB budget): $\approx 96.8\text{ MB}$
+      - $N = 30$ slabs (120 MB budget): $\approx 116.2\text{ MB}$
+      - $N = 50$ slabs (200 MB budget): $\approx 193.6\text{ MB}$
+    - **Proposed Cap:** Derive cap from a stated memory budget (e.g. 25 slabs for mobile/100 MB budget, 30 slabs for 120 MB budget) rather than an arbitrary static number.
   - **Live Append Stability:** Pre-allocates Three.js instancing matrices so incoming items append without resetting camera scroll runway position.
   - **Empty-Runway State:** Displays a single wireframe placeholder slab `"ARCHIVE EMPTY // AWAITING DISBURSEMENTS"` if receipts list is empty.
 - **Rollback:** `git revert HEAD`.
@@ -121,7 +131,11 @@ graph TD
 ### Step 4: CockpitHeader & Hero Chamber Telemetry
 - **Files Touched:** `src/components/CockpitHeader.tsx`, `src/components/Viewport01Hero.tsx`.
 - **Scope:** Connects `animCustody`, `animLiquid`, and `animUsyc` to live store values when `USE_LIVE_DATA === true`.
-- **Invariance Verification:** When `VITE_USE_LIVE_DATA=false`, an automated Playwright DOM snapshot and visual screenshot verify that the UI is 100% byte-for-byte and pixel-for-pixel identical to the baseline.
+- **Flag-Off Invariance Definition:** When `VITE_USE_LIVE_DATA=false`, UI invariance is strictly defined as:
+  (a) DOM snapshots of static sections equal,
+  (b) the same props/data reach the loom with the flag off,
+  (c) screenshots compared visually by the user.
+  *(Record: Production bundle build hashes `dist/assets/index-Z5RoZdbY.css` and `dist/assets/index-CyPagp_5.js` have remained unchanged since the baseline merge).*
 - **Rollback:** `git revert HEAD`.
 
 ---
@@ -131,7 +145,13 @@ The 3D Data Loom WebGL canvas reads **exclusively** from `GET /api/audit/receipt
 
 ---
 
-## 6. Numbered Open Decisions for User Direction
-1. **Slab Cap Threshold:** Is a maximum threshold of **50 rendered slabs** in WebGL acceptable, or would you prefer a higher/lower cap?
-2. **Attestation Badge Styling:** For `txKind: 'unknown'`, should the UI display a muted yellow badge (`[SETTLEMENT UNVERIFIED]`) or a neutral monochrome grey?
-3. **Plinth Monument Scale Shift:** Live treasury capital on `origin/main` is currently **$2.00 USDC** (compared to the mock's $1,420,000.00). When `USE_LIVE_DATA=true`, Hero Plinth Column 1 will display `$2.00 USDC`. Do you confirm keeping this exact raw value without synthetic multipliers?
+## 6. Resolved Decisions (User Directed)
+1. **Slab Cap Threshold & Stated Memory Budget:**
+   - Real texture memory: **3.872 MB per slab** (at 2160x470 DPR 2 cap).
+   - Stated budget: Propose capping at **25 slabs** (100 MB budget) or **30 slabs** (116 MB budget) to prevent VRAM saturation across diverse GPUs.
+2. **Attestation Badge Styling:**
+   - For `txKind: 'unknown'`, render as **neutral monochrome** grey (`[SETTLEMENT UNVERIFIED]`), completely avoiding distracting or uncalibrated accent colors.
+3. **Plinth Monument Scale Shift & Live Telemetry:**
+   - Show real treasury values unscaled with zero artificial multipliers.
+   - Static marketing numbers stay static with an explicit visible datum marker (e.g. `[DATUM]`).
+   - **Critical Note on "$2.00 live":** The "$2.00 live" figure originated from local test code/fixtures (`server.js:126`, `mock-api.mjs`), NOT a real production API response. It must be re-verified against an actual live backend response once staging credentials/endpoints are connected.

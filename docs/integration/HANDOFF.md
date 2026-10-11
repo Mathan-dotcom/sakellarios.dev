@@ -58,6 +58,12 @@ $env:VITE_USE_LIVE_DATA = "true"
 npm run dev
 ```
 
+### Running API Unit Tests (Zero-Dependency Isolated Test Runner)
+```powershell
+# Runs Node native test runner in isolated temp environment; src/api is untouched
+node tools/run-api-tests.mjs
+```
+
 ## 5. Open Questions for Phase 3
 1. Should `txKind: 'unknown'` display a warning icon or neutral badge in the Data Loom card slab?
 2. Shall Data Loom cards enforce a maximum rendered slab count (e.g. 50 items) to prevent WebGL memory saturation?
