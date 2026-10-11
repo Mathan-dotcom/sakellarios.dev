@@ -16,7 +16,7 @@ import {
   adaptGatewayReserves,
   adaptEscalations,
 } from './adapters';
-import { ReceiptDto } from './types';
+import type { ReceiptDto } from './types';
 
 test('formatUtcTimestamp formats ISO strings correctly', () => {
   const result = formatUtcTimestamp('2026-10-03T20:40:21.830Z');
@@ -34,27 +34,47 @@ test('formatUtcTimestamp tolerates invalid or empty inputs without throwing', ()
   assert.equal(formatUtcTimestamp('not-a-date'), '1970-01-01 00:00:00 UTC');
 });
 
-test('formatCurrencyUsdc and formatRawUsdc edge formatting', () => {
-  assert.equal(formatCurrencyUsdc(150), '$150.00');
-  assert.equal(formatCurrencyUsdc(2.5), '$2.50');
+test('formatCurrencyUsdc and formatRawUsdc edge formatting (0, smallest unit, 85000.00, above 2^53)', () => {
+  // 0
+  assert.equal(formatCurrencyUsdc(0), '$0.00');
+  assert.equal(formatRawUsdc(0), '0.00');
+
+  // Smallest unit (1 cent / 0.01)
+  assert.equal(formatCurrencyUsdc(0.01), '$0.01');
+  assert.equal(formatRawUsdc(0.01), '0.01');
+
+  // 85000.00
+  assert.equal(formatCurrencyUsdc(85000), '$85,000.00');
+  assert.equal(formatCurrencyUsdc(85000.0), '$85,000.00');
+  assert.equal(formatRawUsdc(85000), '85000.00');
+
+  // Above 2^53 (Number.MAX_SAFE_INTEGER is 9007199254740991; test 9007199254740993)
+  const largeIntStr = '9007199254740993';
+  assert.equal(formatCurrencyUsdc(largeIntStr), '$9,007,199,254,740,993.00');
+  assert.equal(formatRawUsdc(largeIntStr), '9007199254740993.00');
+  assert.equal(formatCurrencyUsdc(9007199254740993n), '$9,007,199,254,740,993.00');
+  assert.equal(formatRawUsdc(9007199254740993n), '9007199254740993.00');
+
+  // Null/undefined fallbacks
   assert.equal(formatCurrencyUsdc(undefined), '$0.00');
-  assert.equal(formatRawUsdc(150), '150.00');
-  assert.equal(formatRawUsdc('2.5'), '2.50');
   assert.equal(formatRawUsdc(null), '0.00');
 });
 
-test('classifyTxKind correctly separates simulated vs onchain vs unknown', () => {
+test('classifyTxKind correctly separates simulated vs unknown per Part B.1', () => {
   // Payouts, sweeps, and redemptions use Math.random() in backend -> simulated
   assert.equal(classifyTxKind('JIT_VENDOR_PAYMENT', '0xabc'), 'simulated');
+  assert.equal(classifyTxKind('INVOICE_PAYOUT', '0xabc'), 'simulated');
   assert.equal(classifyTxKind('YIELD_SWEEP', '0xabc'), 'simulated');
   assert.equal(classifyTxKind('REDEEM_USYC', '0xabc'), 'simulated');
+  assert.equal(classifyTxKind('YIELD_REDEMPTION', '0xabc'), 'simulated');
 
-  // Escalations approvals with on-chain receipts -> onchain
-  assert.equal(classifyTxKind('ESCALATION_APPROVAL', '0xabc'), 'onchain');
+  // Escalations approvals depend on runtime config -> unknown
+  assert.equal(classifyTxKind('ESCALATION_APPROVAL', '0xabc'), 'unknown');
 
-  // Unknown or empty
+  // Unrecognized or missing hash -> unknown
   assert.equal(classifyTxKind('UNKNOWN_ACTION', '0xabc'), 'unknown');
   assert.equal(classifyTxKind('JIT_VENDOR_PAYMENT', ''), 'unknown');
+  assert.equal(classifyTxKind('JIT_VENDOR_PAYMENT', undefined), 'unknown');
 });
 
 test('adaptReceiptsToSlabs derives ordinal IDs, deduplicates, and sorts stably', () => {
@@ -197,5 +217,5 @@ test('adaptGatewayReserves and adaptEscalations tolerate empty and map correctly
   const list = adaptEscalations(escalationsPayload);
   assert.equal(list.length, 1);
   assert.equal(list[0].amountFormatted, '$400.00');
-  assert.equal(list[0].txKind, 'onchain');
+  assert.equal(list[0].txKind, 'unknown');
 });

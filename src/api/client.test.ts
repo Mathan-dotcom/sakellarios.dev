@@ -12,6 +12,8 @@ import {
   TimeoutError,
   NetworkError,
   ValidationError,
+  getApiBaseUrl,
+  USE_LIVE_DATA,
 } from './client';
 import {
   isRecord,
@@ -23,23 +25,33 @@ import {
 } from './types';
 
 test('forbidMutatingRequest throws UnsupportedMethodError on any non-GET method', () => {
-  assert.throws(
-    () => forbidMutatingRequest('POST', '/api/invoices/process'),
-    (err: unknown) => {
-      assert(err instanceof UnsupportedMethodError);
-      assert.equal(err.status, 405);
-      return true;
-    }
-  );
+  const mutatingMethods = ['POST', 'PUT', 'DELETE', 'PATCH', 'post', 'delete'];
+  for (const method of mutatingMethods) {
+    assert.throws(
+      () => forbidMutatingRequest(method, '/api/invoices/process'),
+      (err: unknown) => {
+        assert(err instanceof UnsupportedMethodError);
+        assert.equal(err.status, 405);
+        assert.match(err.message, /forbidden/);
+        return true;
+      }
+    );
+  }
+});
 
-  assert.throws(
-    () => forbidMutatingRequest('DELETE', '/api/escalations/1'),
-    (err: unknown) => {
-      assert(err instanceof UnsupportedMethodError);
-      assert.equal(err.status, 405);
-      return true;
-    }
-  );
+test('getApiBaseUrl defaults to relative /api and trims trailing slashes', () => {
+  const base = getApiBaseUrl();
+  assert(base.startsWith('/api') || base.startsWith('http'));
+  assert.equal(base.endsWith('/'), false, 'Base URL must not have trailing slashes');
+  assert.equal(base.includes(':4000'), false, 'Client must never default to :4000');
+});
+
+test('USE_LIVE_DATA defaults to false', () => {
+  assert.equal(typeof USE_LIVE_DATA, 'boolean');
+  // Default is false unless VITE_USE_LIVE_DATA is explicitly true
+  if (!process.env.VITE_USE_LIVE_DATA) {
+    assert.equal(USE_LIVE_DATA, false);
+  }
 });
 
 test('Error classes instantiate with expected fields', () => {

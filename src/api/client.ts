@@ -11,12 +11,12 @@
  */
 
 import {
-  ApiCatalogDto,
-  TreasurySummaryResponseDto,
-  GatewayReservesResponseDto,
-  InvoicesResponseDto,
-  EscalationsResponseDto,
-  ReceiptsResponseDto,
+  type ApiCatalogDto,
+  type TreasurySummaryResponseDto,
+  type GatewayReservesResponseDto,
+  type InvoicesResponseDto,
+  type EscalationsResponseDto,
+  type ReceiptsResponseDto,
   isApiCatalogDto,
   isTreasurySummaryResponseDto,
   isGatewayReservesResponseDto,
@@ -26,15 +26,24 @@ import {
 } from './types';
 
 export class ApiError extends Error {
+  public readonly endpoint: string;
+  public readonly status?: number;
+  public readonly statusText?: string;
+  public readonly responseBody?: unknown;
+
   constructor(
     message: string,
-    public readonly endpoint: string,
-    public readonly status?: number,
-    public readonly statusText?: string,
-    public readonly responseBody?: unknown
+    endpoint: string,
+    status?: number,
+    statusText?: string,
+    responseBody?: unknown
   ) {
     super(message);
     this.name = 'ApiError';
+    this.endpoint = endpoint;
+    this.status = status;
+    this.statusText = statusText;
+    this.responseBody = responseBody;
   }
 }
 
@@ -76,6 +85,36 @@ export class ValidationError extends ApiError {
   }
 }
 
+/**
+ * Global Feature Flag (Decision D3 & Part B.3)
+ * Enabled only when VITE_USE_LIVE_DATA is explicitly set to "true". Default is false.
+ */
+export const USE_LIVE_DATA: boolean =
+  typeof import.meta !== 'undefined' &&
+  import.meta.env?.VITE_USE_LIVE_DATA === 'true';
+
+/**
+ * Resolves the active base URL for API requests.
+ * Priority:
+ * 1. import.meta.env.VITE_API_BASE (with any trailing slashes trimmed)
+ * 2. Fallback to relative "/api"
+ *
+ * NOTE ON MIXED CONTENT & SECURITY:
+ * When this application is hosted on an HTTPS origin (e.g. https://sakellarious.dev or Vercel),
+ * web browsers strictly block any direct unencrypted HTTP requests to http://localhost:4000
+ * due to W3C Mixed Content security restrictions.
+ * In production or cloud deployments, VITE_API_BASE must point to a secure HTTPS endpoint
+ * or rely on a relative reverse-proxy path (/api).
+ * The client strictly executes GET requests and never defaults to http://localhost:4000.
+ */
+export function getApiBaseUrl(): string {
+  const envBase =
+    typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE
+      ? String(import.meta.env.VITE_API_BASE).replace(/\/+$/, '')
+      : '';
+  return envBase || '/api';
+}
+
 export interface RequestOptions {
   signal?: AbortSignal;
   timeoutMs?: number;
@@ -100,9 +139,14 @@ export async function getJson<T>(
   const maxRetries = options.maxRetries ?? DEFAULT_MAX_RETRIES;
   const initialBackoffMs = options.initialBackoffMs ?? DEFAULT_INITIAL_BACKOFF_MS;
 
-  // Build target URL ensuring relative base
+  // Build target URL respecting dynamic base
+  const apiBase = getApiBaseUrl();
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-  const url = cleanEndpoint.startsWith('/api') ? cleanEndpoint : `/api${cleanEndpoint}`;
+  const url = cleanEndpoint.startsWith(apiBase)
+    ? cleanEndpoint
+    : cleanEndpoint.startsWith('/api')
+    ? `${apiBase}${cleanEndpoint.slice(4)}`
+    : `${apiBase}${cleanEndpoint}`;
 
   let attempt = 0;
   let lastError: Error | null = null;
@@ -214,8 +258,13 @@ export async function getJson<T>(
  */
 export async function getText(endpoint: string, options: RequestOptions = {}): Promise<string> {
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const apiBase = getApiBaseUrl();
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-  const url = cleanEndpoint.startsWith('/api') ? cleanEndpoint : `/api${cleanEndpoint}`;
+  const url = cleanEndpoint.startsWith(apiBase)
+    ? cleanEndpoint
+    : cleanEndpoint.startsWith('/api')
+    ? `${apiBase}${cleanEndpoint.slice(4)}`
+    : `${apiBase}${cleanEndpoint}`;
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(new TimeoutError(url, timeoutMs)), timeoutMs);

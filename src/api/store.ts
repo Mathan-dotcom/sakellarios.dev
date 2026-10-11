@@ -11,11 +11,11 @@
  */
 
 import {
-  SlabViewModel,
-  TreasurySummaryViewModel,
-  GatewayChainViewModel,
-  EscalationViewModel,
-  ApiCatalogDto,
+  type SlabViewModel,
+  type TreasurySummaryViewModel,
+  type GatewayChainViewModel,
+  type EscalationViewModel,
+  type ApiCatalogDto,
 } from './types';
 import {
   fetchApiCatalog,
@@ -32,11 +32,7 @@ import {
   adaptEscalations,
 } from './adapters';
 
-/**
- * Global Feature Flag (Decision D3)
- * Default is FALSE to ensure mock engine stability until Phase 3 wiring.
- */
-export const USE_LIVE_DATA = false;
+export { USE_LIVE_DATA } from './client';
 
 export interface TreasuryStoreState {
   summary: TreasurySummaryViewModel | null;

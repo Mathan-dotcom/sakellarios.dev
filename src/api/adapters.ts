@@ -64,12 +64,25 @@ export function formatUtcTimestamp(input: string | number | undefined | null): s
 
 /**
  * Formats a currency amount into a dollar display string without floating point jitter.
+ * Safely formats BigInt and string numbers exceeding 2^53 (Number.MAX_SAFE_INTEGER).
  */
-export function formatCurrencyUsdc(amount: number | string | undefined | null): string {
+export function formatCurrencyUsdc(amount: number | string | bigint | undefined | null): string {
   if (amount === undefined || amount === null || amount === '') {
     return '$0.00';
   }
-  const numeric = typeof amount === 'number' ? amount : parseFloat(String(amount));
+  if (typeof amount === 'bigint') {
+    return '$' + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.00';
+  }
+  const str = String(amount).trim();
+  if (/^\d+$/.test(str) && str.length >= 16) {
+    try {
+      const bi = BigInt(str);
+      if (bi > BigInt(Number.MAX_SAFE_INTEGER)) {
+        return '$' + bi.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.00';
+      }
+    } catch {}
+  }
+  const numeric = typeof amount === 'number' ? amount : parseFloat(str);
   if (isNaN(numeric)) {
     return '$0.00';
   }
@@ -81,12 +94,25 @@ export function formatCurrencyUsdc(amount: number | string | undefined | null): 
 
 /**
  * Formats a raw number into a fixed 2-decimal string.
+ * Preserves precision for BigInt and large numeric strings above 2^53.
  */
-export function formatRawUsdc(amount: number | string | undefined | null): string {
+export function formatRawUsdc(amount: number | string | bigint | undefined | null): string {
   if (amount === undefined || amount === null || amount === '') {
     return '0.00';
   }
-  const numeric = typeof amount === 'number' ? amount : parseFloat(String(amount));
+  if (typeof amount === 'bigint') {
+    return amount.toString() + '.00';
+  }
+  const str = String(amount).trim();
+  if (/^\d+$/.test(str) && str.length >= 16) {
+    try {
+      const bi = BigInt(str);
+      if (bi > BigInt(Number.MAX_SAFE_INTEGER)) {
+        return bi.toString() + '.00';
+      }
+    } catch {}
+  }
+  const numeric = typeof amount === 'number' ? amount : parseFloat(str);
   if (isNaN(numeric)) {
     return '0.00';
   }
