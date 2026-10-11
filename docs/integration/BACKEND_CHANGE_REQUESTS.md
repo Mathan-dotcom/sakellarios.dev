@@ -88,9 +88,9 @@ async approveEscalatedPayout(txId, callerAddress = this.ownerAddress) {
 ## 4. HIGH: Non-Atomic Read-Modify-Write & Race Condition on `receipts.json`
 
 ### Location
-- `services/euthynaAudit.js:129-131` (`recordPayoutExecution`)
-- `services/euthynaAudit.js:167-169` (`recordYieldSweep`)
-- `services/euthynaAudit.js:200-202` (`recordYieldRedemption`)
+- `services/euthynaAudit.js:128-130` (`recordPayoutExecution`)
+- `services/euthynaAudit.js:166-168` (`recordYieldSweep`)
+- `services/euthynaAudit.js:203-205` (`recordYieldRedemption`)
 
 ### Code Observation & Impact
 In `services/euthynaAudit.js`:
@@ -99,22 +99,25 @@ const currentReceipts = JSON.parse(fs.readFileSync(this.receiptsFile, 'utf8'));
 currentReceipts.push(jsonLdReceipt);
 fs.writeFileSync(this.receiptsFile, JSON.stringify(currentReceipts, null, 2), 'utf8');
 ```
-- There is zero mutex, file locking, or atomic write operation protecting `receipts.json`.
-- If two HTTP requests settle disbursements concurrently (or during simultaneous automated sweeps and payouts), both threads read the file at state $S$. Whichever write completes last overwrites the other, silently dropping receipts from `receipts.json`.
-- Furthermore, because `euthyna.beancount` writes via `fs.appendFileSync` (lines 95, 151, 189), the Beancount file will contain entries that `receipts.json` loses, causing a permanent split-brain ledger desynchronization.
+Because `fs.readFileSync`, `push`, and `fs.writeFileSync` execute synchronously with zero `await` statements in Node's single-threaded event loop, two concurrent HTTP requests handled by the same Node.js process cannot interrupt each other or drop entries during this synchronous block.
+
+However, two real filesystem hazards exist:
+1. **Multi-Process Concurrency Overwrites:** If another external process writes to the ledger files simultaneously (such as `npm run seed` via `scripts/seedInvoices.js`, automated integration tests, or a second worker/server cluster instance), concurrent read-modify-write cycles across separate OS processes will race and overwrite each other's appended records.
+2. **Crash Mid-Write Corruption (Non-Atomic Write):** `fs.writeFileSync` writes directly to the destination file without an atomic write-and-rename pattern (`tempFile` -> `fs.renameSync`). If the server process crashes, runs out of disk space, or is terminated by the OS/container orchestrator mid-write, `ledger/receipts.json` is left truncated or corrupted, resulting in invalid JSON that crashes subsequent server boots.
 
 ### Recommended Remedy
-- Implement write serialization (e.g. an in-memory Promise queue or file lock via `proper-lockfile`) so that concurrent ledger mutations cannot overwrite or desynchronize records.
+- Implement atomic file writes using a temporary file and `fs.renameSync` (or an atomic write package like `write-file-atomic`).
+- Consider an append-only JSON Lines format (`receipts.jsonl`) to align with `euthyna.beancount`'s append-only semantics.
 
 ---
 
 ## 5. MEDIUM: Indistinguishable Simulated vs. On-Chain Transaction Hashes
 
 ### Location
-- `services/circleStack.js:91`: `const paymasterTxHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join("");`
-- `services/agentRunner.js:444`: `const txHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join("");`
-- `services/agentRunner.js:475`: `const txHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join("");`
-- Contrast with `services/agentRunner.js:386`: `paymasterReceipt.txHash = receipt.hash;` (real on-chain receipt from `approveAndExecuteEscalatedPayout`).
+- `services/circleStack.js:94`: `const paymasterTxHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join("");`
+- `services/agentRunner.js:498`: `const txHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join("");` (sweep)
+- `services/agentRunner.js:527`: `const txHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join("");` (redeem)
+- Contrast with `services/agentRunner.js:420`: `paymasterReceipt.txHash = receipt.hash;` (real on-chain receipt from `approveAndExecuteEscalatedPayout`).
 
 ### Code Observation & Impact
 - In `ledger/receipts.json` and `euthyna.beancount`, simulated random 64-hex strings and real on-chain transaction hashes both occupy the identical `txHash` / `meta-tx-hash` field with no distinguishing marker or status enum.
