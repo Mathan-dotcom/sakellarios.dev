@@ -1,0 +1,39 @@
+# Protected Paths (Read-Only to Frontend)
+# Any modification to these paths violates backend segregation rules.
+
+# Core Backend Source & State
+server.js
+services/
+ledger/
+scripts/
+test/
+lib/
+src/PolicyWallet.sol
+
+# Foundry & Contract Artifacts
+foundry.toml
+out/
+cache/
+broadcast/
+
+# Environment & Secrets Configuration
+.env
+.env.*
+.env.example
+
+# Deployment, Containers & Cloud Manifests
+.github/
+Dockerfile*
+docker-compose*
+Procfile
+render.yaml
+railway.json
+vercel.json
+
+# Documentation, Architecture & Git Metadata
+README.md
+Vestiarion_AI_PRD_v5_0 (1).md
+.gitmodules
+
+# Static Assets (Pending confirmation: Express serves public/, so backend owns it unless confirmed otherwise)
+public/

@@ -1,0 +1,4 @@
+# Shared Paths (Backend + Frontend)
+# Additive frontend dependencies permitted only with explicit approval.
+package.json
+package-lock.json
