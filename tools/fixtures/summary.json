@@ -1,0 +1,48 @@
+{
+  "_comment": "derived, not recorded",
+  "success": true,
+  "data": {
+    "policyWallet": {
+      "address": "0xB9087E75D7DDE6138BF5673Ad36f4AcDb1806aD0",
+      "agentAddress": "0x97aB6e781F034a8Cd0b60b1c6EA5a072529e8665",
+      "ownerAddress": "0xa9c97E3D0f95be9Fc990B3686997eC346D96833e",
+      "dailyLimit": 1000.00,
+      "maxSingleTx": 250.00,
+      "spentToday": 0.00,
+      "dailyLimitRemaining": 1000.00,
+      "categoryLimits": {
+        "INFRASTRUCTURE": 500.00,
+        "PAYROLL": 800.00,
+        "SAAS": 300.00,
+        "VENDOR": 400.00
+      },
+      "categorySpentToday": {
+        "INFRASTRUCTURE": 0.00,
+        "PAYROLL": 0.00,
+        "SAAS": 0.00,
+        "VENDOR": 0.00
+      },
+      "escalationNonce": 0
+    },
+    "balances": {
+      "arcLiquidUsdc": 2.00,
+      "arcUsycVault": 0.00,
+      "totalArcCapital": 2.00,
+      "multichainReserves": {
+        "Base": 18200.50,
+        "Ethereum": 45000.00,
+        "Arbitrum": 12300.25
+      }
+    },
+    "cashFlowForecasting": {
+      "targetBuffer30D": 0.00,
+      "fixedExpensesSum": 0.00,
+      "variableAPSum": 0.00,
+      "yieldSweepStatus": {
+        "shouldSweep": false,
+        "reason": "Liquid balance (2) below target buffer (0)"
+      }
+    },
+    "pendingEscalationsCount": 0
+  }
+}

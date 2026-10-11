@@ -1,0 +1,39 @@
+{
+  "_comment": "derived, not recorded",
+  "success": true,
+  "data": {
+    "gatewayStatus": "LIVE_CONNECTED",
+    "lastSyncedAt": "2026-10-11T16:40:21.830Z",
+    "corporateAddress": "0xB9087E75D7DDE6138BF5673Ad36f4AcDb1806aD0",
+    "chains": [
+      {
+        "chainName": "Arc L1 (Settlement Layer)",
+        "chainId": 5042002,
+        "usdcBalance": 2.00,
+        "usycBalance": 0.00,
+        "isNativeSettlement": true
+      },
+      {
+        "chainName": "Base",
+        "chainId": 8453,
+        "usdcBalance": 18200.50,
+        "usycBalance": 0.00,
+        "isNativeSettlement": false
+      },
+      {
+        "chainName": "Ethereum Mainnet",
+        "chainId": 1,
+        "usdcBalance": 45000.00,
+        "usycBalance": 0.00,
+        "isNativeSettlement": false
+      },
+      {
+        "chainName": "Arbitrum One",
+        "chainId": 42161,
+        "usdcBalance": 12300.25,
+        "usycBalance": 0.00,
+        "isNativeSettlement": false
+      }
+    ]
+  }
+}

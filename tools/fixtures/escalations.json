@@ -1,0 +1,23 @@
+{
+  "_comment": "derived, not recorded",
+  "success": true,
+  "data": [
+    {
+      "txId": "0x53d1000b1784f1bb587e9e5eb2d1f4d9c72c08a983b6cb5561a34bfa95f5431f",
+      "vendor": "0x6666666666666666666666666666666666666666",
+      "amount": 400.00,
+      "category": "VENDOR",
+      "invoiceRef": "INV-PARTNER-009",
+      "reasoningHash": "0x9812bc8834928100234aef91cbe7821034cbb2339d10e821034cba88ef1092a8",
+      "reasoning": "External open-source maintainer stipend for Circom ZK-proof optimization.",
+      "createdAt": 1728388800,
+      "agentApproved": true,
+      "ownerApproved": false,
+      "executed": false,
+      "cancelled": false,
+      "requiresSupervisorReason": "Exceeds max single tx threshold (250 USDC)",
+      "txHash": "0x88f12a39c099e8d1234a7e91d5568194aef91cbe7821034cbb2339d10e821034",
+      "txKind": "onchain"
+    }
+  ]
+}

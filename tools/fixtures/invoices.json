@@ -1,0 +1,20 @@
+{
+  "_comment": "derived, not recorded",
+  "success": true,
+  "data": {
+    "processed": [
+      {
+        "invoiceRef": "INV-INFRA-101",
+        "vendor": "0x3333333333333333333333333333333333333333",
+        "amount": 150.00,
+        "category": "INFRASTRUCTURE",
+        "status": "PAID",
+        "paymasterSponsored": true,
+        "txHash": "0x456ff3554a294c99a650c3d8245491fb70e7db56ea201ccf709f16cd328b29f9",
+        "txKind": "simulated",
+        "settledAt": "2026-10-03T20:40:21.830Z"
+      }
+    ],
+    "pendingEscalation": []
+  }
+}

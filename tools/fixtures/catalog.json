@@ -1,0 +1,20 @@
+{
+  "_comment": "derived, not recorded",
+  "service": "sakellarious.dev - Autonomous Treasury API",
+  "status": "ONLINE",
+  "network": "Arc Testnet (Chain ID 5042002)",
+  "policyWallet": "0xB9087E75D7DDE6138BF5673Ad36f4AcDb1806aD0",
+  "endpoints": {
+    "treasurySummary": "GET /api/treasury/summary",
+    "gatewayReserves": "GET /api/treasury/gateway-reserves",
+    "processInvoice": "POST /api/invoices/process",
+    "pendingEscalations": "GET /api/escalations",
+    "approveEscalation": "POST /api/escalations/:id/approve",
+    "cancelEscalation": "POST /api/escalations/:id/cancel",
+    "sweepYield": "POST /api/treasury/sweep",
+    "redeemYield": "POST /api/treasury/redeem",
+    "beancountLedger": "GET /api/audit/beancount",
+    "jsonLdReceipts": "GET /api/audit/receipts"
+  },
+  "frontendAppUrl": "http://localhost:5173/"
+}
