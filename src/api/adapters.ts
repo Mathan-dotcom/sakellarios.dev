@@ -110,6 +110,8 @@ export function classifyTxKind(action: string | undefined, txHash: string | unde
   }
 
   const act = (action || '').toUpperCase();
+  // Part A Item 3: Direct vendor payouts, sweeps, and redemptions unconditionally generate
+  // simulated 64-hex strings via Math.random() in backend code (circleStack.js:94, agentRunner.js:498, agentRunner.js:527).
   if (act === 'JIT_VENDOR_PAYMENT' || act === 'INVOICE_PAYOUT') {
     return 'simulated';
   }
@@ -119,10 +121,9 @@ export function classifyTxKind(action: string | undefined, txHash: string | unde
   if (act === 'REDEEM_USYC' || act === 'YIELD_REDEMPTION') {
     return 'simulated';
   }
-  if (act === 'ESCALATION_APPROVAL' || act === 'ONCHAIN_APPROVAL') {
-    return 'onchain';
-  }
 
+  // Escalation approvals and any other entry types depend on runtime config (ownerSigner, policyContract)
+  // and cannot be proven as on-chain from receipt fields alone. Default to 'unknown'.
   return 'unknown';
 }
 
@@ -347,7 +348,7 @@ export function adaptEscalations(payload: unknown): EscalationViewModel[] {
     executed: item.executed,
     cancelled: item.cancelled,
     txHash: item.txHash,
-    txKind: item.txHash ? 'onchain' : 'unknown',
+    txKind: 'unknown',
     provenance: 'live',
   }));
 }

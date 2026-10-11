@@ -36,15 +36,21 @@ Reference Baseline Tag: `pre-integration-baseline`
 
 ## Decision D4: Transaction Provenance & UI Presentation Restraint
 - **Audit Findings (Part A Item 3):**
-  - **Direct Invoice Payouts (`circleStack.js:91`):** `txHash` is generated via `Math.random()` producing a pseudo-random 64-hex string. Purely simulated; zero on-chain transaction is broadcast.
-  - **Yield Sweeps (`agentRunner.js:444`):** `txHash` is generated via `Math.random()`. Purely simulated.
-  - **Yield Redemptions (`agentRunner.js:475`):** `txHash` is generated via `Math.random()`. Purely simulated.
+  - **Direct Invoice Payouts (`circleStack.js:94` in `sponsorAndExecutePayout`):** `paymasterTxHash` is generated via `Math.random()` producing a pseudo-random 64-hex string. Unconditionally simulated; zero on-chain transaction is broadcast.
+  - **Yield Sweeps (`agentRunner.js:498` in `sweepSurplusYield`):** `txHash` is generated via `Math.random()`. Unconditionally simulated.
+  - **Yield Redemptions (`agentRunner.js:527` in `redeemUsyc`):** `txHash` is generated via `Math.random()`. Unconditionally simulated.
   - **Escalation Requests (`agentRunner.js:231`):** Generates an on-chain transaction hash (`receipt.hash`) only if `agentSigner` and `policyContract` are initialized; otherwise omitted. Not written to `receipts.json` or `euthyna.beancount`.
-  - **Escalation Approvals (`agentRunner.js:386`):** If `ownerSigner` and `policyContract` are initialized, broadcasts on-chain transaction and records real `receipt.hash`. If keys are absent, falls back to simulated pseudo-random hash.
-- **Decision:** Every ledger view model carries a classification field:
-  $$\text{txKind}: \text{'onchain'} \mid \text{'simulated'} \mid \text{'unknown'}$$
-  with `txHash` preserved as plain raw data.
-- **Phase 3 UI Rule:** The UI must **never** present a simulated or unknown entry as verified on-chain proof or provide an active block explorer link to a fake transaction hash. This rule is recorded here for implementation during Phase 3 view binding.
+  - **Escalation Approvals (`agentRunner.js:420` in `approveEscalatedPayout`):** Broadcasts on-chain transaction and records real `receipt.hash` only if `this.policyContract && this.ownerSigner` are configured at runtime. If keys are missing, falls back to simulated pseudo-random hash from `circleStack.js:94`.
+- **Classification Rule:**
+  - `JIT_VENDOR_PAYMENT`, `YIELD_SWEEP`, and `REDEEM_USYC` (or `YIELD_REDEMPTION`): **`'simulated'`** (unconditionally random in code).
+  - `ESCALATION_APPROVAL` and any other action: **`'unknown'`** (simulated vs. real depends on runtime configuration, and the receipt payload contains no field recording whether on-chain execution occurred).
+  - Missing or empty hash: **`'unknown'`**.
+  - **`'onchain'`** is reserved exclusively for entries where receipt records explicitly prove on-chain execution.
+- **Phase 3 UI Presentation Rule:**
+  - `'onchain'`: Displays `"IMMUTABLE ARC L1 PROOF"` with transaction hash.
+  - `'simulated'`: Displays `"SIMULATED SETTLEMENT // NO ON-CHAIN TX"` and must **not** display the hash as verified proof.
+  - `'unknown'`: Displays `"SETTLEMENT UNVERIFIED"`.
+  - The UI must never link simulated or unknown hashes to block explorers.
 
 ---
 

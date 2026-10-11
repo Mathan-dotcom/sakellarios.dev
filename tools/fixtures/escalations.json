@@ -17,7 +17,7 @@
       "cancelled": false,
       "requiresSupervisorReason": "Exceeds max single tx threshold (250 USDC)",
       "txHash": "0x88f12a39c099e8d1234a7e91d5568194aef91cbe7821034cbb2339d10e821034",
-      "txKind": "onchain"
+      "txKind": "unknown"
     }
   ]
 }
