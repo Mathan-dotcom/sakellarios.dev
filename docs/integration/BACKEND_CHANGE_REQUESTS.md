@@ -67,21 +67,73 @@ async approveEscalatedPayout(txId, callerAddress = this.ownerAddress) {
 
 ---
 
-## 3. ARCHITECTURE: Structured Audit Endpoint for Slabs
+## 3. HIGH: Chain ID Configuration Discrepancy (.env.example vs Runtime Code)
+
+### Location
+- `.env.example:5`: `ARC_CHAIN_ID=42111`
+- `services/agentRunner.js:34`: `this.chainId = parseInt(process.env.ARC_CHAIN_ID || "5042002");`
+- `services/circleStack.js:15`: `this.chainId = parseInt(process.env.ARC_CHAIN_ID || "5042002");`
+- `server.js:84`: `network: "Arc Testnet (Chain ID 5042002)",`
+- `scripts/setupRealtimeArc.js:20`: `const chainId = 5042002;`
+
+### Code Observation & Impact
+- `.env.example` sets `ARC_CHAIN_ID=42111`, while all active operational backend code and setup scripts default to `5042002`.
+- Anyone copying `.env.example` to `.env` as documented silently overrides the runtime default with an invalid/stale Chain ID (`42111`), breaking RPC communication, contract calls, and provider network validation.
+
+### Recommended Remedy
+- Update `.env.example:5` to `ARC_CHAIN_ID=5042002` to align with the authoritative Arc Testnet deployment.
+
+---
+
+## 4. HIGH: Non-Atomic Read-Modify-Write & Race Condition on `receipts.json`
+
+### Location
+- `services/euthynaAudit.js:129-131` (`recordPayoutExecution`)
+- `services/euthynaAudit.js:167-169` (`recordYieldSweep`)
+- `services/euthynaAudit.js:200-202` (`recordYieldRedemption`)
+
+### Code Observation & Impact
+In `services/euthynaAudit.js`:
+```javascript
+const currentReceipts = JSON.parse(fs.readFileSync(this.receiptsFile, 'utf8'));
+currentReceipts.push(jsonLdReceipt);
+fs.writeFileSync(this.receiptsFile, JSON.stringify(currentReceipts, null, 2), 'utf8');
+```
+- There is zero mutex, file locking, or atomic write operation protecting `receipts.json`.
+- If two HTTP requests settle disbursements concurrently (or during simultaneous automated sweeps and payouts), both threads read the file at state $S$. Whichever write completes last overwrites the other, silently dropping receipts from `receipts.json`.
+- Furthermore, because `euthyna.beancount` writes via `fs.appendFileSync` (lines 95, 151, 189), the Beancount file will contain entries that `receipts.json` loses, causing a permanent split-brain ledger desynchronization.
+
+### Recommended Remedy
+- Implement write serialization (e.g. an in-memory Promise queue or file lock via `proper-lockfile`) so that concurrent ledger mutations cannot overwrite or desynchronize records.
+
+---
+
+## 5. MEDIUM: Indistinguishable Simulated vs. On-Chain Transaction Hashes
+
+### Location
+- `services/circleStack.js:91`: `const paymasterTxHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join("");`
+- `services/agentRunner.js:444`: `const txHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join("");`
+- `services/agentRunner.js:475`: `const txHash = "0x" + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join("");`
+- Contrast with `services/agentRunner.js:386`: `paymasterReceipt.txHash = receipt.hash;` (real on-chain receipt from `approveAndExecuteEscalatedPayout`).
+
+### Code Observation & Impact
+- In `ledger/receipts.json` and `euthyna.beancount`, simulated random 64-hex strings and real on-chain transaction hashes both occupy the identical `txHash` / `meta-tx-hash` field with no distinguishing marker or status enum.
+- Consumers (such as frontend audits or blockchain explorers) cannot determine whether an entry represents an actual Arc L1 on-chain transaction or a simulated local mock.
+
+### Recommended Remedy
+- Add an explicit field such as `txKind: "onchain" | "simulated"` or `executionMode: "LIVE_CHAIN" | "MOCK_PAYMASTER"` to `AgentExecutionReceipt` in `euthynaAudit.js`.
+
+---
+
+## 6. ARCHITECTURE: Canonical Entry Identifiers & Structured Slabs Endpoint
 
 ### Location
 - `server.js:223` (`GET /api/audit/beancount`)
+- `ledger/receipts.json`
 
 ### Code Observation
-- `/api/audit/beancount` returns raw double-entry accounting plain text (`text/plain`).
-- Parsing raw Beancount syntax in a browser client requires bundling a specialized text parser (or regex heuristics) to extract slab telemetry (folio numbers, debit/credit accounts, amounts, tags).
+- Neither `ledger/receipts.json` nor `ledger/euthyna.beancount` assigns canonical sequential identifiers (e.g. `"EUTHYNA #00481"`).
+- `/api/audit/beancount` returns raw double-entry accounting plain text (`text/plain`), requiring complex text parsing in the client.
 
 ### Recommended Remedy
-- Provide a dedicated structured endpoint, such as `GET /api/audit/slabs`, returning a normalized JSON array containing:
-  - `folio`: e.g. `"EUTHYNA #00481"`
-  - `txHash`: on-chain transaction hash
-  - `amountUsdc`: formatted numeric amount
-  - `category`: categorized expense account
-  - `status`: `"PAID"` | `"HALTED"` | `"ESCALATED"`
-  - `timestamp`: ISO-8601 UTC timestamp
-  - `sponsor`: Circle Paymaster metadata
+- Provide a dedicated structured endpoint, such as `GET /api/audit/slabs`, returning a normalized JSON array with canonical entry indices, on-chain verification flags, and formatted metadata.
