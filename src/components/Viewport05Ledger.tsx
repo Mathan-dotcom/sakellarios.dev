@@ -134,6 +134,8 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
       id="viewport-05-ledger"
       data-chamber="mineral"
       style={{
+        position: 'relative',
+        overflow: 'hidden',
         width: '100%',
         backgroundColor: 'var(--mineral-bg)',
         color: 'var(--mineral-ink)',
@@ -141,9 +143,11 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
         boxSizing: 'border-box'
       }}
     >
-      {/* FULL-WIDTH HEADER BAR */}
+      {/* FULL-WIDTH HEADER BAR (Z-INDEX 10) */}
       <div
         style={{
+          position: 'relative',
+          zIndex: 10,
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -227,74 +231,75 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
         </div>
       </div>
 
-      {/* VIEWPORT 05 CONTENT: 3D DATA LOOM VS TABULAR REGISTER */}
-      {viewMode === 'loom' ? (
-        <EuthynaDataLoomCanvas
-          invoices={engine.invoices}
-          generateBeancount={generateBeancount}
-          generateJsonLd={generateJsonLd}
-        />
-      ) : (
-        <>
-          {/* TABLE COLUMN HEADER ROW */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '160px 180px 1.4fr 160px 180px 1.2fr',
-              borderBottom: '1px solid var(--mineral-hairline)',
-              padding: '12px 36px',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '11px',
-              letterSpacing: '0.12em',
-              color: 'var(--mineral-ink-muted)',
-              backgroundColor: 'rgba(231, 226, 216, 0.5)',
-              userSelect: 'none'
-            }}
-          >
-            <div>EUTHYNA ID</div>
-            <div>UTC TIMESTAMP</div>
-            <div>COUNTERPARTY &amp; OPERATION</div>
-            <div>VALUE (USDC)</div>
-            <div>BOUND CLEARED</div>
-            <div>ARC L1 TX &amp; PROOF</div>
-          </div>
+      {/* VIEWPORT 05 CONTENT: 3D DATA LOOM VS TABULAR REGISTER (Z-INDEX 10) */}
+      <div style={{ position: 'relative', zIndex: 10 }}>
+        {viewMode === 'loom' ? (
+          <EuthynaDataLoomCanvas
+            invoices={engine.invoices}
+            generateBeancount={generateBeancount}
+            generateJsonLd={generateJsonLd}
+          />
+        ) : (
+          <>
+            {/* TABLE COLUMN HEADER ROW */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '160px 180px 1.4fr 160px 180px 1.2fr',
+                borderBottom: '1px solid var(--mineral-hairline)',
+                padding: '12px 36px',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '11px',
+                letterSpacing: '0.12em',
+                color: 'var(--mineral-ink-muted)',
+                backgroundColor: 'rgba(231, 226, 216, 0.7)',
+                userSelect: 'none'
+              }}
+            >
+              <div>EUTHYNA ID</div>
+              <div>UTC TIMESTAMP</div>
+              <div>COUNTERPARTY &amp; OPERATION</div>
+              <div>VALUE (USDC)</div>
+              <div>BOUND CLEARED</div>
+              <div>ARC L1 TX &amp; PROOF</div>
+            </div>
 
-          {/* ULTRA-DENSE ENGRAVED TABULAR ROWS */}
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {engine.invoices.map((item, idx) => {
-              const folioKey = item.euthynaFolio || `EUTHYNA #${String(idx).padStart(5, '0')}`;
-              const isExpanded = expandedFolio === folioKey;
-              const isTopHighlighted = idx === 0 && Boolean(newlyInscribedFolio);
-              const dateStr = new Date(item.timestamp).toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+            {/* ULTRA-DENSE ENGRAVED TABULAR ROWS */}
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {engine.invoices.map((item, idx) => {
+                const folioKey = item.euthynaFolio || `EUTHYNA #${String(idx).padStart(5, '0')}`;
+                const isExpanded = expandedFolio === folioKey;
+                const isTopHighlighted = idx === 0 && Boolean(newlyInscribedFolio);
+                const dateStr = new Date(item.timestamp).toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
 
-              return (
-                <div key={folioKey} style={{ display: 'flex', flexDirection: 'column' }}>
-                  {/* INTERACTIVE FULL-WIDTH CHAPTER ROW */}
-                  <div
-                    onClick={() => toggleRow(folioKey)}
-                    className="ledger-row"
-                    data-invert-dark="true"
-                    data-datum="true"
-                    data-telemetry={`${folioKey} // ${item.amountUsdc.toFixed(2)} USDC SETTLED`}
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '160px 180px 1.4fr 160px 180px 1.2fr',
-                      padding: '18px 36px',
-                      borderBottom: '1px solid var(--mineral-hairline)',
-                      borderLeft: isTopHighlighted ? '3px solid var(--signal-verified)' : 'none',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '11px',
-                      alignItems: 'center',
-                      backgroundColor: isTopHighlighted
-                        ? 'rgba(46, 90, 68, 0.22)'
-                        : isExpanded
-                        ? 'var(--mineral-recess)'
-                        : 'var(--mineral-bg)',
-                      transition: 'background-color 240ms var(--ease-mechanical), color 240ms var(--ease-mechanical)',
-                      cursor: 'pointer',
-                      userSelect: 'none'
-                    }}
-                  >
+                return (
+                  <div key={folioKey} style={{ display: 'flex', flexDirection: 'column' }}>
+                    {/* INTERACTIVE FULL-WIDTH CHAPTER ROW */}
+                    <div
+                      onClick={() => toggleRow(folioKey)}
+                      className="ledger-row ledger-card"
+                      data-invert-dark="true"
+                      data-datum="true"
+                      data-telemetry={`${folioKey} // ${item.amountUsdc.toFixed(2)} USDC SETTLED`}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '160px 180px 1.4fr 160px 180px 1.2fr',
+                        padding: '18px 36px',
+                        borderBottom: '1px solid var(--mineral-hairline)',
+                        borderLeft: isTopHighlighted ? '3px solid var(--signal-verified)' : 'none',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '11px',
+                        alignItems: 'center',
+                        backgroundColor: isTopHighlighted
+                          ? 'rgba(46, 90, 68, 0.22)'
+                          : isExpanded
+                          ? 'var(--mineral-recess)'
+                          : '#F7F5F0',
+                        transition: 'background-color 240ms var(--ease-mechanical), color 240ms var(--ease-mechanical)',
+                        cursor: 'pointer',
+                        userSelect: 'none'
+                      }}
+                    >
                     {/* 1. EUTHYNA ID */}
                     <div style={{ fontWeight: 500, letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <span>{(isTopHighlighted && idx === 0 && scrambledCells.folio) ? scrambledCells.folio : (item.euthynaFolio || folioKey)}</span>
@@ -375,6 +380,7 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
                     >
                       {/* LEFT PANE: EXACT RAW BEANCOUNT DOUBLE-ENTRY INSCRIPTION */}
                       <div
+                        className="ledger-card"
                         style={{
                           border: '1px solid var(--void-hairline)',
                           backgroundColor: 'var(--void-surface)',
@@ -413,6 +419,7 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
 
                       {/* RIGHT PANE: EXACT SIGNED JSON-LD CRYPTOGRAPHIC RECEIPT */}
                       <div
+                        className="ledger-card"
                         style={{
                           border: '1px solid var(--void-hairline)',
                           backgroundColor: 'var(--void-surface)',
@@ -456,6 +463,7 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
           </div>
         </>
       )}
+      </div>
     </section>
   );
 });

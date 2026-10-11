@@ -179,20 +179,29 @@ const BleibtgleichCursorCanvas: React.FC<BleibtgleichCursorOverlayProps> = ({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    // 3. CANVAS SIZING ON LOAD: explicitly set before WebGL initializes
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
     let isMounted = true;
     let animFrameId: number | null = null;
+    let initTimer: ReturnType<typeof setTimeout> | null = null;
+    let cleanupWebGL: (() => void) | null = null;
 
-    // Initialize WebGL2 context safely with DOM transparency enabled (premultipliedAlpha: false)
-    let gl: WebGL2RenderingContext | null = null;
-    try {
-      gl = canvas.getContext('webgl2', {
-        alpha: true,
-        premultipliedAlpha: false,
-        antialias: false,
-        depth: false,
-        stencil: false,
-      });
-    } catch {
+    initTimer = setTimeout(() => {
+      if (!isMounted || !canvasRef.current) return;
+
+      // Initialize WebGL2 context safely with DOM transparency enabled (premultipliedAlpha: false)
+      let gl: WebGL2RenderingContext | null = null;
+      try {
+        gl = canvas.getContext('webgl2', {
+          alpha: true,
+          premultipliedAlpha: false,
+          antialias: false,
+          depth: false,
+          stencil: false,
+        });
+      } catch {
       return;
     }
 
@@ -622,38 +631,53 @@ const BleibtgleichCursorCanvas: React.FC<BleibtgleichCursorOverlayProps> = ({
       }
     };
 
-    loop();
+      loop();
+
+      cleanupWebGL = () => {
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        window.removeEventListener('pointermove', handlePointerMove);
+        window.removeEventListener('mousemove', handlePointerMove);
+        window.removeEventListener('touchmove', handleTouchMove);
+        window.removeEventListener('mouseleave', handleMouseLeave);
+        window.removeEventListener('resize', resize);
+        if (ro) ro.disconnect();
+        canvas.removeEventListener('webglcontextlost', handleContextLost);
+
+        if (gl && !gl.isContextLost()) {
+          try {
+            if (fboRead) {
+              gl.deleteTexture(fboRead.tex);
+              gl.deleteFramebuffer(fboRead.fbo);
+            }
+            if (fboWrite) {
+              gl.deleteTexture(fboWrite.tex);
+              gl.deleteFramebuffer(fboWrite.fbo);
+            }
+            if (quadBuffer) gl.deleteBuffer(quadBuffer);
+            if (vao) gl.deleteVertexArray(vao);
+            if (splatProgram) gl.deleteProgram(splatProgram.p);
+            if (simProgram) gl.deleteProgram(simProgram.p);
+            if (renderProgram) gl.deleteProgram(renderProgram.p);
+            if (vertShader) gl.deleteShader(vertShader);
+
+            const ext = gl.getExtension('WEBGL_lose_context');
+            if (ext) ext.loseContext();
+          } catch {
+            // Cleanup error suppression
+          }
+        }
+      };
+
+      if (!isMounted) {
+        cleanupWebGL();
+      }
+    }, 50);
 
     return () => {
       isMounted = false;
-      if (animFrameId) cancelAnimationFrame(animFrameId);
-      window.removeEventListener('pointermove', handlePointerMove);
-      window.removeEventListener('mousemove', handlePointerMove);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('mouseleave', handleMouseLeave);
-      window.removeEventListener('resize', resize);
-      if (ro) ro.disconnect();
-      canvas.removeEventListener('webglcontextlost', handleContextLost);
-
-      if (gl && !gl.isContextLost()) {
-        try {
-          if (fboRead) {
-            gl.deleteTexture(fboRead.tex);
-            gl.deleteFramebuffer(fboRead.fbo);
-          }
-          if (fboWrite) {
-            gl.deleteTexture(fboWrite.tex);
-            gl.deleteFramebuffer(fboWrite.fbo);
-          }
-          if (quadBuffer) gl.deleteBuffer(quadBuffer);
-          if (vao) gl.deleteVertexArray(vao);
-          if (splatProgram) gl.deleteProgram(splatProgram.p);
-          if (simProgram) gl.deleteProgram(simProgram.p);
-          if (renderProgram) gl.deleteProgram(renderProgram.p);
-          if (vertShader) gl.deleteShader(vertShader);
-        } catch {
-          // Cleanup error suppression
-        }
+      if (initTimer) clearTimeout(initTimer);
+      if (cleanupWebGL) {
+        cleanupWebGL();
       }
     };
   }, []);

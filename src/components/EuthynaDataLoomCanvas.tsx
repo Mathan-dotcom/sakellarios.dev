@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { ProcessedInvoice } from '../core/useSakellariousEngine';
 import { getScrollVelocity } from '../core/SmoothScroll';
+import { LedgerDisintegrationStrips } from './LedgerDisintegrationStrips';
 
 export interface EuthynaDataLoomCanvasProps {
   invoices: ProcessedInvoice[];
@@ -163,16 +164,17 @@ export const EuthynaDataLoomCanvas: React.FC<EuthynaDataLoomCanvasProps> = React
 
     // 1. SCENE & CAMERA
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color('#F2EFE9'); // Mineral Archive baseline
 
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
     camera.position.set(0, 0, 7.2);
 
-    // 2. RENDERER (Capped at 1.35 DPR)
+    // 2. RENDERER (Capped at 1.35 DPR, Alpha enabled for flanking strips)
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
+      alpha: true,
       powerPreference: 'high-performance'
     });
+    renderer.setClearColor(0x000000, 0);
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.35));
     mount.appendChild(renderer.domElement);
@@ -367,17 +369,64 @@ export const EuthynaDataLoomCanvas: React.FC<EuthynaDataLoomCanvasProps> = React
         position: 'relative',
         width: '100%',
         height: '760px',
-        backgroundColor: '#F2EFE9',
+        backgroundColor: 'transparent',
         overflow: 'hidden',
         userSelect: 'none'
       }}
     >
-      {/* THREE.JS MOUNT CONTAINER */}
+      {/* PHYSICALLY CROPPED WRAPPER FOR DISINTEGRATION STRIPS (EXACTLY MATCHING CARD TRACK HEIGHT: 176px) */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: 0,
+          transform: 'translateY(-50%)',
+          width: '100%',
+          height: '176px',
+          overflow: 'hidden',
+          zIndex: 1,
+          pointerEvents: 'none'
+        }}
+      >
+        <LedgerDisintegrationStrips style={{ width: '100%', height: '100%' }} />
+      </div>
+
+      {/* THREE.JS MOUNT CONTAINER (Z-INDEX 10) */}
       <div
         ref={mountRef}
         style={{
+          position: 'relative',
           width: '100%',
-          height: '100%'
+          height: '100%',
+          zIndex: 10
+        }}
+      />
+
+      {/* SEMANTIC CARD ANCHORS FOR DISINTEGRATION STRIPS */}
+      <div
+        className="ledger-card euthyna-card"
+        data-ledger-card="left"
+        style={{
+          position: 'absolute',
+          left: '5%',
+          top: '38%',
+          width: '42%',
+          height: '24%',
+          pointerEvents: 'none',
+          opacity: 0
+        }}
+      />
+      <div
+        className="ledger-card euthyna-card"
+        data-ledger-card="right"
+        style={{
+          position: 'absolute',
+          left: '53%',
+          top: '38%',
+          width: '42%',
+          height: '24%',
+          pointerEvents: 'none',
+          opacity: 0
         }}
       />
 
