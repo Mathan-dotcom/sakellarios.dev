@@ -13,7 +13,7 @@
 - **Exact Tracked File List:**
   1. `src/components/FluidCursorOverlay.tsx`
   2. `src/components/LedgerDisintegrationStrips.tsx`
-- **Commit Hash:** PENDING_COMMIT_GROUP_2
+- **Commit Hash:** `601b6cb`
 - **One-Line Restore Command:**
   ```bash
   git checkout pre-cleanup -- src/components/FluidCursorOverlay.tsx src/components/LedgerDisintegrationStrips.tsx
@@ -29,7 +29,7 @@
 - **Exact Tracked File List:**
   - `saveweb2zip-com-bleibtgleich-dev/` (62 files)
   - `saveweb2zip-com-tympanus-net/` (8 files)
-- **Commit Hash:** PENDING_COMMIT_GROUP_3
+- **Commit Hash:** `273da21`
 - **One-Line Restore Command:**
   ```bash
   git checkout pre-cleanup -- saveweb2zip-com-bleibtgleich-dev saveweb2zip-com-tympanus-net
