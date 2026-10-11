@@ -4,6 +4,7 @@
  * Daily Limit: 1000 USDC, Single Tx Cap: 250 USDC.
  */
 
+require('dotenv').config();
 const { ethers } = require("ethers");
 const fs = require("fs");
 const path = require("path");
