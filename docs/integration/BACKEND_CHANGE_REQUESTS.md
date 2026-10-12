@@ -268,3 +268,30 @@ However, two real filesystem hazards exist:
 
 ### Recommended Remedy
 - Provide a dedicated structured endpoint, such as `GET /api/audit/slabs`, returning a normalized JSON array with canonical entry indices, on-chain verification flags, and formatted metadata.
+
+---
+
+## 8. CLEANUP: Deprecation of Legacy Express-Served UI Routes & Static Middleware
+
+### Location & Function Citations
+- `server.js:20`: `app.use(express.static(path.join(__dirname, 'public')));`
+- `server.js:23-25`: `app.get('/', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'index.html')); });`
+- `server.js:28-30`: `app.get('/frontend', (req, res) => { res.sendFile(path.join(__dirname, 'frontend.html')); });`
+- `server.js:32-34`: `app.get('/codex', (req, res) => { res.sendFile(path.join(__dirname, 'frontend.html')); });`
+- `server.js:36-38`: `app.get('/landing', (req, res) => { res.sendFile(path.join(__dirname, 'landing.html')); });`
+- `server.js:41-43`: `app.get('/supernova', (req, res) => { res.sendFile(path.join(__dirname, 'supernova_app.html')); });`
+- `README.md:36-40, 42, 66`: Documentation describing access to `http://localhost:4000/`, `/codex`, `/landing`, `/supernova`.
+
+### Code Observation & Impact
+- In this PR, all legacy vanilla UI static assets (`public/`), old prototype pages (`frontend.html`, `landing.html`, `supernova_app.html`), and legacy 3D particle assets (`supernova_explotion_2.html`) have been removed in favor of the production React + Vite application.
+- Consequently, requests to `GET /`, `GET /frontend`, `GET /codex`, `GET /landing`, and `GET /supernova` on the Express backend (`http://localhost:4000`) now trigger `ENOENT` within `res.sendFile()`, resulting in **HTTP 404 Not Found** responses.
+- The Node process does NOT crash (Express handles `ENOENT` via its standard error handler middleware), but these routes are now dead endpoints.
+- Meanwhile, `README.md` (lines 36–40, 42, 66) still instructs users to visit `http://localhost:4000/`, `/codex`, `/landing`, and `/supernova`.
+
+### Recommended Action for Backend Owner
+1. **Dead Route Removal**: Remove `app.use(express.static(...))` (line 20) and the five dead route handlers (`/`, `/frontend`, `/codex`, `/landing`, `/supernova` at lines 23–43) in `server.js`.
+2. **Root Endpoint Decision**: Decide what `GET /` should serve:
+   - **Option A:** Return a JSON health/status object describing the API (similar to `GET /api` at line 80).
+   - **Option B:** Serve the built production frontend bundle from `dist/` (`express.static(path.join(__dirname, 'dist'))`).
+   - **Option C:** Redirect (`301` or `302`) to the frontend server URL.
+3. **README Documentation Update**: Update lines 36–42 and line 66 in `README.md` to reflect that the UI is served independently via Vite, and document the backend server purely as an API service.
