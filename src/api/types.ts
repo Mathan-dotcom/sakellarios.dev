@@ -188,9 +188,13 @@ export interface ErrorResponseDto {
 export interface SlabViewModel {
   id: string; // e.g. "EUTHYNA #00001"
   idSource: IdSource;
+  amount: number;
   amountDisplay: string; // "$150.00"
   amountRaw: string; // "150.00"
   asset: string; // "USDC // ARC L1"
+  action: string;
+  invoiceRef?: string;
+  vendor?: string;
   policyTag: string; // "POL-01 [JIT_PAYMENT]"
   status: 'VERIFIED' | 'PENDING' | 'HALTED';
   timestampUtc: string; // "YYYY-MM-DD HH:mm:ss UTC"
@@ -214,6 +218,17 @@ export interface SlabViewModel {
 }
 
 export interface TreasurySummaryViewModel {
+  liquidUsdc: number;
+  usycVault: number;
+  totalCapital: number;
+  dailyLimit: number;
+  spentToday: number;
+  dailyLimitRemaining: number;
+  maxSingleTx: number;
+  targetBuffer30D: number;
+  escalationNonce: number;
+  categoryLimits: Record<string, number>;
+  categorySpentToday: Record<string, number>;
   liquidUsdcFormatted: string;
   usycVaultFormatted: string;
   totalCapitalFormatted: string;
@@ -245,6 +260,8 @@ export interface TreasurySummaryViewModel {
 export interface GatewayChainViewModel {
   chainName: string;
   chainId: number;
+  usdcBalance: number;
+  usycBalance: number;
   usdcBalanceFormatted: string;
   usycBalanceFormatted: string;
   isNativeSettlement: boolean;
@@ -255,11 +272,15 @@ export interface EscalationViewModel {
   txId: string;
   invoiceRef: string;
   vendor: string;
+  amount: number;
   amountFormatted: string;
   category: string;
   reasoning: string;
   requiresSupervisorReason: string;
+  createdAtMs: number;
   createdAtUtc: string;
+  escalationNonce: number;
+  timelockRemainingSeconds: number;
   ownerApproved: boolean;
   executed: boolean;
   cancelled: boolean;

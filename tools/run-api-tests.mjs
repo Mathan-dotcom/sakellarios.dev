@@ -79,6 +79,30 @@ try {
     }
   }
 
+  // Also include src/core/liveAdapters files for unified test coverage
+  const srcCoreDir = resolve(REPO_ROOT, 'src/core');
+  for (const filename of ['liveAdapters.ts', 'liveAdapters.test.ts']) {
+    const srcPath = join(srcCoreDir, filename);
+    if (!existsSync(srcPath)) continue;
+    const destPath = join(tempDir, filename);
+    let content = readFileSync(srcPath, 'utf8');
+    content = content.replace(
+      /(from\s+['"])\.\.\/api\/([^'"]+?)(['"])/g,
+      (match, prefix, specifier, suffix) => {
+        const ext = specifier.endsWith('.ts') || specifier.endsWith('.js') ? '' : '.ts';
+        return `${prefix}./${specifier}${ext}${suffix}`;
+      }
+    );
+    content = content.replace(
+      /(from\s+['"])(\.\/[^'"]+?)(['"])/g,
+      (match, prefix, specifier, suffix) => {
+        if (specifier.endsWith('.ts') || specifier.endsWith('.js')) return match;
+        return `${prefix}${specifier}.ts${suffix}`;
+      }
+    );
+    writeFileSync(destPath, content, 'utf8');
+  }
+
   // 2. Link node_modules and write package.json with "type": "module"
   const repoNodeModules = join(REPO_ROOT, 'node_modules');
   if (existsSync(repoNodeModules)) {
