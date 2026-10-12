@@ -23,8 +23,13 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
 
 
   // Critically damped mechanical metric roll-ups from 0
-  const animCustody = useAnimatedNumber(engine.balances.totalArcCapital, 750, 0);
-  const animFloor = useAnimatedNumber(engine.forecasting.targetBuffer30D, 750, 0);
+  const rawCustody = engine.balances.totalArcCapital;
+  const hasCustody = typeof rawCustody === 'number' && Number.isFinite(rawCustody);
+  const animCustody = useAnimatedNumber(hasCustody ? rawCustody : 0, 750, 0);
+
+  const rawFloor = engine.forecasting.targetBuffer30D;
+  const hasFloor = typeof rawFloor === 'number' && Number.isFinite(rawFloor);
+  const animFloor = useAnimatedNumber(hasFloor ? rawFloor : 0, 750, 0);
   const animFolio = useAnimatedNumber(481, 750, 0);
 
   // 1. CHOREOGRAPHED 1.35-SECOND INSTRUMENT BOOT SEQUENCE
@@ -377,7 +382,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
               background: 'transparent'
             }}
           >
-            ${Math.round(animCustody).toLocaleString()}
+            {hasCustody ? `$${Math.round(animCustody).toLocaleString()}` : 'UNAVAILABLE'}
           </div>
 
           <div
@@ -436,7 +441,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
               background: 'transparent'
             }}
           >
-            {Math.round(animFloor / 1000)}K FLOOR
+            {hasFloor ? `${Math.round(animFloor / 1000)}K FLOOR` : 'UNAVAILABLE'}
           </div>
 
           <div

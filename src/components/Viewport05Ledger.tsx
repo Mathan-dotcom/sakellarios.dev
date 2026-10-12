@@ -3,6 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useSakellariousEngine, ProcessedInvoice } from '../core/useSakellariousEngine';
 import { scrambleText } from '../core/useAnimatedNumber';
 import { EuthynaDataLoomCanvas } from './EuthynaDataLoomCanvas';
+import { safeToFixed, safeCurrency } from '../core/safeFormat';
 
 export interface Viewport05LedgerProps {
   engine: ReturnType<typeof useSakellariousEngine>;
@@ -34,7 +35,7 @@ export const Viewport05Ledger: React.FC<Viewport05LedgerProps> = React.memo(({ e
     const folioText = item.euthynaFolio || targetFolio || 'EUTHYNA #00482';
     const dateText = new Date(item.timestamp).toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
     const hashText = `${item.txHash ? item.txHash.slice(0, 10) : '0xb0812702'}...`;
-    const valText = `$${item.amountUsdc.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    const valText = safeCurrency(item.amountUsdc, '$', { minimumFractionDigits: 2 });
 
     scrambleText((t) => setScrambledCells(prev => ({ ...prev, folio: t })), folioText, 250);
     scrambleText((t) => setScrambledCells(prev => ({ ...prev, date: t })), dateText, 250);
@@ -92,8 +93,8 @@ export const Viewport05Ledger: React.FC<Viewport05LedgerProps> = React.memo(({ e
 ${dateStr} * "Circle Gateway" "${item.invoiceRef} - Surplus sweep to USYC [${item.euthynaFolio || 'EUTHYNA #00480'}]"
   meta: "circle_gateway_sweep"
   tx_hash: "${item.txHash || '0x7e8c182a4d33bb0f121d5568194aef91cbe7821034cbb2339d10e821034cba88'}"
-  Assets:Arc:USYC                  ${item.amountUsdc.toFixed(2)} USYC
-  Assets:Arc:USDC                 -${item.amountUsdc.toFixed(2)} USDC`;
+  Assets:Arc:USYC                  ${safeToFixed(item.amountUsdc, 2)} USYC
+  Assets:Arc:USDC                 -${safeToFixed(item.amountUsdc, 2)} USDC`;
     }
 
     return `; SAKELLARIOUS CONTINUOUS TREASURY LEDGER
@@ -103,8 +104,8 @@ ${dateStr} * "Circle Gateway" "${item.invoiceRef} - Surplus sweep to USYC [${ite
 ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasoning || 'Automated Payout'} [${item.euthynaFolio || 'EUTHYNA'}]"
   meta: "circle_paymaster"
   tx_hash: "${item.txHash || '0xb08127020a7f6ff2b68e88ae1535764177e7be22525f6f29372fe521cbed879e'}"
-  Expenses:${item.category}:Ops       ${item.amountUsdc.toFixed(2)} USDC
-  Assets:Arc:USDC                  -${item.amountUsdc.toFixed(2)} USDC`;
+  Expenses:${item.category}:Ops       ${safeToFixed(item.amountUsdc, 2)} USDC
+  Assets:Arc:USDC                  -${safeToFixed(item.amountUsdc, 2)} USDC`;
   };
 
   // Helper to generate signed JSON-LD schema receipt
@@ -280,7 +281,7 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
                       className="ledger-row ledger-card"
                       data-invert-dark="true"
                       data-datum="true"
-                      data-telemetry={`${folioKey} // ${item.amountUsdc.toFixed(2)} USDC SETTLED`}
+                      data-telemetry={`${folioKey} // ${safeToFixed(item.amountUsdc, 2)} USDC SETTLED`}
                       style={{
                         display: 'grid',
                         gridTemplateColumns: '160px 180px 1.4fr 160px 180px 1.2fr',
@@ -334,7 +335,7 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
 
                     {/* 4. VALUE */}
                     <div style={{ fontWeight: 500 }}>
-                      {(isTopHighlighted && idx === 0 && scrambledCells.val) ? scrambledCells.val : `$${item.amountUsdc.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                      {(isTopHighlighted && idx === 0 && scrambledCells.val) ? scrambledCells.val : safeCurrency(item.amountUsdc, '$', { minimumFractionDigits: 2 })}
                     </div>
 
                     {/* 5. BOUND CLEARED */}

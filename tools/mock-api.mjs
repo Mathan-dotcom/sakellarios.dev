@@ -46,7 +46,7 @@ export function createMockServer() {
 
     const reqUrl = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
     const pathname = reqUrl.pathname;
-    const mode = reqUrl.searchParams.get('mode');
+    const mode = reqUrl.searchParams.get('mode') || process.env.MOCK_MODE || '';
 
     // 2. Failure Mode Injections
     if (mode === 'error500') {

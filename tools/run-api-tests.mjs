@@ -81,7 +81,7 @@ try {
 
   // Also include src/core/liveAdapters files for unified test coverage
   const srcCoreDir = resolve(REPO_ROOT, 'src/core');
-  for (const filename of ['liveAdapters.ts', 'liveAdapters.test.ts']) {
+  for (const filename of ['liveAdapters.ts', 'liveAdapters.test.ts', 'safeFormat.ts', 'safeFormat.test.ts']) {
     const srcPath = join(srcCoreDir, filename);
     if (!existsSync(srcPath)) continue;
     const destPath = join(tempDir, filename);

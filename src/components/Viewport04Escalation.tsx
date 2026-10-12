@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useSakellariousEngine } from '../core/useSakellariousEngine';
 import { getScrollVelocity } from '../core/SmoothScroll';
+import { safeToFixed, safeFormatNonce } from '../core/safeFormat';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -389,7 +390,7 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.m
           >
             TRAJECTORY VECTOR // DESCENDING
             <div style={{ color: 'var(--void-text-primary)', marginTop: '4px' }}>
-              NONCE #{activeEscalation ? activeEscalation.escalationNonce : 1}
+              {safeFormatNonce(activeEscalation?.escalationNonce, 'NONCE #', activeEscalation ? 'NONCE #--' : 'NONCE #1')}
             </div>
           </div>
         </div>
@@ -511,7 +512,7 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.m
                       marginBottom: '4px'
                     }}
                   >
-                    // ESCALATION DOSSIER: NONCE #{activeEscalation.escalationNonce}
+                    // ESCALATION DOSSIER: {safeFormatNonce(activeEscalation.escalationNonce, 'NONCE #', 'NONCE #--')}
                   </div>
                   <div style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--void-text-muted)' }}>
                     INVOICE: <strong>{activeEscalation.invoiceRef}</strong> // VENDOR: <strong>{activeEscalation.vendor}</strong>
@@ -595,7 +596,7 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.m
                       zIndex: 1
                     }}
                   >
-                    ${activeEscalation.amount.toFixed(2)}
+                    {activeEscalation.amount !== undefined ? `$${safeToFixed(activeEscalation.amount, 2)}` : 'UNAVAILABLE'}
                   </div>
                   <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--void-text-muted)', marginTop: '6px', letterSpacing: '0.12em', position: 'relative', zIndex: 1 }}>
                     CATEGORY: {activeEscalation.category} // TIMELOCK: 72H

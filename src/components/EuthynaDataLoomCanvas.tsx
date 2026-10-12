@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import gsap from 'gsap';
 import { ProcessedInvoice } from '../core/useSakellariousEngine';
+import { safeCurrency } from '../core/safeFormat';
 
 export interface EuthynaDataLoomCanvasProps {
   invoices: ProcessedInvoice[];
@@ -382,7 +383,7 @@ function drawSlabTexture(
   ctx.textAlign = 'right';
   ctx.font = 'bold 42px "Syne", sans-serif';
   ctx.fillStyle = '#141413';
-  const amountStr = `$${record.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+  const amountStr = safeCurrency(record.amount, '$', { minimumFractionDigits: 2 });
   ctx.fillText(amountStr, w - 34, 66);
 
   ctx.font = '13px "JetBrains Mono", monospace';

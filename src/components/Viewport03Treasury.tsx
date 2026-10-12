@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSakellariousEngine } from '../core/useSakellariousEngine';
 import { useAnimatedNumber, scrambleText } from '../core/useAnimatedNumber';
 import { useLenis } from '../core/SmoothScroll';
+import { safeToLocaleString, safeToFixed, safeSurplus } from '../core/safeFormat';
 
 export interface Viewport03TreasuryProps {
   engine: ReturnType<typeof useSakellariousEngine>;
@@ -15,8 +16,13 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
   const cursorPosRef = useRef<{ x: number; y: number } | null>(null);
   const isCanvasHoveredRef = useRef(false);
 
-  const animLiquid = useAnimatedNumber(engine.balances.arcLiquidUsdc);
-  const animUsyc = useAnimatedNumber(engine.balances.arcUsycVault);
+  const rawLiquid = engine.balances.arcLiquidUsdc;
+  const hasLiquid = typeof rawLiquid === 'number' && Number.isFinite(rawLiquid);
+  const animLiquid = useAnimatedNumber(hasLiquid ? rawLiquid : 0);
+
+  const rawUsyc = engine.balances.arcUsycVault;
+  const hasUsyc = typeof rawUsyc === 'number' && Number.isFinite(rawUsyc);
+  const animUsyc = useAnimatedNumber(hasUsyc ? rawUsyc : 0);
 
   // PolicyWallet 4-stage sequential evaluation state
   const [bayLabels, setBayLabels] = useState<[string, string, string, string]>([
@@ -93,7 +99,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
       }
 
       // Compression factor: how close liquid buffer is to 400k floor
-      const surplus = Math.max(0, engine.balances.arcLiquidUsdc - engine.forecasting.targetBuffer30D);
+      const surplus = safeSurplus(engine.balances.arcLiquidUsdc, engine.forecasting.targetBuffer30D) ?? 0;
       const compression = Math.min(1, surplus / 50000); // 0 (compressed) to 1 (expanded)
 
       const lineCount = 24;
@@ -537,7 +543,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
             <div
               data-metric="true"
               data-monumental="true"
-              data-telemetry={`LIQUID BUFFER // $${animLiquid.toFixed(2)} USDC`}
+              data-telemetry={`LIQUID BUFFER // ${hasLiquid ? `$${safeToFixed(animLiquid, 2)}` : 'UNAVAILABLE'} USDC`}
               style={{
                 display: 'flex',
                 alignItems: 'baseline',
@@ -580,7 +586,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                     willChange: 'transform'
                   }}
                 >
-                  ${animLiquid.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {hasLiquid ? `$${safeToLocaleString(animLiquid, 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'UNAVAILABLE'}
                 </div>
               </div>
               <div
@@ -636,7 +642,10 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                   color: 'var(--mineral-ink-muted)'
                 }}
               >
-                SURPLUS: ${Math.max(0, engine.balances.arcLiquidUsdc - engine.forecasting.targetBuffer30D).toLocaleString()} USDC
+                SURPLUS: {(() => {
+                  const s = safeSurplus(engine.balances.arcLiquidUsdc, engine.forecasting.targetBuffer30D);
+                  return s !== null ? `$${s.toLocaleString()} USDC` : 'UNAVAILABLE';
+                })()}
               </div>
             </div>
 
@@ -662,7 +671,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                   YIELD-BEARING RESERVE
                 </div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '18px', fontWeight: 500, fontVariantNumeric: 'tabular-nums', marginTop: '4px', whiteSpace: 'nowrap' }}>
-                  ${animUsyc.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USYC
+                  {hasUsyc ? `$${safeToLocaleString(animUsyc, 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USYC` : 'UNAVAILABLE'}
                 </div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--signal-amber)', marginTop: '4px' }}>
                   5.12% APY // CIRCLE GATEWAY
@@ -907,7 +916,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                   </span>
                 </div>
                 <div className="rule-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--mineral-ink-muted)', marginTop: '4px' }}>
-                  Active Buffer: ${engine.balances.arcLiquidUsdc.toLocaleString()} USDC // Lock: Strict
+                  Active Buffer: {hasLiquid ? `$${safeToLocaleString(engine.balances.arcLiquidUsdc, 'en-US')} USDC` : 'UNAVAILABLE'} // Lock: Strict
                 </div>
               </div>
 

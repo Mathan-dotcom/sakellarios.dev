@@ -2,6 +2,7 @@ import React from 'react';
 import { useSakellariousEngine, useMicroYieldTicker } from '../core/useSakellariousEngine';
 import { useAnimatedNumber } from '../core/useAnimatedNumber';
 import { useLenis } from '../core/SmoothScroll';
+import { safeToFixed, safeToLocaleString } from '../core/safeFormat';
 
 export interface CockpitHeaderProps {
   engine: ReturnType<typeof useSakellariousEngine>;
@@ -11,11 +12,16 @@ export const CockpitHeader: React.FC<CockpitHeaderProps> = React.memo(({ engine 
   const { scrollTo } = useLenis();
   const { liveHarvestYield, blockHeight } = useMicroYieldTicker();
 
-  const animLiquid = useAnimatedNumber(engine.balances.arcLiquidUsdc);
-  const animUsyc = useAnimatedNumber(engine.balances.arcUsycVault);
+  const rawLiquid = engine.balances.arcLiquidUsdc;
+  const hasLiquid = typeof rawLiquid === 'number' && Number.isFinite(rawLiquid);
+  const animLiquid = useAnimatedNumber(hasLiquid ? rawLiquid : 0);
+
+  const rawUsyc = engine.balances.arcUsycVault;
+  const hasUsyc = typeof rawUsyc === 'number' && Number.isFinite(rawUsyc);
+  const animUsyc = useAnimatedNumber(hasUsyc ? rawUsyc : 0);
 
   const isHalted = engine.escalations.length > 0;
-  const pendingAmount = isHalted ? engine.escalations[0].amount : 0;
+  const pendingAmount = isHalted ? (engine.escalations[0]?.amount ?? undefined) : 0;
 
   const handleCellClick = (targetId: string) => {
     scrollTo(targetId);
@@ -112,7 +118,7 @@ export const CockpitHeader: React.FC<CockpitHeaderProps> = React.memo(({ engine 
             </span>
             <span className="cell-muted" style={{ color: 'var(--void-text-muted)' }}>■</span>
             <span className="cell-muted" style={{ color: 'var(--void-text-muted)', fontVariantNumeric: 'tabular-nums' }}>
-              BLK #{blockHeight.toLocaleString()}
+              BLK #{safeToLocaleString(blockHeight, 'en-US', undefined, '5042002')}
             </span>
           </div>
         </div>
@@ -172,7 +178,7 @@ export const CockpitHeader: React.FC<CockpitHeaderProps> = React.memo(({ engine 
             }}
           >
             <span style={{ fontWeight: 500 }}>
-              {animLiquid.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC
+              {safeToLocaleString(animLiquid, 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }, 'UNAVAILABLE')} USDC
             </span>
             <span className="cell-muted" style={{ fontSize: '9px', color: 'var(--void-text-muted)', marginLeft: '6px' }}>
               [FLOOR &gt;= 400K]
@@ -219,7 +225,7 @@ export const CockpitHeader: React.FC<CockpitHeaderProps> = React.memo(({ engine 
             }}
           >
             <span style={{ fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>
-              {animUsyc.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USYC
+              {safeToLocaleString(animUsyc, 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }, 'UNAVAILABLE')} USYC
             </span>
             <span
               style={{
@@ -229,7 +235,7 @@ export const CockpitHeader: React.FC<CockpitHeaderProps> = React.memo(({ engine 
                 fontVariantNumeric: 'tabular-nums'
               }}
             >
-              +{liveHarvestYield.toFixed(6)}
+              +{safeToFixed(liveHarvestYield, 6, '0.000000')}
             </span>
           </div>
         </div>
@@ -271,7 +277,7 @@ export const CockpitHeader: React.FC<CockpitHeaderProps> = React.memo(({ engine 
           >
             {isHalted ? (
               <span className="cell-signal" style={{ color: 'var(--signal-tension)', fontWeight: 500 }}>
-                {engine.escalations.length} HALTED [{pendingAmount.toFixed(2)} USDC]
+                {engine.escalations.length} HALTED [{safeToFixed(pendingAmount, 2, '--')} USDC]
               </span>
             ) : (
               <span style={{ color: 'var(--signal-verified)', fontWeight: 500 }}>

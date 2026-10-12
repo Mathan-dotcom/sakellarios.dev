@@ -66,6 +66,14 @@ npm run dev:ui
 node tools/run-api-tests.mjs
 ```
 
+### Mock Server Failure Injections (MOCK_MODE)
+`tools/mock-api.mjs` supports simulated failure modes via the `MOCK_MODE` environment variable (default mode when no `?mode=` query parameter is supplied):
+- `empty`: Returns empty/null payloads (`data: null` or empty arrays `[]`).
+- `error500`: Responds with HTTP 500 Internal Server Error.
+- `slow`: Injects a 3000ms artificial latency delay.
+- `malformed`: Returns truncated/malformed JSON strings to test frontend resilience.
+The mock server remains strictly GET-only across all modes; any non-GET request receives HTTP 405 Method Not Allowed.
+
 ## 5. Deployment & Build Notes
 - **Deployment Configuration:** No deployment manifests (e.g. Render, Railway, Docker, Procfile, Vercel) exist in the repository. The host dashboard setup is unknown, so ask the backend owner whether their host environment runs a `"build"` script.
 - **Package Lock Audit:** Running `npm uninstall ... --package-lock-only --dry-run` printed `"up to date"` and is inconclusive, so `framer-motion` and `webgl-fluid` stay for now.
