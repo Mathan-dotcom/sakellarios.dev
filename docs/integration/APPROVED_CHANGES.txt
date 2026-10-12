@@ -1,0 +1,26 @@
+# Approved changes for files existing on origin/main that are deleted or modified on this branch.
+# Format: <path>: <one-line reason>
+
+# Approved Deletions (16 paths)
+frontend.html: Deprecated legacy UI root view replaced by Vite React application
+landing.html: Deprecated legacy landing scrollytelling view replaced by Vite React application
+supernova_app.html: Deprecated legacy 3D supernova page replaced by Vite React application
+supernova_explotion_2.html: Deprecated legacy supernova simulation asset removed
+public/index.html: Deprecated Express-served vanilla editorial UI entrypoint removed
+public/css/byzantine-editorial.css: Deprecated Express-served editorial CSS stylesheet removed
+public/js/chancery-seal.js: Deprecated Express-served chancery seal script removed
+public/js/folio-ledger.js: Deprecated Express-served ledger script removed
+public/js/folio-pipeline.js: Deprecated Express-served pipeline script removed
+public/js/folio-reserves.js: Deprecated Express-served reserves script removed
+public/js/folio-routing.js: Deprecated Express-served routing script removed
+public/js/manifesto-scrollytelling.js: Deprecated Express-served scrollytelling script removed
+public/js/theme-switcher.js: Deprecated Express-served theme switcher script removed
+public/three/OrbitControls.js: Deprecated Express-served Three.js orbit controls removed
+public/three/SupernovaCanvas.js: Deprecated Express-served supernova canvas script removed
+public/three/three.module.js: Deprecated Express-served Three.js module removed
+
+# Approved Shared Modifications (4 paths)
+index.html: Vite entry replaces the old root page
+package.json: Additive frontend dependencies and Vite build scripts for React UI
+package-lock.json: Lockfile resolution for additive frontend dependencies
+.gitignore: Ignore frontend build output directory dist/

@@ -1,0 +1,16 @@
+frontend.html
+landing.html
+supernova_app.html
+supernova_explotion_2.html
+public/index.html
+public/css/byzantine-editorial.css
+public/js/chancery-seal.js
+public/js/folio-ledger.js
+public/js/folio-pipeline.js
+public/js/folio-reserves.js
+public/js/folio-routing.js
+public/js/manifesto-scrollytelling.js
+public/js/theme-switcher.js
+public/three/OrbitControls.js
+public/three/SupernovaCanvas.js
+public/three/three.module.js
