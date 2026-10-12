@@ -174,24 +174,34 @@ In `services/agentRunner.js` lines 227–245 and 278–298 (`processIncomingInvo
 
 ---
 
-## 3. HIGH: Mutating Endpoints Lack Authentication & Rate Limiting
+## 3. HIGH: All 6 Backend POST Routes Lack Authentication & Rate Limiting (Including External API Quota Drain Risk)
 
 ### Location & Function Citations
 - `server.js:16` (`app.use(cors())`)
 - `server.js:123-130` (Route handler `app.post('/api/treasury/sweep')`)
 - `server.js:133-144` (Route handler `app.post('/api/treasury/redeem')`)
 - `server.js:158-177` (Route handler `app.post('/api/invoices/process')`)
+- `server.js:186-195` (Route handler `app.post('/api/escalations/:id/approve')`)
 - `server.js:198-207` (Route handler `app.post('/api/escalations/:id/cancel')`)
+- `server.js:210-221` (Route handler `app.post('/api/sanctions/check')`)
+- `services/sanctions.js:19-83` (Method `OpenSanctionsVerifier.prototype.screenRecipient`)
 
 ### Code Observation
 - Wildcard CORS is enabled globally: `app.use(cors())` (`server.js:16`).
-- None of the 4 state-changing routes have authentication middleware or rate limiting.
-- Any network client can repeatedly call `/api/invoices/process` to exhaust daily category limits, drain USDC via Circle Paymaster payouts, trigger on-chain transaction spam (`requestEscalatedPayout`), or cause runaway growth of `ledger/euthyna.beancount` and `ledger/receipts.json`.
+- **All 6 POST routes** on the backend are completely unauthenticated. None of them mount authentication middleware, API key headers, session checks, or rate limiting.
+- State-changing risk: Any network client can repeatedly call `/api/invoices/process`, `/api/treasury/sweep`, `/api/treasury/redeem`, `/api/escalations/:id/approve`, and `/api/escalations/:id/cancel` to execute payouts, manipulate USYC vaults, trigger on-chain spam, or force owner approvals.
+- **External API Quota Drain Hazard (`POST /api/sanctions/check`):**
+  - Line 210 exposes `POST /api/sanctions/check` without authentication.
+  - When invoked, it executes `agent.sanctionsVerifier.screenRecipient(addressOrEntity)` (`services/sanctions.js:19`).
+  - This issues a live HTTP request to `https://api.opensanctions.org/search/default` with header `Authorization: ApiKey ${this.apiKey}` using `process.env.OPENSANCTIONS_API_KEY`.
+  - The results are **not cached or stored**, and there is zero rate limiting.
+  - Any unauthenticated third party can repeatedly flood `POST /api/sanctions/check` to exhaust the operator's paid OpenSanctions API quota.
 
 ### Recommended Remedy
-1. Install `express-rate-limit` to restrict request frequency on mutating endpoints.
+1. Install `express-rate-limit` to restrict request frequency globally and per IP on all POST endpoints.
 2. Restrict CORS origins to trusted frontend domains (`origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:5173']`).
-3. Require HMAC webhook signatures or API keys for invoice ingestion from automated partners.
+3. Require authentication (Bearer token or supervisor session secret) on administrative and screening endpoints.
+4. Implement in-memory or Redis caching (e.g. 24h TTL per sanitized lowercase address) for sanctions query responses to prevent redundant billing and quota depletion.
 
 ---
 

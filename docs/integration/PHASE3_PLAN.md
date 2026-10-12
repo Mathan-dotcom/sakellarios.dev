@@ -140,6 +140,30 @@ graph TD
   *(Record: Production bundle build hashes `dist/assets/index-Z5RoZdbY.css` and `dist/assets/index-CyPagp_5.js` have remained unchanged since the baseline merge).*
 - **Rollback:** `git revert HEAD`.
 
+### Step 4b: Action Surfaces in Live Mode (Read-Only State & Simulation Badging)
+- **Files Touched:** `src/components/Viewport03Treasury.tsx`, `src/components/Viewport04Escalation.tsx`.
+- **Scope:**
+  - In live mode (`VITE_USE_LIVE_DATA = true`), the live engine returns `{ ok: false, reason: 'READ_ONLY_LIVE' }` for all 6 actions.
+  - Current UI surfaces must not display misleading success states or deceptive fallback messages.
+  - **Proposed Copy & Presentation:**
+    1. **Yield Sweep (`Viewport03Treasury.tsx:208-215`):**
+       - Feedback: `"READ-ONLY // NO BACKEND ACTION: Yield sweeping disabled in live telemetry mode."`
+    2. **Yield Redemption (`Viewport03Treasury.tsx:217-224`):**
+       - Feedback: `"READ-ONLY // NO BACKEND ACTION: Yield redemption disabled in live telemetry mode."`
+    3. **Invoice Submission & Replay Pipeline (`Viewport03Treasury.tsx:283-390`):**
+       - Local pipeline animation is explicitly badged: `"SIMULATION ONLY // NO ON-CHAIN TRANSACTION"`.
+       - Final feedback: `"READ-ONLY // NO BACKEND ACTION: Mutating invoice execution is disabled in live mode."`
+       - Suppress dispatch of fake `sakellarious:new-inscription` events and preserve live balance streams unchanged.
+    4. **Sanctions Check (`Viewport03Treasury.tsx:425-431`):**
+       - Feedback: `"READ-ONLY // NO BACKEND ACTION: Standalone screening disabled in live mode."`
+    5. **Supervisor Escalation Override (`Viewport04Escalation.tsx:118-126`):**
+       - When press-and-hold completes, display: `"READ-ONLY // NO BACKEND ACTION: Escalation approval requires supervisor signature via backend."`
+       - Suppress fake golden seal confirmation or label clearly as `"[LOCAL SIMULATION ONLY - NO ON-CHAIN SIGNATURE]"`.
+       - Cancel action (`Viewport04Escalation.tsx:170-173`): Feedback: `"READ-ONLY // NO BACKEND ACTION: Cancellation disabled in live mode."`
+       - Demo reset button (`Viewport04Escalation.tsx:175-180`): Disabled or labelled `"[DEMO SIMULATION RESET]"`.
+  - **Zero-Mutation Invariance:** Live-derived fields (`balances`, `escalations`, `invoices`, `slabs`, `reserves`) are never mutated locally.
+- **Rollback:** `git revert HEAD`.
+
 ---
 
 ## 5. Architectural Agreement: Data Loom Source

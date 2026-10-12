@@ -46,7 +46,7 @@ The backend is an Express-based autonomous treasury and Accounts Payable (AP) / 
 | `server.js` | Express Server (`app`) | Exposes HTTP REST API (port 4000), enables wildcard CORS, routes requests to `VestiarionAgent`, serves static HTML from `public/`. | Network I/O (port 4000) |
 | `services/agentRunner.js` | `VestiarionAgent` | Central orchestrator: syncs on-chain state, executes policy checks, routes payouts, requests/approves escalations, sweeps yield. | Dispatches on-chain transactions via signers |
 | `services/circleStack.js` | `CircleStackService` | Connects to Arc L1 RPC, wraps USDC ERC20 contract, coordinates Circle Paymaster for gasless transactions. | RPC calls; simulates/sponsors transfers |
-| `services/sanctions.js` | `OpenSanctionsVerifier` | Queries OpenSanctions API to screen recipient vendor addresses prior to payment. | Outbound HTTPS requests to OpenSanctions API |
+| `services/sanctions.js` | `OpenSanctionsVerifier` | Queries OpenSanctions API to screen recipient vendor addresses prior to payment. Also exposed via unauthenticated route `POST /api/sanctions/check`. | Outbound HTTPS requests to OpenSanctions API (unauthenticated external API quota exposure) |
 | `services/forecaster.js` | `CashFlowForecaster` | Calculates 30-day operating buffer (fixed expenses + variable AP) and determines if yield sweeping is warranted. | Pure mathematical computation (in-memory) |
 | `services/euthynaAudit.js` | `EuthynaAuditLedger` | Records double-entry Beancount journal entries and cryptographic JSON-LD audit receipts. | **Synchronously writes to `ledger/euthyna.beancount` and `ledger/receipts.json`** |
 | `services/supervisorNotifier.js` | `SupervisorNotifier` | Dispatches Webhook notifications to human supervisor upon escalation events. | Outbound HTTP POST to `SUPERVISOR_WEBHOOK_URL` |
@@ -59,6 +59,7 @@ The backend is an Express-based autonomous treasury and Accounts Payable (AP) / 
 
 ## 3. Data Flow & Transaction Lifecycle
 
+0. **Standalone Sanctions Screening:** Client sends unauthenticated `POST /api/sanctions/check`. Directly invokes `OpenSanctionsVerifier.screenRecipient()` querying `api.opensanctions.org` in realtime without caching, consuming external API quota.
 1. **Invoice Ingestion:** Client sends `POST /api/invoices/process`.
 2. **Pre-flight Screening:** `OpenSanctionsVerifier` screens vendor. If flagged, transaction blocks immediately (`SANCTIONS_BLOCKED`).
 3. **Whitelist Verification:** Checks `PolicyWallet.whitelistedVendors(vendor)`.

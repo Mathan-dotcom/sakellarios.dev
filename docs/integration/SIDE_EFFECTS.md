@@ -63,8 +63,8 @@ Facts directly from active code:
    app.use(cors());
    ```
    No origin filtering, headers restriction, or credentials gating is applied. Any origin (`*`) is accepted.
-2. **Zero Authentication on Mutating Routes (`server.js:123-207`):**
-   None of the 5 mutating endpoints (`/api/treasury/sweep`, `/api/treasury/redeem`, `/api/invoices/process`, `/api/escalations/:id/approve`, `/api/escalations/:id/cancel`) have authentication middleware, session checks, bearer token validation, or API key verification.
+2. **Zero Authentication on All 6 POST Routes (`server.js:123-221`):**
+   None of the 6 backend POST endpoints (`/api/treasury/sweep`, `/api/treasury/redeem`, `/api/invoices/process`, `/api/escalations/:id/approve`, `/api/escalations/:id/cancel`, `/api/sanctions/check`) have authentication middleware, session checks, bearer token validation, or API key verification. Unauthenticated callers can also exhaust the operator's paid OpenSanctions API quota via `/api/sanctions/check`.
 3. **Zero Rate Limiting:**
    No rate limiter (e.g. `express-rate-limit`) is installed or mounted anywhere in `server.js`.
 4. **Critical Unauthorized Owner Privilege Escalation (`server.js:186-195` & `agentRunner.js:388-457`):**
@@ -99,6 +99,7 @@ Facts directly from active code:
    - Drain USYC reserves via `POST /api/treasury/sweep` and `/api/treasury/redeem`.
    - Execute payouts via `POST /api/invoices/process`.
    - Force owner approval of any pending transaction via `POST /api/escalations/:id/approve` using the server's configured private keys.
+   - Drain external OpenSanctions API quota via unauthenticated request spam to `POST /api/sanctions/check`.
 
 ---
 
@@ -113,7 +114,7 @@ Facts directly from active code:
 | `/api/escalations` | `GET` | `server.js:180-183` (handler `app.get('/api/escalations')`) | **Read-Only** | Returns all in-memory pending escalations. |
 | `/api/audit/beancount` | `GET` | `server.js:224-231` (handler `app.get('/api/audit/beancount')`) | **Read-Only** | Synchronously reads and returns `ledger/euthyna.beancount`. |
 | `/api/audit/receipts` | `GET` | `server.js:234-241` (handler `app.get('/api/audit/receipts')`) | **Read-Only** | Synchronously reads and returns `ledger/receipts.json`. |
-| `/api/sanctions/check` | `POST` | `server.js:210-221` (handler `app.post('/api/sanctions/check')`) | **Read-Only** (External Query) | Screens address via external OpenSanctions REST API. |
+| `/api/sanctions/check` | `POST` | `server.js:210-221` (handler `app.post('/api/sanctions/check')`) | **Read-Only** (External Query) | Screens address via external OpenSanctions REST API. Unauthenticated with zero rate limiting or caching (external API quota drain risk). |
 | `/api/invoices/process` | `POST` | `server.js:158-177` (handler `app.post('/api/invoices/process')`) | **STATE-CHANGING** | Sponsors payout via Paymaster, updates state, **appends to `ledger/euthyna.beancount` and writes `ledger/receipts.json`**. If limit exceeded, broadcasts on-chain escalation transaction. |
 | `/api/escalations/:id/approve` | `POST` | `server.js:186-195` (handler `app.post('/api/escalations/:id/approve')`) | **STATE-CHANGING** | Approves escalation, broadcasts on-chain owner approval transaction, and **writes to `ledger/` files**. |
 | `/api/escalations/:id/cancel` | `POST` | `server.js:198-207` (handler `app.post('/api/escalations/:id/cancel')`) | **STATE-CHANGING** | Mutates in-memory transaction status (`cancelled = true`). |

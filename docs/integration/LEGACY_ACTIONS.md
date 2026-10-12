@@ -1,7 +1,8 @@
 # Legacy Engine Action Audit (Offline Demonstration Fallbacks)
 
 This document records the 6 legacy mutating `POST` call sites in `src/core/useLegacySakellariousEngine.ts`.
-These mutating calls exist strictly for offline interactive demonstrations and are isolated behind the feature flag (`VITE_USE_LIVE_DATA = false`). In live mode (`VITE_USE_LIVE_DATA = true`), all actions are strictly read-only and return `{ ok: false, reason: 'READ_ONLY_LIVE' }`.
+All 6 corresponding backend endpoints on `server.js` (`/api/sanctions/check`, `/api/invoices/process`, `/api/escalations/:id/approve`, `/api/escalations/:id/cancel`, `/api/treasury/sweep`, `/api/treasury/redeem`) are completely unauthenticated. `POST /api/sanctions/check` is also missing from the `GET /api` service catalog and consumes external OpenSanctions API quota.
+These calls exist strictly for offline interactive demonstrations and are isolated behind the feature flag (`VITE_USE_LIVE_DATA = false`). In live mode (`VITE_USE_LIVE_DATA = true`), all actions are strictly read-only and return `{ ok: false, reason: 'READ_ONLY_LIVE' }`.
 
 ---
 

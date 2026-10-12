@@ -385,7 +385,49 @@ HTTP Status: `400 Bad Request`, `404 Not Found`, or `500 Internal Server Error`
       }
     ]
   }
+---
+
+### Route 13: `POST /api/sanctions/check` (OpenSanctions Screening Endpoint)
+> [!WARNING]
+> **Omission in Service Catalog:** This route exists in active backend code at `server.js:210` (`app.post('/api/sanctions/check', ...)`), but is **missing from the `GET /api` service catalog dictionary** (`server.js:80-99`). It is completely unauthenticated and exposes the operator's external OpenSanctions API quota.
+> In frontend live mode, `checkSanctions` performs zero network requests and returns `{ ok: false, reason: 'READ_ONLY_LIVE' }`.
+
+- **Content-Type:** `application/json`
+- **Method:** `POST`
+- **Purpose:** On-demand pre-flight screening of vendor EVM address or entity name against OpenSanctions dataset via `OpenSanctionsVerifier.screenRecipient()`.
+- **Request Body:**
+  ```json
+  {
+    "addressOrEntity": "0x8576acc5c05d6ce88f4e49bf65bdf0c62f91353c"
+  }
   ```
+- **Contract Schema (Success `200 OK`):**
+  | Key Path | Type | Unit / Format | Description |
+  | :--- | :--- | :--- | :--- |
+  | `success` | `boolean` | `true` | Request status flag |
+  | `data.status` | `string` | Enum (`"CLEAN"`, `"SANCTIONED"`, `"FLAGGED"`) | Screening verdict |
+  | `data.provider` | `string` | Text | Service name (`"OpenSanctions API"`) |
+  | `data.queriedAt` | `string` | ISO-8601 UTC string | Timestamp of query |
+  | `data.isClean` | `boolean` | Boolean | True if address is clear |
+  | `data.matchCount` | `number` (optional) | Integer | Number of fuzzy results if clean |
+  | `data.match` | `object` (optional) | Object | Detailed sanction record if matched |
+  | `data.diagnostic` | `string` (optional) | Text | Present if evaluated via local fallback |
+- **Sample Success Payload:**
+  ```json
+  {
+    "success": true,
+    "data": {
+      "status": "CLEAN",
+      "provider": "OpenSanctions API",
+      "queriedAt": "2026-10-12T06:40:21.830Z",
+      "matchCount": 0,
+      "isClean": true
+    }
+  }
+  ```
+- **Error Responses:**
+  - `400 Bad Request`: If `addressOrEntity` is omitted or empty (`{ "success": false, "error": "addressOrEntity required" }`).
+  - `500 Internal Server Error`: On unexpected service error (`{ "success": false, "error": "<error message>" }`).
 
 ---
 

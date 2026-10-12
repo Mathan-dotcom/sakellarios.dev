@@ -19,7 +19,7 @@ Integrates the production React + TypeScript + Three.js continuous treasury dash
 - **`.gitignore`:** Single additive line (`dist/`) preserving clean build segregation.
 
 ## 4. Backend Integrity Proof
-Execution of `git diff origin/main integration/backend-wiring` across all protected backend paths (`server.js`, `services/`, `ledger/`, `scripts/`, `test/`, `lib/`, `src/PolicyWallet.sol`, `foundry.toml`, `.env.example`, `README.md`, `Vestiarion_AI_PRD_v5_0 (1).md`) excluding the 12 approved `public/` deletions is **100% EMPTY**. Zero backend logic was altered. Live mode contains no POST.
+Execution of `git diff origin/main integration/backend-wiring` across all protected backend paths (`server.js`, `services/`, `ledger/`, `scripts/`, `test/`, `lib/`, `src/PolicyWallet.sol`, `foundry.toml`, `.env.example`, `README.md`, `Vestiarion_AI_PRD_v5_0 (1).md`) excluding the 12 approved `public/` deletions is **100% EMPTY**. Zero backend logic was altered. The backend exposes 6 unauthenticated POST routes (including uncataloged `POST /api/sanctions/check`); frontend live mode contains zero POST requests and zero mutations.
 
 ## 5. Development & Testing
 - **Run Isolated Mock Server:** `node tools/mock-api.mjs` (serves fixtures on `:4010`)
