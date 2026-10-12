@@ -106,12 +106,12 @@ export interface ProcessedInvoiceDto {
 export interface PendingEscalationDto {
   txId: string;
   vendor: string;
-  amount: number;
+  amount?: number;
   category: string;
   invoiceRef: string;
   reasoningHash: string;
   reasoning: string;
-  createdAt: number;
+  createdAt?: number;
   agentApproved: boolean;
   ownerApproved: boolean;
   executed: boolean;
@@ -162,7 +162,7 @@ export interface ReceiptDto {
   agentId: string;
   action: string;
   vendorAddress?: string;
-  amountUsdc: number;
+  amountUsdc?: number;
   category?: string;
   invoiceRef?: string;
   sanctionsVerification: ReceiptSanctionsDto;
@@ -188,16 +188,16 @@ export interface ErrorResponseDto {
 export interface SlabViewModel {
   id: string; // e.g. "EUTHYNA #00001"
   idSource: IdSource;
-  amount: number;
-  amountDisplay: string; // "$150.00"
-  amountRaw: string; // "150.00"
+  amount?: number;
+  amountDisplay?: string; // "$150.00"
+  amountRaw?: string; // "150.00"
   asset: string; // "USDC // ARC L1"
-  action: string;
+  action?: string;
   invoiceRef?: string;
   vendor?: string;
   policyTag: string; // "POL-01 [JIT_PAYMENT]"
   status: 'VERIFIED' | 'PENDING' | 'HALTED';
-  timestampUtc: string; // "YYYY-MM-DD HH:mm:ss UTC"
+  timestampUtc?: string; // "YYYY-MM-DD HH:mm:ss UTC"
   category: string;
   counterparty: string;
   txHash: string;
@@ -224,11 +224,11 @@ export interface TreasurySummaryViewModel {
   dailyLimit: number;
   spentToday: number;
   dailyLimitRemaining: number;
-  maxSingleTx: number;
-  targetBuffer30D: number;
-  escalationNonce: number;
-  categoryLimits: Record<string, number>;
-  categorySpentToday: Record<string, number>;
+  maxSingleTx?: number;
+  targetBuffer30D?: number;
+  escalationNonce?: number;
+  categoryLimits?: Record<string, number>;
+  categorySpentToday?: Record<string, number>;
   liquidUsdcFormatted: string;
   usycVaultFormatted: string;
   totalCapitalFormatted: string;
@@ -260,8 +260,8 @@ export interface TreasurySummaryViewModel {
 export interface GatewayChainViewModel {
   chainName: string;
   chainId: number;
-  usdcBalance: number;
-  usycBalance: number;
+  usdcBalance?: number;
+  usycBalance?: number;
   usdcBalanceFormatted: string;
   usycBalanceFormatted: string;
   isNativeSettlement: boolean;
@@ -272,15 +272,16 @@ export interface EscalationViewModel {
   txId: string;
   invoiceRef: string;
   vendor: string;
-  amount: number;
-  amountFormatted: string;
+  amount?: number;
+  amountFormatted?: string;
   category: string;
   reasoning: string;
   requiresSupervisorReason: string;
-  createdAtMs: number;
-  createdAtUtc: string;
-  escalationNonce: number;
-  timelockRemainingSeconds: number;
+  createdAtMs?: number;
+  createdAtUtc?: string;
+  expiresAtMs?: number;
+  escalationNonce?: number;
+  timelockRemainingSeconds?: number;
   ownerApproved: boolean;
   executed: boolean;
   cancelled: boolean;
@@ -335,7 +336,7 @@ export function isGatewayReservesResponseDto(value: unknown): value is GatewayRe
       isRecord(c) &&
       typeof c.chainName === 'string' &&
       typeof c.chainId === 'number' &&
-      typeof c.usdcBalance === 'number'
+      (c.usdcBalance === undefined || typeof c.usdcBalance === 'number')
   );
 }
 
@@ -350,7 +351,7 @@ export function isEscalationsResponseDto(value: unknown): value is EscalationsRe
   if (!isRecord(value)) return false;
   if (value.success !== true || !Array.isArray(value.data)) return false;
   return value.data.every(
-    (e) => isRecord(e) && typeof e.txId === 'string' && typeof e.amount === 'number'
+    (e) => isRecord(e) && typeof e.txId === 'string' && (e.amount === undefined || typeof e.amount === 'number')
   );
 }
 
@@ -362,7 +363,7 @@ export function isReceiptDto(value: unknown): value is ReceiptDto {
     typeof value.timestamp === 'string' &&
     typeof value.agentId === 'string' &&
     typeof value.action === 'string' &&
-    typeof value.amountUsdc === 'number' &&
+    (value.amountUsdc === undefined || typeof value.amountUsdc === 'number') &&
     typeof value.txHash === 'string'
   );
 }

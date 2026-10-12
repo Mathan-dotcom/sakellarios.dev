@@ -193,3 +193,40 @@ test('LIVE_READ_ONLY_REJECTION rejects mutating actions', () => {
   assert.equal(LIVE_READ_ONLY_REJECTION.ok, false);
   assert.equal(LIVE_READ_ONLY_REJECTION.reason, 'READ_ONLY_LIVE');
 });
+
+test('mapStoreToEngineState marks unavailable on invalid summary payload without prior data (never zeros)', () => {
+  // Scenario: fetch completed (lastUpdated set), but returned invalid payload so summary is null
+  const store = createMockStoreState({
+    summary: null,
+    lastUpdated: { summary: 1700000000000, reserves: null, slabs: null, escalations: null, beancount: null },
+  });
+
+  const state = mapStoreToEngineState(store);
+
+  assert.equal(state.telemetry.totalArcCapital.status, 'unavailable');
+  assert.equal(state.telemetry.totalArcCapital.value, null);
+  assert.equal(state.telemetry.arcLiquidUsdc.status, 'unavailable');
+  assert.equal(state.telemetry.arcLiquidUsdc.value, null);
+  assert.equal(state.telemetry.arcUsycVault.status, 'unavailable');
+  assert.equal(state.telemetry.arcUsycVault.value, null);
+});
+
+test('mapStoreToEngineState marks telemetry unavailable for missing optional backend fields', () => {
+  const partialSummary: TreasurySummaryViewModel = {
+    ...mockSummaryDto,
+    targetBuffer30D: undefined,
+    maxSingleTx: undefined,
+  };
+
+  const store = createMockStoreState({
+    summary: partialSummary,
+    lastUpdated: { summary: Date.now(), reserves: null, slabs: null, escalations: null, beancount: null },
+  });
+
+  const state = mapStoreToEngineState(store);
+
+  assert.equal(state.telemetry.targetBuffer30D.status, 'unavailable');
+  assert.equal(state.telemetry.targetBuffer30D.value, null);
+  assert.equal(state.telemetry.maxSingleTx.status, 'unavailable');
+  assert.equal(state.telemetry.maxSingleTx.value, null);
+});

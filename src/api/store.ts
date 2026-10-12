@@ -161,7 +161,11 @@ class TreasuryStore {
       }
 
       const dto = await fetchTreasurySummary();
-      this.state.summary = adaptTreasurySummary(dto, this.state.catalog);
+      const adapted = adaptTreasurySummary(dto, this.state.catalog);
+      if (!adapted) {
+        throw new Error('Invalid treasury summary payload structure');
+      }
+      this.state.summary = adapted;
       this.state.errors.summary = null;
       this.state.lastUpdated.summary = Date.now();
       this.failureCounts.set(routeKey, 0);

@@ -177,6 +177,7 @@ test('adaptTreasurySummary resolves chain ID dynamically and formats metrics', (
   };
 
   const vm = adaptTreasurySummary(summaryPayload, catalogPayload);
+  assert.ok(vm, 'vm must not be null');
 
   assert.equal(vm.liquidUsdcFormatted, '$1,500.00');
   assert.equal(vm.usycVaultFormatted, '$5,000.00');
@@ -188,7 +189,37 @@ test('adaptTreasurySummary resolves chain ID dynamically and formats metrics', (
   assert.equal(vm.provenance.chainId, 'live');
 });
 
-test('adaptGatewayReserves and adaptEscalations tolerate empty and map correctly', () => {
+test('adaptTreasurySummary returns null on invalid or empty payloads (never zero-filled fallback)', () => {
+  assert.equal(adaptTreasurySummary(null), null);
+  assert.equal(adaptTreasurySummary({}), null);
+  assert.equal(adaptTreasurySummary({ success: false }), null);
+  assert.equal(adaptTreasurySummary({ success: true, data: {} }), null);
+});
+
+test('adaptReceiptsToSlabs handles missing amount as undefined (never $0.00)', () => {
+  const payload = {
+    success: true,
+    data: [
+      {
+        '@context': 'https://sakellarious.dev/schemas/audit-v5.jsonld',
+        type: 'AgentExecutionReceipt',
+        timestamp: '2026-10-05T12:00:00.000Z',
+        agentId: '0x2222',
+        action: 'JIT_VENDOR_PAYMENT',
+        // amountUsdc is omitted
+        txHash: '0x1111',
+      },
+    ],
+  };
+
+  const slabs = adaptReceiptsToSlabs(payload);
+  assert.equal(slabs.length, 1);
+  assert.equal(slabs[0].amount, undefined);
+  assert.equal(slabs[0].amountDisplay, undefined);
+  assert.equal(slabs[0].amountRaw, undefined);
+});
+
+test('adaptEscalations handles timelock derivation, missing createdAt, and missing amount', () => {
   assert.deepEqual(adaptGatewayReserves(null), []);
   assert.deepEqual(adaptEscalations(null), []);
 
@@ -201,21 +232,48 @@ test('adaptGatewayReserves and adaptEscalations tolerate empty and map correctly
         amount: 400,
         category: 'VENDOR',
         invoiceRef: 'INV-1',
-        reasoningHash: '0x0',
         reasoning: 'Bounty',
-        createdAt: 1728388800,
-        agentApproved: true,
-        ownerApproved: false,
+        createdAt: 1728388800, // seconds
         executed: false,
         cancelled: false,
         requiresSupervisorReason: 'Exceeds cap',
         txHash: '0xreal',
       },
+      {
+        txId: '0xdef',
+        vendor: '0x456',
+        // missing amount and createdAt
+        category: 'INFRASTRUCTURE',
+        invoiceRef: 'INV-2',
+        reasoningHash: '0x0',
+        reasoning: 'Buffer',
+        agentApproved: true,
+        ownerApproved: false,
+        executed: false,
+        cancelled: false,
+        requiresSupervisorReason: 'Risk check',
+        txHash: '0xnone',
+      },
     ],
   };
 
   const list = adaptEscalations(escalationsPayload);
-  assert.equal(list.length, 1);
+  assert.equal(list.length, 2);
+
+  // Item 1: Valid fields
+  assert.equal(list[0].amount, 400);
   assert.equal(list[0].amountFormatted, '$400.00');
-  assert.equal(list[0].txKind, 'unknown');
+  assert.equal(list[0].createdAtMs, 1728388800000);
+  // Timelock 3 days: 3 * 86400 * 1000 = 259200000 ms
+  assert.equal(list[0].expiresAtMs, 1728388800000 + (3 * 86400 * 1000));
+  assert.equal(list[0].escalationNonce, undefined); // never constant 1
+  assert.equal(list[0].timelockRemainingSeconds, undefined); // computed dynamically at render time, never stored constant
+
+  // Item 2: Missing fields -> undefined (never fabricated zeros or Date.now())
+  assert.equal(list[1].amount, undefined);
+  assert.equal(list[1].amountFormatted, undefined);
+  assert.equal(list[1].createdAtMs, undefined);
+  assert.equal(list[1].expiresAtMs, undefined); // missing createdAt -> no timelock
+  assert.equal(list[1].escalationNonce, undefined);
+  assert.equal(list[1].timelockRemainingSeconds, undefined);
 });

@@ -116,7 +116,7 @@ export function mapStoreToEngineState(
   now = Date.now()
 ): LiveEngineState {
   const summary = store.summary;
-  const summaryErr = store.errors.summary;
+  const summaryErr = store.errors.summary || (summary === null && store.lastUpdated.summary !== null ? new Error('Invalid summary payload') : null);
   const summaryUpdated = store.lastUpdated.summary;
 
   const { status: summaryStatus, ageMs: summaryAge } = resolveFieldStatus(
@@ -154,7 +154,7 @@ export function mapStoreToEngineState(
 
   // 2. Forecasting
   const prevForecasting = previousState?.forecasting;
-  const targetBuffer30D = summary ? summary.targetBuffer30D : (prevForecasting?.targetBuffer30D ?? 0);
+  const targetBuffer30D = summary?.targetBuffer30D ?? (prevForecasting?.targetBuffer30D ?? 0);
   
   // burnRate30D and projectedNetCashFlow have no backend endpoints -> 'static' with marker
   const burnRate30D = 18000.00;
@@ -194,43 +194,44 @@ export function mapStoreToEngineState(
     arbitrumUsdc: 0,
   };
   for (const chain of store.reserves) {
+    const bal = chain.usdcBalance ?? 0;
     if (chain.chainId === 5042002 || chain.isNativeSettlement) {
-      reserves.arcL1Usdc = chain.usdcBalance;
+      reserves.arcL1Usdc = bal;
     } else if (chain.chainId === 1) {
-      reserves.ethereumUsdc = chain.usdcBalance;
+      reserves.ethereumUsdc = bal;
     } else if (chain.chainId === 8453) {
-      reserves.baseUsdc = chain.usdcBalance;
+      reserves.baseUsdc = bal;
     } else if (chain.chainId === 42161) {
-      reserves.arbitrumUsdc = chain.usdcBalance;
+      reserves.arbitrumUsdc = bal;
     }
   }
 
   // 5. Escalations
   const escalations: EscalatedTransaction[] = store.escalations.map((esc) => ({
     id: esc.txId,
-    escalationNonce: esc.escalationNonce,
+    escalationNonce: esc.escalationNonce ?? 0,
     vendor: esc.vendor,
-    amount: esc.amount,
+    amount: esc.amount ?? 0,
     category: esc.category,
     invoiceRef: esc.invoiceRef,
     reasoning: esc.reasoning,
-    createdAt: esc.createdAtMs,
+    createdAt: esc.createdAtMs ?? 0,
     executed: esc.executed,
     cancelled: esc.cancelled,
-    timelockExpirySeconds: esc.timelockRemainingSeconds,
+    timelockExpirySeconds: esc.timelockRemainingSeconds ?? 0,
   }));
 
   // 6. Invoices (derived from audit receipts without fake records)
   const invoices: ProcessedInvoice[] = store.slabs.map((slab) => ({
     invoiceRef: slab.invoiceRef || slab.id,
     vendorAddress: slab.vendor || slab.counterparty,
-    amountUsdc: slab.amount,
+    amountUsdc: slab.amount ?? 0,
     category: slab.category,
     status: 'PAID',
     txHash: slab.txHash,
     reasoning: slab.action,
     gasCostUsdc: 0.00,
-    timestamp: new Date(slab.timestampUtc).getTime() || Date.now(),
+    timestamp: slab.timestampUtc ? new Date(slab.timestampUtc).getTime() : 0,
     euthynaFolio: slab.id,
   }));
 
@@ -296,8 +297,8 @@ export function mapStoreToEngineState(
         ageMs: summaryAge,
       },
       targetBuffer30D: {
-        value: summary ? summary.targetBuffer30D : null,
-        status: summaryStatus,
+        value: summary?.targetBuffer30D !== undefined ? summary.targetBuffer30D : null,
+        status: (summaryStatus === 'live' && summary?.targetBuffer30D === undefined) ? 'unavailable' : summaryStatus,
         provenance: 'live',
         ageMs: summaryAge,
       },
@@ -321,24 +322,24 @@ export function mapStoreToEngineState(
       },
       policyAddress: {
         value: summary?.policyWalletAddress || null,
-        status: summaryStatus,
+        status: summary?.policyWalletAddress ? summaryStatus : (summaryStatus === 'live' ? 'unavailable' : summaryStatus),
         provenance: 'live',
         ageMs: summaryAge,
       },
       maxSingleTx: {
-        value: summary ? summary.maxSingleTx : null,
-        status: summaryStatus,
+        value: summary?.maxSingleTx !== undefined ? summary.maxSingleTx : null,
+        status: (summaryStatus === 'live' && summary?.maxSingleTx === undefined) ? 'unavailable' : summaryStatus,
         provenance: 'live',
         ageMs: summaryAge,
       },
       escalations: {
-        value: store.escalations.length > 0 ? escalations : [],
+        value: escStatus === 'unavailable' ? null : escalations,
         status: escStatus,
         provenance: 'live',
         ageMs: escAge,
       },
       slabs: {
-        value: slabs,
+        value: slabsStatus === 'unavailable' ? null : slabs,
         status: slabsStatus,
         provenance: 'derived',
         ageMs: slabsAge,

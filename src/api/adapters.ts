@@ -202,26 +202,28 @@ export function adaptReceiptsToSlabs(payload: unknown): SlabViewModel[] {
   return sorted.map((receipt, index) => {
     const ordinalNum = String(index + 1).padStart(5, '0');
     const id = `EUTHYNA #${ordinalNum}`;
-    const amountRaw = formatRawUsdc(receipt.amountUsdc);
-    const amountDisplay = formatCurrencyUsdc(receipt.amountUsdc);
-    const timestampUtc = formatUtcTimestamp(receipt.timestamp);
-    const txKind = classifyTxKind(receipt.action, receipt.txHash);
-
     const isPassed = receipt.smartContractVerification?.singleTxCheckPassed ?? true;
     const status: 'VERIFIED' | 'PENDING' | 'HALTED' = isPassed ? 'VERIFIED' : 'PENDING';
 
-    const actionTag = (receipt.action || 'PAYOUT').replace(/_/g, ' ');
-    const policyTag = `POL-01 [${actionTag}]`;
+    const action = receipt.action ? String(receipt.action) : undefined;
+    const actionTag = action ? action.replace(/_/g, ' ') : undefined;
+    const policyTag = actionTag ? `POL-01 [${actionTag}]` : 'POL-01';
     const counterparty = receipt.vendorAddress || receipt.agentId || '0x0000000000000000000000000000000000000000';
+
+    const amount = typeof receipt.amountUsdc === 'number' ? receipt.amountUsdc : undefined;
+    const amountDisplay = amount !== undefined ? formatCurrencyUsdc(amount) : undefined;
+    const amountRaw = amount !== undefined ? formatRawUsdc(amount) : undefined;
+    const timestampUtc = receipt.timestamp ? formatUtcTimestamp(receipt.timestamp) : undefined;
+    const txKind = classifyTxKind(receipt.action, receipt.txHash);
 
     return {
       id,
       idSource: 'derived-ordinal',
-      amount: receipt.amountUsdc || 0,
+      amount,
       amountDisplay,
       amountRaw,
       asset: 'USDC // ARC L1',
-      action: receipt.action || 'PAYOUT',
+      action,
       invoiceRef: receipt.invoiceRef,
       vendor: receipt.vendorAddress,
       policyTag,
@@ -255,49 +257,9 @@ export function adaptReceiptsToSlabs(payload: unknown): SlabViewModel[] {
 export function adaptTreasurySummary(
   summaryPayload: unknown,
   catalogPayload?: unknown
-): TreasurySummaryViewModel {
-  const fallback: TreasurySummaryViewModel = {
-    liquidUsdc: 0,
-    usycVault: 0,
-    totalCapital: 0,
-    dailyLimit: 0,
-    spentToday: 0,
-    dailyLimitRemaining: 0,
-    maxSingleTx: 0,
-    targetBuffer30D: 0,
-    escalationNonce: 0,
-    categoryLimits: {},
-    categorySpentToday: {},
-    liquidUsdcFormatted: '$0.00',
-    usycVaultFormatted: '$0.00',
-    totalCapitalFormatted: '$0.00',
-    dailyLimitFormatted: '$0.00',
-    spentTodayFormatted: '$0.00',
-    dailyLimitRemainingFormatted: '$0.00',
-    policyWalletAddress: '0x0000000000000000000000000000000000000000',
-    agentAddress: '0x0000000000000000000000000000000000000000',
-    ownerAddress: '0x0000000000000000000000000000000000000000',
-    pendingEscalationsCount: 0,
-    shouldSweepYield: false,
-    sweepReason: 'No data',
-    networkName: 'Arc Testnet',
-    chainId: 5042002,
-    provenance: {
-      liquidUsdc: 'static',
-      usycVault: 'static',
-      totalCapital: 'static',
-      dailyLimit: 'static',
-      spentToday: 'static',
-      dailyLimitRemaining: 'static',
-      addresses: 'static',
-      pendingEscalationsCount: 'static',
-      networkName: 'static',
-      chainId: 'static',
-    },
-  };
-
+): TreasurySummaryViewModel | null {
   if (!isTreasurySummaryResponseDto(summaryPayload)) {
-    return fallback;
+    return null;
   }
 
   const d = summaryPayload.data;
@@ -318,6 +280,12 @@ export function adaptTreasurySummary(
     }
   }
 
+  const targetBuffer30D = typeof cs.targetBuffer30D === 'number' ? cs.targetBuffer30D : undefined;
+  const categoryLimits = pw.categoryLimits && isRecord(pw.categoryLimits) ? pw.categoryLimits : undefined;
+  const categorySpentToday = pw.categorySpentToday && isRecord(pw.categorySpentToday) ? pw.categorySpentToday : undefined;
+  const maxSingleTx = typeof pw.maxSingleTx === 'number' ? pw.maxSingleTx : undefined;
+  const escalationNonce = typeof pw.escalationNonce === 'number' ? pw.escalationNonce : undefined;
+
   return {
     liquidUsdc: b.arcLiquidUsdc,
     usycVault: b.arcUsycVault,
@@ -325,11 +293,11 @@ export function adaptTreasurySummary(
     dailyLimit: pw.dailyLimit,
     spentToday: pw.spentToday,
     dailyLimitRemaining: pw.dailyLimitRemaining,
-    maxSingleTx: pw.maxSingleTx,
-    targetBuffer30D: cs.targetBuffer30D || 0,
-    escalationNonce: pw.escalationNonce,
-    categoryLimits: pw.categoryLimits || {},
-    categorySpentToday: pw.categorySpentToday || {},
+    maxSingleTx,
+    targetBuffer30D,
+    escalationNonce,
+    categoryLimits,
+    categorySpentToday,
     liquidUsdcFormatted: formatCurrencyUsdc(b.arcLiquidUsdc),
     usycVaultFormatted: formatCurrencyUsdc(b.arcUsycVault),
     totalCapitalFormatted: formatCurrencyUsdc(b.totalArcCapital),
@@ -371,10 +339,10 @@ export function adaptGatewayReserves(payload: unknown): GatewayChainViewModel[] 
   return payload.data.chains.map((chain) => ({
     chainName: chain.chainName,
     chainId: chain.chainId,
-    usdcBalance: chain.usdcBalance || 0,
-    usycBalance: chain.usycBalance || 0,
-    usdcBalanceFormatted: formatCurrencyUsdc(chain.usdcBalance),
-    usycBalanceFormatted: formatCurrencyUsdc(chain.usycBalance),
+    usdcBalance: typeof chain.usdcBalance === 'number' ? chain.usdcBalance : undefined,
+    usycBalance: typeof chain.usycBalance === 'number' ? chain.usycBalance : undefined,
+    usdcBalanceFormatted: typeof chain.usdcBalance === 'number' ? formatCurrencyUsdc(chain.usdcBalance) : '$0.00',
+    usycBalanceFormatted: typeof chain.usycBalance === 'number' ? formatCurrencyUsdc(chain.usycBalance) : '$0.00',
     isNativeSettlement: chain.isNativeSettlement,
     provenance: 'live',
   }));
@@ -389,24 +357,43 @@ export function adaptEscalations(payload: unknown): EscalationViewModel[] {
     return [];
   }
 
-  return payload.data.map((item) => ({
-    txId: item.txId,
-    invoiceRef: item.invoiceRef,
-    vendor: item.vendor,
-    amount: item.amount || 0,
-    amountFormatted: formatCurrencyUsdc(item.amount),
-    category: item.category,
-    reasoning: item.reasoning,
-    requiresSupervisorReason: item.requiresSupervisorReason,
-    createdAtMs: typeof item.createdAt === 'number' ? (item.createdAt < 1e11 ? item.createdAt * 1000 : item.createdAt) : Date.now(),
-    createdAtUtc: formatUtcTimestamp(item.createdAt),
-    escalationNonce: 1,
-    timelockRemainingSeconds: 259200,
-    ownerApproved: item.ownerApproved,
-    executed: item.executed,
-    cancelled: item.cancelled,
-    txHash: item.txHash,
-    txKind: 'unknown',
-    provenance: 'live',
-  }));
+  return payload.data.map((item) => {
+    // Timelock expiration rule from ../backend-origin-main-ref/services/agentRunner.js:399:
+    // "if (now > pTx.createdAt + (3 * 86400)) { throw new Error("Escalated transaction expired"); }"
+    // Formula: expiresAtMs = createdAtMs + 3 * 86400 * 1000 tagged 'derived' only when createdAt is valid.
+    const createdAtMs = typeof item.createdAt === 'number'
+      ? (item.createdAt < 1e11 ? item.createdAt * 1000 : item.createdAt)
+      : undefined;
+
+    const expiresAtMs = createdAtMs !== undefined
+      ? createdAtMs + (3 * 86400 * 1000)
+      : undefined;
+
+    const amount = typeof item.amount === 'number' ? item.amount : undefined;
+
+    const amountFormatted = amount !== undefined ? formatCurrencyUsdc(amount) : undefined;
+    const createdAtUtc = typeof item.createdAt === 'number' ? formatUtcTimestamp(item.createdAt) : undefined;
+
+    return {
+      txId: item.txId,
+      invoiceRef: item.invoiceRef,
+      vendor: item.vendor,
+      amount,
+      amountFormatted,
+      category: item.category,
+      reasoning: item.reasoning,
+      requiresSupervisorReason: item.requiresSupervisorReason,
+      createdAtMs,
+      createdAtUtc,
+      expiresAtMs,
+      escalationNonce: undefined, // Not provided per-escalation in backend API
+      timelockRemainingSeconds: undefined, // Computed dynamically at render time from clock, never stored as constant
+      ownerApproved: item.ownerApproved,
+      executed: item.executed,
+      cancelled: item.cancelled,
+      txHash: item.txHash,
+      txKind: 'unknown',
+      provenance: 'live',
+    };
+  });
 }
