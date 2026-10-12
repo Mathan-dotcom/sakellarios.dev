@@ -15,7 +15,7 @@
  * 7. Leaves src/api 100% untouched.
  */
 
-import { existsSync, readdirSync, readFileSync, writeFileSync, rmSync, mkdtempSync } from 'fs';
+import { existsSync, readdirSync, readFileSync, writeFileSync, rmSync, mkdtempSync, symlinkSync } from 'fs';
 import { resolve, dirname, join } from 'path';
 import { tmpdir } from 'os';
 import { fileURLToPath } from 'url';
@@ -79,7 +79,16 @@ try {
     }
   }
 
-  // 2. Write package.json with "type": "module"
+  // 2. Link node_modules and write package.json with "type": "module"
+  const repoNodeModules = join(REPO_ROOT, 'node_modules');
+  if (existsSync(repoNodeModules)) {
+    try {
+      symlinkSync(repoNodeModules, join(tempDir, 'node_modules'), 'junction');
+    } catch {
+      // Fallback
+    }
+  }
+
   writeFileSync(
     join(tempDir, 'package.json'),
     JSON.stringify({ name: 'api-tests-runner', type: 'module' }, null, 2),
@@ -94,7 +103,11 @@ try {
     {
       cwd: tempDir,
       stdio: 'inherit',
-      env: { ...process.env, NODE_NO_WARNINGS: '1' }
+      env: {
+        ...process.env,
+        NODE_NO_WARNINGS: '1',
+        NODE_PATH: resolve(REPO_ROOT, 'node_modules'),
+      }
     }
   );
 
