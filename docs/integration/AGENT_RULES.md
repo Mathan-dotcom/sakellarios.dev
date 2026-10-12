@@ -10,7 +10,7 @@ These absolute rules govern all agent actions across the integration process.
 ## 2. Git & Source Control Segregation
 - **Never push:** Remote pushes (`git push`) are strictly forbidden. All work remains local.
 - **Backend & Protected Paths are Read-Only:** Zero edits, additions, deletions, renames, or formatting changes inside paths listed in `PROTECTED_PATHS.txt` (including `server.js`, `services/`, `ledger/`, `scripts/`, `test/`, `lib/`, `foundry.toml`, `.env.example`, `public/`, and documentation).
-- **Run Guard Script Before Every Commit:** Always execute `node tools/frontend-guard.mjs` and `node tools/check-no-mutation.mjs`. Never use `--no-verify`.
+- **Run Guard Script Before Every Commit:** Always execute `node tools/frontend-guard.mjs`, `node tools/check-no-mutation.mjs`, and `node tools/check-live-bundle.mjs`. Never use `--no-verify`.
 - **Pre-Integration Baseline:** Tag `pre-integration-baseline` serves as the immutable reference ref for all segregation audits.
 
 ## 3. Dependency & Environment Boundary

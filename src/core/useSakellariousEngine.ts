@@ -8,12 +8,11 @@
  * - When USE_LIVE_DATA is true: returns the live reactive engine bridge.
  */
 
-import { USE_LIVE_DATA } from '../api/store';
 import { useLegacySakellariousEngine } from './useLegacySakellariousEngine';
 import { useLiveSakellariousEngine } from './useLiveSakellariousEngine';
 
 export function useSakellariousEngine() {
-  if (USE_LIVE_DATA) {
+  if (import.meta.env.VITE_USE_LIVE_DATA === 'true') {
     return useLiveSakellariousEngine();
   }
   return useLegacySakellariousEngine();
