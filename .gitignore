@@ -3,4 +3,3 @@ out/
 cache/
 .env
 dist/
-_quarantined_legacy_ui/
