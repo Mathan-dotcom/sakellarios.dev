@@ -66,3 +66,13 @@ Reference Baseline Tag: `pre-integration-baseline`
   - Handle duplicate entries gracefully via deduplication.
   - Handle out-of-order records by sorting deterministically.
   - Never throw unhandled exceptions during data mapping; fallback gracefully to typed defaults.
+
+---
+
+## Decision D7: Flag-Off Segregation & Non-GET Proxy Rejection
+- **Context:** The legacy mock engine retains 6 client-side demonstration `POST` dispatchers for offline simulations.
+- **Decision:** Flag-off builds must never be served same-origin with the real backend.
+- **Proxy Invariant:** When `VITE_USE_LIVE_DATA` is active, the Vite development proxy forwards strictly GET requests and rejects all non-GET requests (`POST`, `PUT`, `DELETE`, `PATCH`) with HTTP 405 Method Not Allowed. When `VITE_USE_LIVE_DATA` is false, the proxy is disabled entirely so flag-off runs in zero-backend isolation.
+- **Live Bridge Invariant:** The live data bridge is strictly read-only and contains zero mutating network calls.
+
+
