@@ -40,14 +40,14 @@ node tools/mock-api.mjs
 # Terminal 2: Run Frontend Dev Server (Proxies /api -> :4010)
 $env:API_PROXY_TARGET = "http://localhost:4010"
 $env:VITE_USE_LIVE_DATA = "false"
-npm run dev
+npm run dev:ui
 ```
 
 ### Mode B: Live Mock Telemetry (UI Consuming Mock Data Store)
 ```powershell
 $env:API_PROXY_TARGET = "http://localhost:4010"
 $env:VITE_USE_LIVE_DATA = "true"
-npm run dev
+npm run dev:ui
 ```
 
 ### Mode C: Live Backend (Read-Only Proxy to localhost:4000)
@@ -55,7 +55,7 @@ npm run dev
 # Requires backend running on :4000. All non-GET requests rejected at proxy with 405.
 $env:API_PROXY_TARGET = "http://localhost:4000"
 $env:VITE_USE_LIVE_DATA = "true"
-npm run dev
+npm run dev:ui
 ```
 
 ### Running API Unit Tests (Zero-Dependency Isolated Test Runner)

@@ -4,6 +4,7 @@ These absolute rules govern all agent actions across the integration process.
 
 ## 1. Process & Runtime Management
 - **Never start, stop, or kill a process:** Background dev servers (e.g. Vite on `:5173`) and terminal sessions belong exclusively to the operator.
+- **Never run `npm run dev` or `npm start`:** Both scripts execute `node server.js` (backend runtime). The UI dev server is `npm run dev:ui`, and only the operator starts it.
 - **Never interactively prompt:** All verification and commands execute autonomously without blocking.
 
 ## 2. Git & Source Control Segregation

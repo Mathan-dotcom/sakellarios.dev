@@ -14,7 +14,7 @@ Integrates the production React + TypeScript + Three.js continuous treasury dash
 - **Route Impact:** `GET /`, `GET /frontend`, `GET /codex`, `GET /landing`, and `GET /supernova` in `server.js` now return **HTTP 404** (the Node server does not crash; API endpoints remain 100% unaffected). See [BACKEND_CHANGE_REQUESTS.md](file:///c:/Users/steph/Desktop/Git/Secullarius/docs/integration/BACKEND_CHANGE_REQUESTS.md).
 
 ## 3. Shared File Modifications
-- **`package.json` & `package-lock.json`:** Additive frontend dependencies only (`react`, `three`, `gsap`, etc.) and Vite scripts (`dev`, `build`, `server`, `preview`). Backend dependencies (`express`, `ethers`, `cors`, `dotenv`, `@openzeppelin/contracts`), runtime metadata (`main`, `type`), and scripts (`start`, `test`, `seed`, `report`, `deploy:arc`) are **100% identical** to `origin/main`.
+- **`package.json` & `package-lock.json`:** Additive frontend dependencies only (`react`, `three`, `gsap`, etc.). `dev` and `start` are unchanged (both run `node server.js`); UI scripts are `dev:ui`, `build:ui`, `preview:ui`. Backend dependencies (`express`, `ethers`, `cors`, `dotenv`, `@openzeppelin/contracts`), runtime metadata (`main`, `type`), and scripts (`start`, `dev`, `test`, `seed`, `report`, `deploy:arc`) are **100% identical** to `origin/main`.
 - **`index.html`:** Clean single-page Vite React entry root replacing the legacy monolithic HTML.
 - **`.gitignore`:** Single additive line (`dist/`) preserving clean build segregation.
 
@@ -23,7 +23,8 @@ Execution of `git diff origin/main integration/backend-wiring` across all protec
 
 ## 5. Development & Testing
 - **Run Isolated Mock Server:** `node tools/mock-api.mjs` (serves fixtures on `:4010`)
-- **Run Frontend Dev Server:** `npm run dev` (Vite on `http://localhost:5173`)
+- **Run Frontend Dev Server:** `npm run dev:ui` (Vite on `http://localhost:5173`)
+- **Run Build:** `npm run build:ui` (`tsc && vite build`)
 - **Run Verification Suite:** `npx tsc --noEmit && npx vite build && node tools/run-api-tests.mjs && node tools/frontend-guard.mjs`
 
 ## 6. Review Reference & Rollback

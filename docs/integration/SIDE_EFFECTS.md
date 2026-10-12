@@ -188,10 +188,10 @@ The service discovery index (`GET /api` in `server.js:80-99`) was verified again
 | `npm run report` | Backend | Executes `node scripts/exportAuditReport.js` to parse `ledger/euthyna.beancount`. | **Backend (Audit Tool)** |
 | `npm run deploy:arc` | Backend | Executes `node scripts/deploy.js` to broadcast contract deployments to Arc L1. | **Backend (On-Chain Mutation)** |
 | `npm start` | Shared/Backend | Executes `node server.js` (starts Express server on port 4000). | **Backend Runtime** |
-| `npm run dev` | Frontend (local branch) | Launches Vite development server on port 5173. *(Note: On origin/main, "dev" pointed to `node server.js`)*. | **Frontend Dev Server** |
-| `npm run server` | Frontend (local branch) | Alias to run `node server.js` on port 4000 without clashing with Vite dev. | **Backend Runtime** |
-| `npm run build` | Frontend (local branch) | Executes `tsc && vite build` to generate `dist/`. | **Frontend Build** |
-| `npm run preview` | Frontend (local branch) | Previews built bundle via `vite preview`. | **Frontend Preview** |
+| `npm run dev` | Shared/Backend | Executes `node server.js` (identical to origin/main). | **Backend Runtime** |
+| `npm run dev:ui` | Frontend (local branch) | Launches Vite development server on port 5173. Operator only. | **Frontend Dev Server** |
+| `npm run build:ui` | Frontend (local branch) | Executes `tsc && vite build` to generate `dist/`. Safe build-only command. | **Frontend Build** |
+| `npm run preview:ui` | Frontend (local branch) | Previews built bundle via `vite preview`. | **Frontend Preview** |
 
 ---
 

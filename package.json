@@ -14,11 +14,11 @@
     "seed": "node scripts/seedInvoices.js",
     "report": "node scripts/exportAuditReport.js",
     "deploy:arc": "node scripts/deploy.js",
-    "server": "node server.js",
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node server.js",
+    "dev:ui": "vite",
+    "build:ui": "tsc && vite build",
+    "preview:ui": "vite preview"
   },
   "repository": {
     "type": "git",

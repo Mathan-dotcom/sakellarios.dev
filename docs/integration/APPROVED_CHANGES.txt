@@ -21,6 +21,6 @@ public/js/yield-manager.js: Deprecated Express-served yield manager script remov
 
 # Approved Shared Modifications (4 paths)
 index.html: Vite entry replaces the old root page
-package.json: Additive frontend dependencies and Vite build scripts for React UI
+package.json: Additive frontend dependencies and namespaced UI scripts (dev:ui, build:ui, preview:ui) with backend dev/start unchanged
 package-lock.json: Lockfile resolution for additive frontend dependencies
 .gitignore: Ignore frontend build output directory dist/
