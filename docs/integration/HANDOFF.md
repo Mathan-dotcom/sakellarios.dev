@@ -29,6 +29,8 @@
 - **D4:** `txKind` classification: vendor payouts, sweeps, and redemptions = `simulated`; approvals = `unknown`.
 - **D5:** Chain ID dynamically resolved (default `5042002`, never hardcoded `42111`).
 - **D6:** Adapters tolerate missing, duplicate, and out-of-order entries without throwing.
+- **D7:** Flag-off segregation and non-GET proxy rejection.
+- **D8:** Proxy behavior & baseline segregation: The baseline proxied `/api` to `:4000` for everyone, so flag-off dev could show live backend data and its legacy POST buttons reached the real backend if it was running; C1 removed that. To see live data: `VITE_USE_LIVE_DATA=true`, with `API_PROXY_TARGET` defaulting to the mock on `:4010` (`:4000` only if set explicitly).
 
 ## 4. PowerShell Execution Commands
 
@@ -64,6 +66,10 @@ npm run dev:ui
 node tools/run-api-tests.mjs
 ```
 
-## 5. Open Questions for Phase 3
+## 5. Deployment & Build Notes
+- **Deployment Configuration:** No deployment manifests (e.g. Render, Railway, Docker, Procfile, Vercel) exist in the repository. The host dashboard setup is unknown, so ask the backend owner whether their host environment runs a `"build"` script.
+- **Package Lock Audit:** Running `npm uninstall ... --package-lock-only --dry-run` printed `"up to date"` and is inconclusive, so `framer-motion` and `webgl-fluid` stay for now.
+
+## 6. Open Questions for Phase 3
 1. Should `txKind: 'unknown'` display a warning icon or neutral badge in the Data Loom card slab?
 2. Shall Data Loom cards enforce a maximum rendered slab count (e.g. 50 items) to prevent WebGL memory saturation?

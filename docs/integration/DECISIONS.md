@@ -75,4 +75,10 @@ Reference Baseline Tag: `pre-integration-baseline`
 - **Proxy Invariant:** When `VITE_USE_LIVE_DATA` is active, the Vite development proxy forwards strictly GET requests and rejects all non-GET requests (`POST`, `PUT`, `DELETE`, `PATCH`) with HTTP 405 Method Not Allowed. When `VITE_USE_LIVE_DATA` is false, the proxy is disabled entirely so flag-off runs in zero-backend isolation.
 - **Live Bridge Invariant:** The live data bridge is strictly read-only and contains zero mutating network calls.
 
+---
+
+## Decision D8: Proxy Behavior & Baseline Segregation
+- **Context:** The pre-integration baseline unconditionally proxied `/api` to `:4000` for everyone, so flag-off dev could show live backend data and its legacy POST buttons reached the real backend if it was running; commit C1 removed that unsafe default.
+- **Decision:** Do not apply any proxy change to unconditionally re-expose `:4000`. To see live backend data, set `VITE_USE_LIVE_DATA=true`, with `API_PROXY_TARGET` defaulting safely to the mock on `:4010` (`:4000` only if explicitly set).
+
 

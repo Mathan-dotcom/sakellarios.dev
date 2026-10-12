@@ -27,7 +27,15 @@ Execution of `git diff origin/main integration/backend-wiring` across all protec
 - **Run Build:** `npm run build:ui` (`tsc && vite build`)
 - **Run Verification Suite:** `npx tsc --noEmit && npx vite build && node tools/run-api-tests.mjs && node tools/frontend-guard.mjs`
 
-## 6. Review Reference & Rollback
+## 6. Architectural Decisions & Proxy Policy (Decision D8)
+- **Baseline Proxy Removal:** The baseline proxied `/api` to `:4000` for everyone, so flag-off dev could show live backend data and its legacy POST buttons reached the real backend if it was running; commit C1 removed that.
+- **Current Live Data Access:** To see live backend data: `VITE_USE_LIVE_DATA=true`, with `API_PROXY_TARGET` defaulting safely to the mock on `:4010` (`:4000` only if set explicitly).
+
+## 7. Deployment & Dependency Notes
+- **Deployment Configuration:** No deployment manifests (e.g. Render, Railway, Docker, Procfile, Vercel) exist in the repository. The host dashboard setup is unknown, so ask the backend owner whether their host runs a `"build"` script.
+- **Dependency Audit:** Running `npm uninstall ... --package-lock-only --dry-run` printed `"up to date"` and was inconclusive, so `framer-motion` and `webgl-fluid` stay for now.
+
+## 8. Review Reference & Rollback
 - **Security & Route Observations:** [BACKEND_CHANGE_REQUESTS.md](file:///c:/Users/steph/Desktop/Git/Secullarius/docs/integration/BACKEND_CHANGE_REQUESTS.md)
 - **Detailed Deletion Log:** [DELETIONS.md](file:///c:/Users/steph/Desktop/Git/Secullarius/docs/integration/DELETIONS.md)
 - **Rollback Option:** Revert PR or restore pre-cleanup tag via `git restore --source=pre-cleanup --staged --worktree -- public Public`.
