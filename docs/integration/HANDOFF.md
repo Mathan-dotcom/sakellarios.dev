@@ -78,6 +78,64 @@ The mock server remains strictly GET-only across all modes; any non-GET request 
 - **Deployment Configuration:** No deployment manifests (e.g. Render, Railway, Docker, Procfile, Vercel) exist in the repository. The host dashboard setup is unknown, so ask the backend owner whether their host environment runs a `"build"` script.
 - **Package Lock Audit:** Running `npm uninstall ... --package-lock-only --dry-run` printed `"up to date"` and is inconclusive, so `framer-motion` and `webgl-fluid` stay for now.
 
-## 6. Open Questions for Phase 3
-1. Should `txKind: 'unknown'` display a warning icon or neutral badge in the Data Loom card slab?
-2. Shall Data Loom cards enforce a maximum rendered slab count (e.g. 50 items) to prevent WebGL memory saturation?
+## 6. Phase 3 Live Integration Summary (Steps 0–5)
+
+### What Changed
+- **Crash Sites Guarded (Step 0):** Pure formatting helper `src/core/safeFormat.ts` (`safeToFixed`, `safeToLocaleString`, `safeCurrency`, `safeSurplus`, `safeFormatNonce`) with 35 tests prevents throws and `undefined`/`NaN`/`Infinity` rendering on missing backend fields. Root error boundary `src/components/LiveErrorBoundary.tsx` traps unhandled render errors in live mode (`"LIVE DATA ERROR // see console"`), rendering children untouched when flag is off.
+- **Mock Failure Injections (Step 0b):** `tools/mock-api.mjs` reads `process.env.MOCK_MODE` (`empty | error500 | slow | malformed`) as the default mode when no `?mode=` query parameter is provided.
+- **Live Action Guards (Step 1):** In live mode, components read `{ ok: false, reason }` from engine action returns. Blocked actions in Viewport 04 (`approve`, `cancel`, `reset`) and Viewport 03 (`sweep`, `redeem`, `processInvoice`, `checkSanctions`) display `"READ-ONLY // NO BACKEND ACTION"`, never displaying fake seals, fake success, or `"BUFFER BALANCED"`. Tactical simulations are explicitly labeled `[SIMULATION ONLY // NO ON-CHAIN ACTION]` and do not mutate live data or fire `sakellarious:new-inscription`.
+- **Raw Table (Step 2):** In Viewport 05, `[ RAW TABLE ]` feeds from authoritative live receipts (`engine.slabs`) in live mode, displaying `"NO AUDIT RECEIPTS RECORDED // EMPTY RUNWAY"` when empty. Flag-off remains on legacy mock invoices.
+- **Data Loom Slabs (Step 3):** `EuthynaDataLoomCanvas` accepts `slabs?: SlabViewModel[]`. In live mode, renders up to the 18 newest live slabs (fewer renders fewer, zero renders empty-runway state) with scroll offset preserved across appends, textures properly disposed, and offscreen pause preserved. Text adheres strictly to view model provenance: `txKind: 'simulated'` -> `"SIMULATED SETTLEMENT // NO ON-CHAIN TX"`, `'unknown'` -> `"SETTLEMENT UNVERIFIED"`, `"IMMUTABLE ARC L1 PROOF"` only when `onchain`, IDs marked as derived ordinals, `"DOUBLE-ENTRY ARCHIVE // RECORDED"`, and `"CIRCLE PAYMASTER // SIMULATED SPONSORSHIP"`.
+- **Header Strip & Telemetry Markers (Step 4):** Live values displayed for connected endpoints; `[STATIC]` markers placed on unbacked fields (`blockHeight`, `liveHarvestYield`, `7D FORECAST OBLIGATIONS`); loading, stale, and unavailable badges reflect live telemetry status.
+- **Live Mode Zero-POST Invariant (Step 5):** Live mode contains no POST (the bundle check now proves it) and the flag-on bundle contains no mutating strings.
+
+### What is Static vs Live
+| Field | Status in Live Mode | Provenance |
+|---|---|---|
+| Liquid Buffer (`arcLiquidUsdc`) | Live (`/api/treasury/summary`) | Live |
+| USYC Vault (`arcUsycVault`) | Live (`/api/treasury/summary`) | Live |
+| Total Custody (`totalArcCapital`) | Live (`/api/treasury/summary`) | Live |
+| Operating Floor (`targetBuffer30D`) | Live (`/api/treasury/summary`) | Live |
+| Escalations (`escalations`) | Live (`/api/escalations/pending`) | Live |
+| Ledger Slabs / Receipts (`slabs`) | Live (`/api/ledger/receipts`) | Live / Derived |
+| Double-entry beancount (`rawBeancount`) | Live (`/api/ledger/beancount`) | Live |
+| Block Height (`blockHeight`) | `5042002 [STATIC]` | Static (no backend route) |
+| Harvest Yield (`liveHarvestYield`) | `+0.000000 [STATIC]` | Static (no backend route) |
+| 7D Obligations (`68,400 USDC`) | `68,400 USDC [STATIC]` | Static (no backend route) |
+
+### Read-Only Actions in Live Mode
+- `approveEscalation`: Returns `{ ok: false, reason: 'READ_ONLY_LIVE' }`. Blocked notice displayed; no seal applied.
+- `cancelEscalation`: Returns `{ ok: false, reason: 'READ_ONLY_LIVE' }`. Blocked notice displayed.
+- `resetEscalationDemo`: Blocked with `"READ-ONLY // NO BACKEND ACTION"`.
+- `sweepSurplusYield`: Returns `{ ok: false, reason: 'READ_ONLY_LIVE' }`. Blocked notice displayed.
+- `redeemYield`: Returns `{ ok: false, reason: 'READ_ONLY_LIVE' }`. Blocked notice displayed.
+- `processInvoice`: Returns `{ ok: false, reason: 'READ_ONLY_LIVE' }`. Blocked notice displayed; no inscription emitted.
+- `checkSanctions`: Returns `{ ok: false, reason: 'READ_ONLY_LIVE' }`. Blocked notice displayed.
+
+### How to Test
+1. **Flag Off (Legacy Baseline):**
+   ```powershell
+   $env:VITE_USE_LIVE_DATA = "false"
+   npm run dev:ui
+   ```
+2. **Flag On with Mock API:**
+   ```powershell
+   node tools/mock-api.mjs
+   $env:VITE_USE_LIVE_DATA = "true"
+   $env:API_PROXY_TARGET = "http://localhost:4010"
+   npm run dev:ui
+   ```
+3. **Flag On Failure Modes:**
+   ```powershell
+   $env:MOCK_MODE = "empty" # or "error500", "slow", "malformed"
+   node tools/mock-api.mjs
+   ```
+4. **Verification Suite:**
+   ```powershell
+   npx tsc --noEmit
+   node tools/run-api-tests.mjs
+   node tools/check-no-mutation.mjs
+   node tools/check-live-bundle.mjs
+   npx vite build
+   node tools/frontend-guard.mjs
+   ```

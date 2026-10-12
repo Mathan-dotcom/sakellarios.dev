@@ -8,6 +8,8 @@ export interface CockpitHeaderProps {
   engine: ReturnType<typeof useSakellariousEngine>;
 }
 
+const isLiveMode = import.meta.env.VITE_USE_LIVE_DATA === 'true';
+
 export const CockpitHeader: React.FC<CockpitHeaderProps> = React.memo(({ engine }) => {
   const { scrollTo } = useLenis();
   const { liveHarvestYield, blockHeight } = useMicroYieldTicker();
@@ -118,7 +120,7 @@ export const CockpitHeader: React.FC<CockpitHeaderProps> = React.memo(({ engine 
             </span>
             <span className="cell-muted" style={{ color: 'var(--void-text-muted)' }}>■</span>
             <span className="cell-muted" style={{ color: 'var(--void-text-muted)', fontVariantNumeric: 'tabular-nums' }}>
-              BLK #{safeToLocaleString(blockHeight, 'en-US', undefined, '5042002')}
+              BLK #{safeToLocaleString(blockHeight, 'en-US', undefined, '5042002')} {isLiveMode && <span style={{ color: 'var(--signal-amber)', fontWeight: 600 }}>[STATIC]</span>}
             </span>
           </div>
         </div>
@@ -178,8 +180,17 @@ export const CockpitHeader: React.FC<CockpitHeaderProps> = React.memo(({ engine 
             }}
           >
             <span style={{ fontWeight: 500 }}>
-              {safeToLocaleString(animLiquid, 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }, 'UNAVAILABLE')} USDC
+              {isLiveMode && engine.telemetry?.arcLiquidUsdc?.status === 'loading'
+                ? 'LOADING...'
+                : isLiveMode && (!hasLiquid || engine.telemetry?.arcLiquidUsdc?.status === 'unavailable')
+                ? 'UNAVAILABLE'
+                : `${safeToLocaleString(animLiquid, 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }, 'UNAVAILABLE')} USDC`}
             </span>
+            {isLiveMode && engine.telemetry?.arcLiquidUsdc?.status === 'stale' && (
+              <span style={{ fontSize: '8px', color: 'var(--signal-amber)', border: '1px solid var(--signal-amber)', padding: '1px 3px', marginLeft: '4px' }}>
+                STALE
+              </span>
+            )}
             <span className="cell-muted" style={{ fontSize: '9px', color: 'var(--void-text-muted)', marginLeft: '6px' }}>
               [FLOOR &gt;= 400K]
             </span>
@@ -225,8 +236,17 @@ export const CockpitHeader: React.FC<CockpitHeaderProps> = React.memo(({ engine 
             }}
           >
             <span style={{ fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>
-              {safeToLocaleString(animUsyc, 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }, 'UNAVAILABLE')} USYC
+              {isLiveMode && engine.telemetry?.arcUsycVault?.status === 'loading'
+                ? 'LOADING...'
+                : isLiveMode && (!hasUsyc || engine.telemetry?.arcUsycVault?.status === 'unavailable')
+                ? 'UNAVAILABLE'
+                : `${safeToLocaleString(animUsyc, 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }, 'UNAVAILABLE')} USYC`}
             </span>
+            {isLiveMode && engine.telemetry?.arcUsycVault?.status === 'stale' && (
+              <span style={{ fontSize: '8px', color: 'var(--signal-amber)', border: '1px solid var(--signal-amber)', padding: '1px 3px' }}>
+                STALE
+              </span>
+            )}
             <span
               style={{
                 fontSize: '9px',
@@ -235,7 +255,7 @@ export const CockpitHeader: React.FC<CockpitHeaderProps> = React.memo(({ engine 
                 fontVariantNumeric: 'tabular-nums'
               }}
             >
-              +{safeToFixed(liveHarvestYield, 6, '0.000000')}
+              +{safeToFixed(liveHarvestYield, 6, '0.000000')} {isLiveMode && '[STATIC]'}
             </span>
           </div>
         </div>
@@ -323,7 +343,7 @@ export const CockpitHeader: React.FC<CockpitHeaderProps> = React.memo(({ engine 
               fontWeight: 500
             }}
           >
-            EUTHYNA #00481 <span className="cell-muted" style={{ fontSize: '9px', color: 'var(--void-text-muted)' }}>[ARC L1]</span>
+            {isLiveMode ? (engine.slabs.length > 0 ? engine.slabs[0].id : 'EUTHYNA #00000') : 'EUTHYNA #00481'} <span className="cell-muted" style={{ fontSize: '9px', color: 'var(--void-text-muted)' }}>[ARC L1]</span>
           </div>
         </div>
       </div>

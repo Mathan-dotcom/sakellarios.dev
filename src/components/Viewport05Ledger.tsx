@@ -9,6 +9,8 @@ export interface Viewport05LedgerProps {
   engine: ReturnType<typeof useSakellariousEngine>;
 }
 
+const isLiveMode = import.meta.env.VITE_USE_LIVE_DATA === 'true';
+
 export const Viewport05Ledger: React.FC<Viewport05LedgerProps> = React.memo(({ engine }) => {
   const [viewMode, setViewMode] = useState<'loom' | 'table'>('loom');
   const [expandedFolio, setExpandedFolio] = useState<string | null>('EUTHYNA #00481');
@@ -184,7 +186,7 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
               color: 'var(--mineral-ink-muted)'
             }}
           >
-            TOTAL SETTLED CHAPTERS: {engine.invoices.length} // IMMUTABLE LEDGER
+            TOTAL SETTLED CHAPTERS: {isLiveMode ? engine.slabs.length : engine.invoices.length} // {isLiveMode ? 'LIVE LEDGER' : 'IMMUTABLE LEDGER'}
           </div>
 
           {/* SPATIAL LOOM / TABULAR REGISTER SWITCH */}
@@ -237,6 +239,7 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
         {viewMode === 'loom' ? (
           <EuthynaDataLoomCanvas
             invoices={engine.invoices}
+            slabs={isLiveMode ? engine.slabs : undefined}
             generateBeancount={generateBeancount}
             generateJsonLd={generateJsonLd}
           />
@@ -267,201 +270,443 @@ ${dateStr} * "Circle Paymaster Settlement" "${item.invoiceRef} - ${item.reasonin
 
             {/* ULTRA-DENSE ENGRAVED TABULAR ROWS */}
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {engine.invoices.map((item, idx) => {
-                const folioKey = item.euthynaFolio || `EUTHYNA #${String(idx).padStart(5, '0')}`;
-                const isExpanded = expandedFolio === folioKey;
-                const isTopHighlighted = idx === 0 && Boolean(newlyInscribedFolio);
-                const dateStr = new Date(item.timestamp).toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+              {isLiveMode ? (
+                engine.slabs.length === 0 ? (
+                  <div
+                    style={{
+                      padding: '48px 36px',
+                      textAlign: 'center',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '11px',
+                      letterSpacing: '0.14em',
+                      color: 'var(--mineral-ink-muted)',
+                      textTransform: 'uppercase'
+                    }}
+                  >
+                    NO AUDIT RECEIPTS RECORDED // EMPTY RUNWAY
+                  </div>
+                ) : (
+                  engine.slabs.map((slab, idx) => {
+                    const folioKey = slab.id;
+                    const isExpanded = expandedFolio === folioKey;
+                    const isTopHighlighted = idx === 0 && Boolean(newlyInscribedFolio);
+                    const slabAsInvoice: ProcessedInvoice = {
+                      invoiceRef: slab.invoiceRef || slab.id,
+                      vendorAddress: slab.counterparty,
+                      amountUsdc: slab.amount ?? 0,
+                      category: slab.category,
+                      status: 'PAID',
+                      txHash: slab.txHash,
+                      reasoning: slab.action,
+                      gasCostUsdc: 0.00,
+                      timestamp: slab.timestampUtc ? new Date(slab.timestampUtc).getTime() : 0,
+                      euthynaFolio: slab.id
+                    };
 
-                return (
-                  <div key={folioKey} style={{ display: 'flex', flexDirection: 'column' }}>
-                    {/* INTERACTIVE FULL-WIDTH CHAPTER ROW */}
-                    <div
-                      onClick={() => toggleRow(folioKey)}
-                      className="ledger-row ledger-card"
-                      data-invert-dark="true"
-                      data-datum="true"
-                      data-telemetry={`${folioKey} // ${safeToFixed(item.amountUsdc, 2)} USDC SETTLED`}
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: '160px 180px 1.4fr 160px 180px 1.2fr',
-                        padding: '18px 36px',
-                        borderBottom: '1px solid var(--mineral-hairline)',
-                        borderLeft: isTopHighlighted ? '3px solid var(--signal-verified)' : 'none',
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '11px',
-                        alignItems: 'center',
-                        backgroundColor: isTopHighlighted
-                          ? 'rgba(46, 90, 68, 0.22)'
-                          : isExpanded
-                          ? 'var(--mineral-recess)'
-                          : '#F7F5F0',
-                        transition: 'background-color 240ms var(--ease-mechanical), color 240ms var(--ease-mechanical)',
-                        cursor: 'pointer',
-                        userSelect: 'none'
-                      }}
-                    >
-                    {/* 1. EUTHYNA ID */}
-                    <div style={{ fontWeight: 500, letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span>{(isTopHighlighted && idx === 0 && scrambledCells.folio) ? scrambledCells.folio : (item.euthynaFolio || folioKey)}</span>
-                      {isTopHighlighted && (
+                    return (
+                      <div key={folioKey} style={{ display: 'flex', flexDirection: 'column' }}>
+                        {/* INTERACTIVE FULL-WIDTH CHAPTER ROW */}
+                        <div
+                          onClick={() => toggleRow(folioKey)}
+                          className="ledger-row ledger-card"
+                          data-invert-dark="true"
+                          data-datum="true"
+                          data-telemetry={`${folioKey} // ${safeToFixed(slab.amount, 2, 'UNAVAILABLE')} USDC SETTLED`}
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '160px 180px 1.4fr 160px 180px 1.2fr',
+                            padding: '18px 36px',
+                            borderBottom: '1px solid var(--mineral-hairline)',
+                            borderLeft: isTopHighlighted ? '3px solid var(--signal-verified)' : 'none',
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '11px',
+                            alignItems: 'center',
+                            backgroundColor: isTopHighlighted
+                              ? 'rgba(46, 90, 68, 0.22)'
+                              : isExpanded
+                              ? 'var(--mineral-recess)'
+                              : '#F7F5F0',
+                            transition: 'background-color 240ms var(--ease-mechanical), color 240ms var(--ease-mechanical)',
+                            cursor: 'pointer',
+                            userSelect: 'none'
+                          }}
+                        >
+                          {/* 1. EUTHYNA ID */}
+                          <div style={{ fontWeight: 500, letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span>{(isTopHighlighted && idx === 0 && scrambledCells.folio) ? scrambledCells.folio : slab.id}</span>
+                            {slab.idSource === 'derived-ordinal' && (
+                              <span style={{ fontSize: '8px', color: 'var(--mineral-ink-muted)', fontWeight: 400 }}>
+                                [ORDINAL]
+                              </span>
+                            )}
+                            {isTopHighlighted && (
+                              <span
+                                style={{
+                                  fontSize: '8px',
+                                  backgroundColor: 'var(--signal-verified)',
+                                  color: '#F2EFE9',
+                                  padding: '1px 5px',
+                                  fontWeight: 700
+                                }}
+                              >
+                                NEW
+                              </span>
+                            )}
+                          </div>
+
+                          {/* 2. UTC TIMESTAMP */}
+                          <div className="ledger-muted" style={{ fontSize: '10px', color: 'var(--mineral-ink-muted)' }}>
+                            {(isTopHighlighted && idx === 0 && scrambledCells.date) ? scrambledCells.date : (slab.timestampUtc || 'UNAVAILABLE')}
+                          </div>
+
+                          {/* 3. COUNTERPARTY & OPERATION */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontWeight: 500 }}>{slab.category}</span>
+                            <span className="ledger-muted" style={{ color: 'var(--mineral-ink-muted)' }}>//</span>
+                            <span className="ledger-muted" style={{ fontSize: '10px', color: 'var(--mineral-ink-muted)' }}>
+                              {slab.counterparty ? `${slab.counterparty.slice(0, 8)}...${slab.counterparty.slice(-6)}` : 'UNAVAILABLE'}
+                            </span>
+                          </div>
+
+                          {/* 4. VALUE */}
+                          <div style={{ fontWeight: 500 }}>
+                            {(isTopHighlighted && idx === 0 && scrambledCells.val)
+                              ? scrambledCells.val
+                              : (slab.amountDisplay || (slab.amount !== undefined ? safeCurrency(slab.amount, '$', { minimumFractionDigits: 2 }) : 'UNAVAILABLE'))}
+                          </div>
+
+                          {/* 5. BOUND CLEARED */}
+                          <div>
+                            <span
+                              style={{
+                                fontSize: '9px',
+                                color:
+                                  slab.txKind === 'simulated'
+                                    ? 'var(--signal-amber)'
+                                    : slab.txKind === 'unknown'
+                                    ? 'var(--mineral-ink-muted)'
+                                    : 'var(--signal-verified)',
+                                fontWeight: 500,
+                                letterSpacing: '0.06em'
+                              }}
+                            >
+                              {slab.txKind === 'simulated'
+                                ? 'SIMULATED SETTLEMENT // NO ON-CHAIN TX'
+                                : slab.txKind === 'unknown'
+                                ? 'SETTLEMENT UNVERIFIED'
+                                : slab.policyTag}
+                            </span>
+                          </div>
+
+                          {/* 6. ARC L1 TX & PAYMASTER PROOF */}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <span className="ledger-muted" style={{ fontSize: '10px', color: 'var(--mineral-ink-muted)' }}>
+                              {slab.txKind === 'onchain'
+                                ? `${slab.txHash.slice(0, 10)}... [IMMUTABLE ARC L1 PROOF]`
+                                : slab.txKind === 'simulated'
+                                ? `${slab.txHash.slice(0, 10)}... [SIMULATED]`
+                                : `${slab.txHash ? `${slab.txHash.slice(0, 10)}...` : '0x0000000000...'} [UNVERIFIED]`}
+                            </span>
+                            <span style={{ fontSize: '9px', color: isExpanded ? 'var(--signal-amber)' : 'var(--mineral-ink-muted)' }}>
+                              {isExpanded ? '[-] DRAWER' : '[+] PROOF'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* RECESSED #0A0A09 FORENSIC DRAWER DIRECTLY UNDERNEATH */}
+                        {isExpanded && (
+                          <div
+                            style={{
+                              backgroundColor: 'var(--void-bg)',
+                              color: 'var(--void-text-primary)',
+                              borderBottom: '1px solid var(--mineral-hairline)',
+                              padding: '24px 36px',
+                              display: 'grid',
+                              gridTemplateColumns: '1fr 1fr',
+                              gap: '24px',
+                              boxSizing: 'border-box'
+                            }}
+                          >
+                            {/* LEFT PANE: EXACT RAW BEANCOUNT DOUBLE-ENTRY INSCRIPTION */}
+                            <div
+                              className="ledger-card"
+                              style={{
+                                border: '1px solid var(--void-hairline)',
+                                backgroundColor: 'var(--void-surface)',
+                                padding: '18px'
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontFamily: 'var(--font-mono)',
+                                  fontSize: '9px',
+                                  letterSpacing: '0.16em',
+                                  color: 'var(--signal-amber)',
+                                  marginBottom: '12px',
+                                  borderBottom: '1px solid var(--void-hairline)',
+                                  paddingBottom: '6px',
+                                  display: 'flex',
+                                  justifyContent: 'space-between'
+                                }}
+                              >
+                                <span>// RAW BEANCOUNT DOUBLE-ENTRY RECORD</span>
+                                <span>UTF-8 // RFC-EUTHYNA</span>
+                              </div>
+                              <pre
+                                style={{
+                                  fontFamily: 'var(--font-mono)',
+                                  fontSize: '11px',
+                                  lineHeight: 1.5,
+                                  color: 'var(--void-text-primary)',
+                                  whiteSpace: 'pre-wrap',
+                                  margin: 0
+                                }}
+                              >
+                                {engine.audit.rawBeancount || generateBeancount(slabAsInvoice)}
+                              </pre>
+                            </div>
+
+                            {/* RIGHT PANE: EXACT SIGNED JSON-LD CRYPTOGRAPHIC RECEIPT */}
+                            <div
+                              className="ledger-card"
+                              style={{
+                                border: '1px solid var(--void-hairline)',
+                                backgroundColor: 'var(--void-surface)',
+                                padding: '18px'
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontFamily: 'var(--font-mono)',
+                                  fontSize: '9px',
+                                  letterSpacing: '0.16em',
+                                  color: 'var(--signal-verified)',
+                                  marginBottom: '12px',
+                                  borderBottom: '1px solid var(--void-hairline)',
+                                  paddingBottom: '6px',
+                                  display: 'flex',
+                                  justifyContent: 'space-between'
+                                }}
+                              >
+                                <span>// SIGNED JSON-LD ATTESTATION</span>
+                                <span>SCHEMA.ORG / FINANCIAL_TRANSACTION</span>
+                              </div>
+                              <pre
+                                style={{
+                                  fontFamily: 'var(--font-mono)',
+                                  fontSize: '11px',
+                                  lineHeight: 1.5,
+                                  color: 'rgba(242, 239, 233, 0.88)',
+                                  whiteSpace: 'pre-wrap',
+                                  margin: 0
+                                }}
+                              >
+                                {generateJsonLd(slabAsInvoice)}
+                              </pre>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                )
+              ) : (
+                engine.invoices.map((item, idx) => {
+                  const folioKey = item.euthynaFolio || `EUTHYNA #${String(idx).padStart(5, '0')}`;
+                  const isExpanded = expandedFolio === folioKey;
+                  const isTopHighlighted = idx === 0 && Boolean(newlyInscribedFolio);
+                  const dateStr = new Date(item.timestamp).toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+
+                  return (
+                    <div key={folioKey} style={{ display: 'flex', flexDirection: 'column' }}>
+                      {/* INTERACTIVE FULL-WIDTH CHAPTER ROW */}
+                      <div
+                        onClick={() => toggleRow(folioKey)}
+                        className="ledger-row ledger-card"
+                        data-invert-dark="true"
+                        data-datum="true"
+                        data-telemetry={`${folioKey} // ${safeToFixed(item.amountUsdc, 2)} USDC SETTLED`}
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '160px 180px 1.4fr 160px 180px 1.2fr',
+                          padding: '18px 36px',
+                          borderBottom: '1px solid var(--mineral-hairline)',
+                          borderLeft: isTopHighlighted ? '3px solid var(--signal-verified)' : 'none',
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '11px',
+                          alignItems: 'center',
+                          backgroundColor: isTopHighlighted
+                            ? 'rgba(46, 90, 68, 0.22)'
+                            : isExpanded
+                            ? 'var(--mineral-recess)'
+                            : '#F7F5F0',
+                          transition: 'background-color 240ms var(--ease-mechanical), color 240ms var(--ease-mechanical)',
+                          cursor: 'pointer',
+                          userSelect: 'none'
+                        }}
+                      >
+                      {/* 1. EUTHYNA ID */}
+                      <div style={{ fontWeight: 500, letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span>{(isTopHighlighted && idx === 0 && scrambledCells.folio) ? scrambledCells.folio : (item.euthynaFolio || folioKey)}</span>
+                        {isTopHighlighted && (
+                          <span
+                            style={{
+                              fontSize: '8px',
+                              backgroundColor: 'var(--signal-verified)',
+                              color: '#F2EFE9',
+                              padding: '1px 5px',
+                              fontWeight: 700
+                            }}
+                          >
+                            NEW
+                          </span>
+                        )}
+                      </div>
+
+                      {/* 2. UTC TIMESTAMP */}
+                      <div className="ledger-muted" style={{ fontSize: '10px', color: 'var(--mineral-ink-muted)' }}>
+                        {(isTopHighlighted && idx === 0 && scrambledCells.date) ? scrambledCells.date : dateStr}
+                      </div>
+
+                      {/* 3. COUNTERPARTY & OPERATION */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontWeight: 500 }}>{item.category}</span>
+                        <span className="ledger-muted" style={{ color: 'var(--mineral-ink-muted)' }}>//</span>
+                        <span className="ledger-muted" style={{ fontSize: '10px', color: 'var(--mineral-ink-muted)' }}>
+                          {item.vendorAddress.slice(0, 8)}...{item.vendorAddress.slice(-6)}
+                        </span>
+                      </div>
+
+                      {/* 4. VALUE */}
+                      <div style={{ fontWeight: 500 }}>
+                        {(isTopHighlighted && idx === 0 && scrambledCells.val) ? scrambledCells.val : safeCurrency(item.amountUsdc, '$', { minimumFractionDigits: 2 })}
+                      </div>
+
+                      {/* 5. BOUND CLEARED */}
+                      <div>
                         <span
                           style={{
-                            fontSize: '8px',
-                            backgroundColor: 'var(--signal-verified)',
-                            color: '#F2EFE9',
-                            padding: '1px 5px',
-                            fontWeight: 700
+                            fontSize: '9px',
+                            color: item.category === 'YIELD_SWEEP' ? 'var(--signal-amber)' : 'var(--signal-verified)',
+                            fontWeight: 500,
+                            letterSpacing: '0.06em'
                           }}
                         >
-                          NEW
+                          {item.category === 'YIELD_SWEEP' ? 'POL-01 [SWEEP]' : 'POL-02 & POL-03 [PASSED]'}
                         </span>
-                      )}
+                      </div>
+
+                      {/* 6. ARC L1 TX & PAYMASTER PROOF */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span className="ledger-muted" style={{ fontSize: '10px', color: 'var(--mineral-ink-muted)' }}>
+                          {(isTopHighlighted && idx === 0 && scrambledCells.hash)
+                            ? `${scrambledCells.hash} [0.00 GAS]`
+                            : `${item.txHash ? `${item.txHash.slice(0, 10)}...` : '0xb08127...'} [0.00 GAS]`}
+                        </span>
+                        <span style={{ fontSize: '9px', color: isExpanded ? 'var(--signal-amber)' : 'var(--mineral-ink-muted)' }}>
+                          {isExpanded ? '[-] DRAWER' : '[+] PROOF'}
+                        </span>
+                      </div>
                     </div>
 
-                    {/* 2. UTC TIMESTAMP */}
-                    <div className="ledger-muted" style={{ fontSize: '10px', color: 'var(--mineral-ink-muted)' }}>
-                      {(isTopHighlighted && idx === 0 && scrambledCells.date) ? scrambledCells.date : dateStr}
-                    </div>
-
-                    {/* 3. COUNTERPARTY & OPERATION */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontWeight: 500 }}>{item.category}</span>
-                      <span className="ledger-muted" style={{ color: 'var(--mineral-ink-muted)' }}>//</span>
-                      <span className="ledger-muted" style={{ fontSize: '10px', color: 'var(--mineral-ink-muted)' }}>
-                        {item.vendorAddress.slice(0, 8)}...{item.vendorAddress.slice(-6)}
-                      </span>
-                    </div>
-
-                    {/* 4. VALUE */}
-                    <div style={{ fontWeight: 500 }}>
-                      {(isTopHighlighted && idx === 0 && scrambledCells.val) ? scrambledCells.val : safeCurrency(item.amountUsdc, '$', { minimumFractionDigits: 2 })}
-                    </div>
-
-                    {/* 5. BOUND CLEARED */}
-                    <div>
-                      <span
+                    {/* RECESSED #0A0A09 FORENSIC DRAWER DIRECTLY UNDERNEATH */}
+                    {isExpanded && (
+                      <div
                         style={{
-                          fontSize: '9px',
-                          color: item.category === 'YIELD_SWEEP' ? 'var(--signal-amber)' : 'var(--signal-verified)',
-                          fontWeight: 500,
-                          letterSpacing: '0.06em'
+                          backgroundColor: 'var(--void-bg)',
+                          color: 'var(--void-text-primary)',
+                          borderBottom: '1px solid var(--mineral-hairline)',
+                          padding: '24px 36px',
+                          display: 'grid',
+                          gridTemplateColumns: '1fr 1fr',
+                          gap: '24px',
+                          boxSizing: 'border-box'
                         }}
                       >
-                        {item.category === 'YIELD_SWEEP' ? 'POL-01 [SWEEP]' : 'POL-02 & POL-03 [PASSED]'}
-                      </span>
-                    </div>
+                        {/* LEFT PANE: EXACT RAW BEANCOUNT DOUBLE-ENTRY INSCRIPTION */}
+                        <div
+                          className="ledger-card"
+                          style={{
+                            border: '1px solid var(--void-hairline)',
+                            backgroundColor: 'var(--void-surface)',
+                            padding: '18px'
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontFamily: 'var(--font-mono)',
+                              fontSize: '9px',
+                              letterSpacing: '0.16em',
+                              color: 'var(--signal-amber)',
+                              marginBottom: '12px',
+                              borderBottom: '1px solid var(--void-hairline)',
+                              paddingBottom: '6px',
+                              display: 'flex',
+                              justifyContent: 'space-between'
+                            }}
+                          >
+                            <span>// RAW BEANCOUNT DOUBLE-ENTRY RECORD</span>
+                            <span>UTF-8 // RFC-EUTHYNA</span>
+                          </div>
+                          <pre
+                            style={{
+                              fontFamily: 'var(--font-mono)',
+                              fontSize: '11px',
+                              lineHeight: 1.5,
+                              color: 'var(--void-text-primary)',
+                              whiteSpace: 'pre-wrap',
+                              margin: 0
+                            }}
+                          >
+                            {generateBeancount(item)}
+                          </pre>
+                        </div>
 
-                    {/* 6. ARC L1 TX & PAYMASTER PROOF */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span className="ledger-muted" style={{ fontSize: '10px', color: 'var(--mineral-ink-muted)' }}>
-                        {(isTopHighlighted && idx === 0 && scrambledCells.hash)
-                          ? `${scrambledCells.hash} [0.00 GAS]`
-                          : `${item.txHash ? `${item.txHash.slice(0, 10)}...` : '0xb08127...'} [0.00 GAS]`}
-                      </span>
-                      <span style={{ fontSize: '9px', color: isExpanded ? 'var(--signal-amber)' : 'var(--mineral-ink-muted)' }}>
-                        {isExpanded ? '[-] DRAWER' : '[+] PROOF'}
-                      </span>
-                    </div>
+                        {/* RIGHT PANE: EXACT SIGNED JSON-LD CRYPTOGRAPHIC RECEIPT */}
+                        <div
+                          className="ledger-card"
+                          style={{
+                            border: '1px solid var(--void-hairline)',
+                            backgroundColor: 'var(--void-surface)',
+                            padding: '18px'
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontFamily: 'var(--font-mono)',
+                              fontSize: '9px',
+                              letterSpacing: '0.16em',
+                              color: 'var(--signal-verified)',
+                              marginBottom: '12px',
+                              borderBottom: '1px solid var(--void-hairline)',
+                              paddingBottom: '6px',
+                              display: 'flex',
+                              justifyContent: 'space-between'
+                            }}
+                          >
+                            <span>// SIGNED JSON-LD ATTESTATION</span>
+                            <span>SCHEMA.ORG / FINANCIAL_TRANSACTION</span>
+                          </div>
+                          <pre
+                            style={{
+                              fontFamily: 'var(--font-mono)',
+                              fontSize: '11px',
+                              lineHeight: 1.5,
+                              color: 'rgba(242, 239, 233, 0.88)',
+                              whiteSpace: 'pre-wrap',
+                              margin: 0
+                            }}
+                          >
+                            {generateJsonLd(item)}
+                          </pre>
+                        </div>
+                      </div>
+                    )}
                   </div>
-
-                  {/* RECESSED #0A0A09 FORENSIC DRAWER DIRECTLY UNDERNEATH */}
-                  {isExpanded && (
-                    <div
-                      style={{
-                        backgroundColor: 'var(--void-bg)',
-                        color: 'var(--void-text-primary)',
-                        borderBottom: '1px solid var(--mineral-hairline)',
-                        padding: '24px 36px',
-                        display: 'grid',
-                        gridTemplateColumns: '1fr 1fr',
-                        gap: '24px',
-                        boxSizing: 'border-box'
-                      }}
-                    >
-                      {/* LEFT PANE: EXACT RAW BEANCOUNT DOUBLE-ENTRY INSCRIPTION */}
-                      <div
-                        className="ledger-card"
-                        style={{
-                          border: '1px solid var(--void-hairline)',
-                          backgroundColor: 'var(--void-surface)',
-                          padding: '18px'
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: '9px',
-                            letterSpacing: '0.16em',
-                            color: 'var(--signal-amber)',
-                            marginBottom: '12px',
-                            borderBottom: '1px solid var(--void-hairline)',
-                            paddingBottom: '6px',
-                            display: 'flex',
-                            justifyContent: 'space-between'
-                          }}
-                        >
-                          <span>// RAW BEANCOUNT DOUBLE-ENTRY RECORD</span>
-                          <span>UTF-8 // RFC-EUTHYNA</span>
-                        </div>
-                        <pre
-                          style={{
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: '11px',
-                            lineHeight: 1.5,
-                            color: 'var(--void-text-primary)',
-                            whiteSpace: 'pre-wrap',
-                            margin: 0
-                          }}
-                        >
-                          {generateBeancount(item)}
-                        </pre>
-                      </div>
-
-                      {/* RIGHT PANE: EXACT SIGNED JSON-LD CRYPTOGRAPHIC RECEIPT */}
-                      <div
-                        className="ledger-card"
-                        style={{
-                          border: '1px solid var(--void-hairline)',
-                          backgroundColor: 'var(--void-surface)',
-                          padding: '18px'
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: '9px',
-                            letterSpacing: '0.16em',
-                            color: 'var(--signal-verified)',
-                            marginBottom: '12px',
-                            borderBottom: '1px solid var(--void-hairline)',
-                            paddingBottom: '6px',
-                            display: 'flex',
-                            justifyContent: 'space-between'
-                          }}
-                        >
-                          <span>// SIGNED JSON-LD ATTESTATION</span>
-                          <span>SCHEMA.ORG / FINANCIAL_TRANSACTION</span>
-                        </div>
-                        <pre
-                          style={{
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: '11px',
-                            lineHeight: 1.5,
-                            color: 'rgba(242, 239, 233, 0.88)',
-                            whiteSpace: 'pre-wrap',
-                            margin: 0
-                          }}
-                        >
-                          {generateJsonLd(item)}
-                        </pre>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                );
+              })
+            )}
+            </div>
         </>
       )}
       </div>

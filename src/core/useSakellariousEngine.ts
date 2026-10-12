@@ -11,11 +11,11 @@
 import { useLegacySakellariousEngine } from './useLegacySakellariousEngine';
 import { useLiveSakellariousEngine } from './useLiveSakellariousEngine';
 
-export function useSakellariousEngine() {
+export function useSakellariousEngine(): ReturnType<typeof useLiveSakellariousEngine> {
   if (import.meta.env.VITE_USE_LIVE_DATA === 'true') {
     return useLiveSakellariousEngine();
   }
-  return useLegacySakellariousEngine();
+  return useLegacySakellariousEngine() as unknown as ReturnType<typeof useLiveSakellariousEngine>;
 }
 
 export * from './useLegacySakellariousEngine';

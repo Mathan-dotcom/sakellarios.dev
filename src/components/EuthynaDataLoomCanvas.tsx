@@ -2,10 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import gsap from 'gsap';
 import { ProcessedInvoice } from '../core/useSakellariousEngine';
-import { safeCurrency } from '../core/safeFormat';
+import { safeCurrency, safeToFixed } from '../core/safeFormat';
+import type { SlabViewModel, TxKind } from '../api/types';
+
+const isLiveMode = import.meta.env.VITE_USE_LIVE_DATA === 'true';
 
 export interface EuthynaDataLoomCanvasProps {
-  invoices: ProcessedInvoice[];
+  invoices?: ProcessedInvoice[];
+  slabs?: SlabViewModel[];
   generateBeancount?: (item: ProcessedInvoice) => string;
   generateJsonLd?: (item: ProcessedInvoice) => string;
   onVelocityChange?: (velocity: number) => void;
@@ -225,10 +229,12 @@ interface SlabRecord {
   folio: string;
   category: string;
   vendor: string;
-  amount: number;
+  amount: number | undefined;
   tx: string;
   timestamp: string;
   isSweep: boolean;
+  txKind?: TxKind;
+  isDerivedOrdinal?: boolean;
 }
 
 const DEFAULT_SLAB_DATA: SlabRecord[] = [
@@ -335,7 +341,7 @@ function drawSlabTexture(
   ctx.textAlign = 'left';
   ctx.font = 'bold 20px "JetBrains Mono", monospace';
   ctx.fillStyle = '#141413';
-  ctx.fillText(record.folio, 34, 48);
+  ctx.fillText(record.isDerivedOrdinal ? `${record.folio} [ORDINAL]` : record.folio, 34, 48);
 
   // Policy Badge
   const badgeWidth = record.isSweep ? 144 : 190;
@@ -352,8 +358,19 @@ function drawSlabTexture(
   ctx.fillText(record.timestamp, 34, 138);
 
   ctx.font = '12px "JetBrains Mono", monospace';
-  ctx.fillStyle = 'rgba(20, 20, 19, 0.45)';
-  ctx.fillText('IMMUTABLE ARC L1 PROOF', 34, 172);
+  if (record.txKind === 'onchain') {
+    ctx.fillStyle = '#2E5A44';
+    ctx.fillText('IMMUTABLE ARC L1 PROOF', 34, 172);
+  } else if (record.txKind === 'simulated') {
+    ctx.fillStyle = 'rgba(20, 20, 19, 0.45)';
+    ctx.fillText('SIMULATED SETTLEMENT // NO ON-CHAIN TX', 34, 172);
+  } else if (record.txKind === 'unknown' || isLiveMode) {
+    ctx.fillStyle = 'rgba(20, 20, 19, 0.45)';
+    ctx.fillText('SETTLEMENT UNVERIFIED', 34, 172);
+  } else {
+    ctx.fillStyle = '#2E5A44';
+    ctx.fillText('IMMUTABLE ARC L1 PROOF', 34, 172);
+  }
 
   // --------------------------------------------------------------------------
   // COLUMN 2: CATEGORY, COUNTERPARTY & TRANSACTION HASH
@@ -375,7 +392,11 @@ function drawSlabTexture(
 
   ctx.font = '12px "JetBrains Mono", monospace';
   ctx.fillStyle = 'rgba(20, 20, 19, 0.45)';
-  ctx.fillText('CIRCLE PAYMASTER // 0.00 USDC GASLESS SPONSORSHIP', 342, 172);
+  if (record.txKind === 'simulated') {
+    ctx.fillText('CIRCLE PAYMASTER // SIMULATED SPONSORSHIP', 342, 172);
+  } else {
+    ctx.fillText('CIRCLE PAYMASTER // 0.00 USDC GASLESS SPONSORSHIP', 342, 172);
+  }
 
   // --------------------------------------------------------------------------
   // COLUMN 3: MONUMENTAL SYNE NUMERAL & PROOF STATUS
@@ -392,7 +413,11 @@ function drawSlabTexture(
 
   ctx.font = 'bold 12px "JetBrains Mono", monospace';
   ctx.fillStyle = '#141413';
-  ctx.fillText('DOUBLE-ENTRY ARCHIVE // VERIFIED', w - 34, 172);
+  if (isLiveMode || (record.txKind && record.txKind !== 'onchain')) {
+    ctx.fillText('DOUBLE-ENTRY ARCHIVE // RECORDED', w - 34, 172);
+  } else {
+    ctx.fillText('DOUBLE-ENTRY ARCHIVE // VERIFIED', w - 34, 172);
+  }
   ctx.textAlign = 'left';
 
   return canvas;
@@ -410,12 +435,14 @@ function createTexture(source: HTMLCanvasElement): THREE.Texture {
 
 export const EuthynaDataLoomCanvas: React.FC<EuthynaDataLoomCanvasProps> = React.memo(({
   invoices,
+  slabs,
   onVelocityChange,
   onFallbackToTable,
   isHalted,
   gap
 }) => {
   const stageRef = useRef<HTMLDivElement>(null);
+  const offsetRef = useRef<number | null>(null);
   const [hudVelocity, setHudVelocity] = useState(0);
 
   useEffect(() => {
@@ -468,25 +495,46 @@ export const EuthynaDataLoomCanvas: React.FC<EuthynaDataLoomCanvasProps> = React
       uGlint:     { value: 0.18 },
     };
 
-    // 3. Assemble 18 Distinct Records
-    const slabRecords: SlabRecord[] = Array.from({ length: SLAB_COUNT }, (_, i) => {
-      if (invoices && invoices[i]) {
-        const inv = invoices[i];
-        const dateStr = new Date(inv.timestamp).toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
-        return {
-          folio: inv.euthynaFolio || `EUTHYNA #${String(i).padStart(5, '0')}`,
-          category: inv.category,
-          vendor: inv.vendorAddress,
-          amount: inv.amountUsdc,
-          tx: inv.txHash ? `${inv.txHash.slice(0, 18)}...` : '0xb08127020a...',
-          timestamp: dateStr,
-          isSweep: inv.category === 'YIELD_SWEEP'
-        };
-      }
-      return DEFAULT_SLAB_DATA[i % DEFAULT_SLAB_DATA.length];
-    });
+    // 3. Assemble Slabs (Flag off: today's 18 mock slabs; Flag on: newest 18 live slabs)
+    const isLiveMode = import.meta.env.VITE_USE_LIVE_DATA === 'true';
 
-    // 4. One Shared BufferGeometry for all 18 ribbons
+    let slabRecords: SlabRecord[] = [];
+    if (isLiveMode) {
+      const sourceSlabs = slabs || [];
+      const newest18 = sourceSlabs.slice(-18);
+      slabRecords = newest18.map((s) => ({
+        folio: s.id,
+        category: s.category,
+        vendor: s.vendor || s.counterparty || '0x0000000000000000000000000000000000000000',
+        amount: s.amount,
+        tx: s.txHash ? `${s.txHash.slice(0, 18)}...` : '0x0000000000...',
+        timestamp: s.timestampUtc || '0000-00-00 00:00:00 UTC',
+        isSweep: s.category === 'YIELD_SWEEP',
+        txKind: s.txKind,
+        isDerivedOrdinal: s.idSource === 'derived-ordinal',
+      }));
+    } else {
+      slabRecords = Array.from({ length: SLAB_COUNT }, (_, i) => {
+        if (invoices && invoices[i]) {
+          const inv = invoices[i];
+          const dateStr = new Date(inv.timestamp).toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+          return {
+            folio: inv.euthynaFolio || `EUTHYNA #${String(i).padStart(5, '0')}`,
+            category: inv.category,
+            vendor: inv.vendorAddress,
+            amount: inv.amountUsdc,
+            tx: inv.txHash ? `${inv.txHash.slice(0, 18)}...` : '0xb08127020a...',
+            timestamp: dateStr,
+            isSweep: inv.category === 'YIELD_SWEEP',
+          };
+        }
+        return DEFAULT_SLAB_DATA[i % DEFAULT_SLAB_DATA.length];
+      });
+    }
+
+    const activeCount = slabRecords.length;
+
+    // 4. One Shared BufferGeometry for ribbons
     const geometry = buildRibbonGeometry(
       CONFIG.slabWidth,
       CONFIG.slabHeight,
@@ -494,20 +542,21 @@ export const EuthynaDataLoomCanvas: React.FC<EuthynaDataLoomCanvasProps> = React
       CONFIG.segments
     );
 
-    // 5. Build 18 Meshes (Each with unique material, texture & seed)
+    // 5. Build Meshes (Each with unique material, texture & seed)
     const cards: { mesh: THREE.Mesh; baseX: number }[] = [];
     const materials: THREE.ShaderMaterial[] = [];
     const textures: THREE.Texture[] = [];
 
     const effectiveGap = typeof gap === 'number' ? gap : CONFIG.defaultGap;
     const pitch = CONFIG.slabWidth + effectiveGap;
-    const stripSpan = SLAB_COUNT * pitch;
+    const stripSpan = Math.max(1, activeCount * pitch);
 
-    // 6. Motion state
-    let baseSpeed = reduceMotion || isHalted ? 0 : CONFIG.scrollSpeed;
+    // 6. Motion state (preserve scroll offset across live appends)
+    let baseSpeed = reduceMotion || isHalted || activeCount === 0 ? 0 : CONFIG.scrollSpeed;
     const motion = { velocity: 0 };
-    // Center slab 0 in view on load
-    let offset = stripSpan / 2;
+    if (offsetRef.current === null) {
+      offsetRef.current = stripSpan / 2;
+    }
 
     const velocityTween = gsap.to(motion, {
       velocity: baseSpeed,
@@ -536,7 +585,7 @@ export const EuthynaDataLoomCanvas: React.FC<EuthynaDataLoomCanvasProps> = React
 
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-      for (let i = 0; i < SLAB_COUNT; i++) {
+      for (let i = 0; i < activeCount; i++) {
         const record = slabRecords[i];
         const canvas = drawSlabTexture(record, CONFIG.slabWidth, CONFIG.slabHeight, dpr);
         const texture = createTexture(canvas);
@@ -612,7 +661,9 @@ export const EuthynaDataLoomCanvas: React.FC<EuthynaDataLoomCanvasProps> = React
       const now = performance.now();
       const dx = event.clientX - lastX;
       const dt = Math.max(1, now - lastTime) / 1000;
-      offset -= dx;
+      if (offsetRef.current !== null) {
+        offsetRef.current -= dx;
+      }
       dragVelocity += (-dx / dt - dragVelocity) * 0.35;
       lastX = event.clientX;
       lastTime = now;
@@ -641,17 +692,22 @@ export const EuthynaDataLoomCanvas: React.FC<EuthynaDataLoomCanvasProps> = React
 
     const tickerCallback = (time: number, deltaMS: number) => {
       if (!isVisible) return;
-      if (!dragging) offset += motion.velocity * (deltaMS / 1000);
+      if (!dragging && offsetRef.current !== null) {
+        offsetRef.current += motion.velocity * (deltaMS / 1000);
+      }
       shared.uTime.value = time;
 
       const currentVel = Math.abs(motion.velocity) / 100;
       setHudVelocity(currentVel);
       onVelocityChange?.(motion.velocity);
 
-      const half = stripSpan / 2;
-      for (const card of cards) {
-        const x = ((card.baseX - offset) % stripSpan + stripSpan) % stripSpan;
-        card.mesh.position.x = x - half;
+      if (activeCount > 0) {
+        const half = stripSpan / 2;
+        const currentOffset = offsetRef.current ?? half;
+        for (const card of cards) {
+          const x = ((card.baseX - currentOffset) % stripSpan + stripSpan) % stripSpan;
+          card.mesh.position.x = x - half;
+        }
       }
 
       renderer?.render(scene, camera);
@@ -706,7 +762,7 @@ export const EuthynaDataLoomCanvas: React.FC<EuthynaDataLoomCanvasProps> = React
         }
       }
     };
-  }, [invoices, isHalted, gap, onVelocityChange, onFallbackToTable]);
+  }, [invoices, slabs, isHalted, gap, onVelocityChange, onFallbackToTable]);
 
   return (
     <div
@@ -730,6 +786,46 @@ export const EuthynaDataLoomCanvas: React.FC<EuthynaDataLoomCanvasProps> = React
           touchAction: 'pan-y'
         }}
       />
+
+      {/* EMPTY RUNWAY STATE IN LIVE MODE WHEN ZERO SLABS */}
+      {isLiveMode && (slabs?.length ?? 0) === 0 && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none',
+            zIndex: 15
+          }}
+        >
+          <div
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '12px',
+              letterSpacing: '0.16em',
+              color: 'var(--mineral-ink)',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              marginBottom: '6px'
+            }}
+          >
+            NO AUDIT RECEIPTS RECORDED // EMPTY RUNWAY
+          </div>
+          <div
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '10px',
+              letterSpacing: '0.1em',
+              color: 'var(--mineral-ink-muted)'
+            }}
+          >
+            AWAITING ON-CHAIN OR SIMULATED SETTLEMENT TRANSACTIONS
+          </div>
+        </div>
+      )}
 
       {/* TOP ARCHITECTURAL HUD STATUS STRIP */}
       <div
@@ -756,11 +852,11 @@ export const EuthynaDataLoomCanvas: React.FC<EuthynaDataLoomCanvasProps> = React
           <span style={{ color: 'var(--mineral-ink-muted)' }}>//</span>
           <span>HORIZONTAL SPATIAL RUNWAY</span>
           <span style={{ color: 'var(--mineral-ink-muted)' }}>//</span>
-          <span>18 IMMUTABLE REGISTER SLABS</span>
+          <span>{isLiveMode ? `${slabs?.length ?? 0} LIVE REGISTER SLABS` : '18 IMMUTABLE REGISTER SLABS'}</span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span>VELOCITY COUPLING: {hudVelocity.toFixed(2)} M/S</span>
+          <span>VELOCITY COUPLING: {safeToFixed(hudVelocity, 2)} M/S</span>
           <span style={{ color: 'var(--mineral-ink-muted)' }}>//</span>
           <span>CULLING: 60 FPS GPU</span>
         </div>

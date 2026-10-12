@@ -22,6 +22,8 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.m
   const [holdProgress, setHoldProgress] = useState(0); // 0 to 1
   const [isHolding, setIsHolding] = useState(false);
   const [isSealed, setIsSealed] = useState(false);
+  const [actionNotice, setActionNotice] = useState<string | null>(null);
+  const isLiveMode = import.meta.env.VITE_USE_LIVE_DATA === 'true';
 
   const holdStartTimeRef = useRef<number | null>(null);
   const holdRafRef = useRef<number | null>(null);
@@ -119,9 +121,15 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.m
       if (progress >= 1) {
         // Complete Sovereign Seal!
         setIsHolding(false);
-        setIsSealed(true);
-        engine.approveEscalation(activeEscalation.id);
-        setTimeout(() => ScrollTrigger.refresh(), 50);
+        Promise.resolve(engine.approveEscalation(activeEscalation.id)).then((res) => {
+          if (res && typeof res === 'object' && 'ok' in res && !(res as { ok?: boolean }).ok) {
+            setActionNotice('READ-ONLY // NO BACKEND ACTION');
+            setHoldProgress(0);
+            return;
+          }
+          setIsSealed(true);
+          setTimeout(() => ScrollTrigger.refresh(), 50);
+        });
         return;
       }
 
@@ -167,13 +175,21 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.m
     ScrollTrigger.refresh();
   }, [isHalted, isSealed]);
 
-  const handleReject = () => {
+  const handleReject = async () => {
     if (!activeEscalation) return;
-    engine.cancelEscalation(activeEscalation.id);
+    const res = await engine.cancelEscalation(activeEscalation.id);
+    if (res && typeof res === 'object' && 'ok' in res && !(res as { ok?: boolean }).ok) {
+      setActionNotice('READ-ONLY // NO BACKEND ACTION');
+      return;
+    }
     setTimeout(() => ScrollTrigger.refresh(), 50);
   };
 
   const handleResetDemo = () => {
+    if (isLiveMode) {
+      setActionNotice('READ-ONLY // NO BACKEND ACTION');
+      return;
+    }
     setIsSealed(false);
     setHoldProgress(0);
     engine.resetEscalationDemo();
@@ -745,7 +761,9 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.m
                       textTransform: 'uppercase'
                     }}
                   >
-                    PRESS &amp; HOLD (1.20S) TO COUNTERSIGN SOVEREIGN SEAL &amp; RELEASE ACROSS DATUM
+                    {isLiveMode
+                      ? '[SIMULATION ONLY // NO ON-CHAIN ACTION] PRESS & HOLD (1.20S) TO TEST SEAL PHYSICS'
+                      : 'PRESS & HOLD (1.20S) TO COUNTERSIGN SOVEREIGN SEAL & RELEASE ACROSS DATUM'}
                   </div>
 
                   {/* Live Millisecond Counter */}
@@ -785,6 +803,24 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.m
                     [ REJECT &amp; VOID OBLIGATION ]
                   </button>
                 </div>
+
+                {actionNotice && (
+                  <div
+                    style={{
+                      padding: '10px 16px',
+                      backgroundColor: 'rgba(200, 75, 49, 0.15)',
+                      border: '1px solid var(--signal-tension)',
+                      color: 'var(--signal-tension)',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '11px',
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      textAlign: 'center'
+                    }}
+                  >
+                    {actionNotice}
+                  </div>
+                )}
               </div>
             </div>
           ) : (

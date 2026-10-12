@@ -18,14 +18,51 @@ Integrates the production React + TypeScript + Three.js continuous treasury dash
 - **`index.html`:** Clean single-page Vite React entry root replacing the legacy monolithic HTML.
 - **`.gitignore`:** Single additive line (`dist/`) preserving clean build segregation.
 
-## 4. Backend Integrity Proof
-Execution of `git diff origin/main integration/backend-wiring` across all protected backend paths (`server.js`, `services/`, `ledger/`, `scripts/`, `test/`, `lib/`, `src/PolicyWallet.sol`, `foundry.toml`, `.env.example`, `README.md`, `Vestiarion_AI_PRD_v5_0 (1).md`) excluding the 12 approved `public/` deletions is **100% EMPTY**. Zero backend logic was altered. The backend exposes 6 unauthenticated POST routes (including uncataloged `POST /api/sanctions/check`); frontend live mode contains zero POST requests and zero mutations.
+## 4. Backend Integrity Proof & Live Mode Zero-POST Invariant
+Execution of `git diff origin/main integration/backend-wiring` across all protected backend paths (`server.js`, `services/`, `ledger/`, `scripts/`, `test/`, `lib/`, `src/PolicyWallet.sol`, `foundry.toml`, `.env.example`, `README.md`, `Vestiarion_AI_PRD_v5_0 (1).md`) excluding the 12 approved `public/` deletions is **100% EMPTY**. Zero backend logic was altered. The backend exposes 6 unauthenticated POST routes (including uncataloged `POST /api/sanctions/check`); **live mode contains no POST (the bundle check now proves it) and the flag-on bundle contains no mutating strings.**
+
+### Phase 3 Integration Additions
+- **Crash Sites Guarded (Step 0):** Pure formatting helper `src/core/safeFormat.ts` (`safeToFixed`, `safeToLocaleString`, `safeCurrency`, `safeSurplus`, `safeFormatNonce`) with 35 tests ensures missing fields never throw and never render `undefined`, `NaN`, or `Infinity`. Output is byte-identical for numeric values. Root `LiveErrorBoundary.tsx` traps unhandled exceptions in live mode (`"LIVE DATA ERROR // see console"`), rendering children untouched when flag is off.
+- **Mock Failure Injections (Step 0b):** `tools/mock-api.mjs` supports `process.env.MOCK_MODE` (`empty | error500 | slow | malformed`) as the default mode when no `?mode=` query parameter is supplied.
+- **Read-Only Action Controls (Step 1):** In live mode, components read `{ ok: false, reason }` from engine action returns. Blocked actions in Viewport 04 (`approve`, `cancel`, `reset`) and Viewport 03 (`sweep`, `redeem`, `processInvoice`, `checkSanctions`) show `"READ-ONLY // NO BACKEND ACTION"`, never displaying fake seals, fake success, or `"BUFFER BALANCED"`. Interactive simulations are labeled `[SIMULATION ONLY // NO ON-CHAIN ACTION]` and do not alter live state or dispatch `sakellarious:new-inscription`. Flag off: 100% legacy mock behavior preserved.
+- **Authoritative Raw Table (Step 2):** In Viewport 05, `[ RAW TABLE ]` feeds from live receipts (`engine.slabs`) in live mode, displaying `"NO AUDIT RECEIPTS RECORDED // EMPTY RUNWAY"` when empty. Flag off: legacy mock invoices preserved.
+- **Data Loom Slabs (Step 3):** `EuthynaDataLoomCanvas` accepts `slabs?: SlabViewModel[]`. Renders up to the 18 newest live slabs when flag is on (zero renders empty-runway state) with scroll offset preserved across appends, removed textures disposed, and offscreen pause preserved. Slab text strictly follows view model provenance: `txKind: 'simulated'` -> `"SIMULATED SETTLEMENT // NO ON-CHAIN TX"`, `'unknown'` -> `"SETTLEMENT UNVERIFIED"`, never `"IMMUTABLE ARC L1 PROOF"` unless `onchain`, IDs marked as derived ordinals, `"DOUBLE-ENTRY ARCHIVE // RECORDED"`, and `"CIRCLE PAYMASTER // SIMULATED SPONSORSHIP"`.
+- **Header Strip & Telemetry Markers (Step 4):** Live values displayed for connected endpoints; `[STATIC]` markers placed on unbacked fields (`blockHeight`, `liveHarvestYield`, `7D FORECAST OBLIGATIONS`); loading, stale, and unavailable badges reflect live telemetry status.
+
+### What is Static vs Live
+| Field | Status in Live Mode | Provenance |
+|---|---|---|
+| Liquid Buffer (`arcLiquidUsdc`) | Live (`/api/treasury/summary`) | Live |
+| USYC Vault (`arcUsycVault`) | Live (`/api/treasury/summary`) | Live |
+| Total Custody (`totalArcCapital`) | Live (`/api/treasury/summary`) | Live |
+| Operating Floor (`targetBuffer30D`) | Live (`/api/treasury/summary`) | Live |
+| Escalations (`escalations`) | Live (`/api/escalations/pending`) | Live |
+| Ledger Slabs / Receipts (`slabs`) | Live (`/api/ledger/receipts`) | Live / Derived |
+| Double-entry beancount (`rawBeancount`) | Live (`/api/ledger/beancount`) | Live |
+| Block Height (`blockHeight`) | `5042002 [STATIC]` | Static (no backend route) |
+| Harvest Yield (`liveHarvestYield`) | `+0.000000 [STATIC]` | Static (no backend route) |
+| 7D Obligations (`68,400 USDC`) | `68,400 USDC [STATIC]` | Static (no backend route) |
+
+### Read-Only Actions in Live Mode
+All mutating actions in live mode return `{ ok: false, reason: 'READ_ONLY_LIVE' }` and are blocked with UI notices:
+- `approveEscalation`, `cancelEscalation`, `resetEscalationDemo`: Viewport 04 Sovereign Seal blocked; displays `"READ-ONLY // NO BACKEND ACTION"`.
+- `sweepSurplusYield`, `redeemYield`, `processInvoice`, `checkSanctions`: Viewport 03 tactical controls blocked; displays `"READ-ONLY // NO BACKEND ACTION"`.
 
 ## 5. Development & Testing
 - **Run Isolated Mock Server:** `node tools/mock-api.mjs` (serves fixtures on `:4010`)
-- **Run Frontend Dev Server:** `npm run dev:ui` (Vite on `http://localhost:5173`)
+- **Run Mock Server Failure Modes:** `MOCK_MODE=empty|error500|slow|malformed node tools/mock-api.mjs`
+- **Run Frontend Dev Server (Flag Off):** `npm run dev:ui` (Vite on `http://localhost:5173`)
+- **Run Frontend Dev Server (Flag On):** `VITE_USE_LIVE_DATA=true API_PROXY_TARGET=http://localhost:4010 npm run dev:ui`
 - **Run Build:** `npm run build:ui` (`tsc && vite build`)
-- **Run Verification Suite:** `npx tsc --noEmit && npx vite build && node tools/run-api-tests.mjs && node tools/frontend-guard.mjs`
+- **Run Full Verification Suite:**
+  ```powershell
+  npx tsc --noEmit
+  node tools/run-api-tests.mjs
+  node tools/check-no-mutation.mjs
+  node tools/check-live-bundle.mjs
+  npx vite build
+  node tools/frontend-guard.mjs
+  ```
 
 ## 6. Architectural Decisions & Proxy Policy (Decision D8)
 - **Baseline Proxy Removal:** The baseline proxied `/api` to `:4000` for everyone, so flag-off dev could show live backend data and its legacy POST buttons reached the real backend if it was running; commit C1 removed that.

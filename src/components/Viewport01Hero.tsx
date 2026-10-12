@@ -4,10 +4,13 @@ import { useSakellariousEngine } from '../core/useSakellariousEngine';
 import { useAnimatedNumber } from '../core/useAnimatedNumber';
 import { OpticalGovernorCanvas } from './OpticalGovernorCanvas';
 import { BleibtgleichCursorOverlay } from './BleibtgleichCursorOverlay';
+import { safeToLocaleString } from '../core/safeFormat';
 
 export interface Viewport01HeroProps {
   engine: ReturnType<typeof useSakellariousEngine>;
 }
+
+const isLiveMode = import.meta.env.VITE_USE_LIVE_DATA === 'true';
 
 export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engine }) => {
   const isHalted = engine.escalations.length > 0;
@@ -30,7 +33,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
   const rawFloor = engine.forecasting.targetBuffer30D;
   const hasFloor = typeof rawFloor === 'number' && Number.isFinite(rawFloor);
   const animFloor = useAnimatedNumber(hasFloor ? rawFloor : 0, 750, 0);
-  const animFolio = useAnimatedNumber(481, 750, 0);
+  const animFolio = useAnimatedNumber(isLiveMode ? (engine.slabs.length > 0 ? engine.slabs.length : 0) : 481, 750, 0);
 
   // 1. CHOREOGRAPHED 1.35-SECOND INSTRUMENT BOOT SEQUENCE
   useEffect(() => {
@@ -382,7 +385,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
               background: 'transparent'
             }}
           >
-            {hasCustody ? `$${Math.round(animCustody).toLocaleString()}` : 'UNAVAILABLE'}
+            {hasCustody ? `$${safeToLocaleString(Math.round(animCustody), 'en-US')}` : 'UNAVAILABLE'}
           </div>
 
           <div
@@ -512,7 +515,7 @@ export const Viewport01Hero: React.FC<Viewport01HeroProps> = React.memo(({ engin
               background: 'transparent'
             }}
           >
-            ARC L1 VERIFIED
+            {isLiveMode ? (engine.slabs[0]?.txKind === 'onchain' ? 'ARC L1 VERIFIED' : 'RECORDED // SIMULATED') : 'ARC L1 VERIFIED'}
           </div>
         </div>
       </footer>

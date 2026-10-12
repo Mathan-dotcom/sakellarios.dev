@@ -23,6 +23,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
   const rawUsyc = engine.balances.arcUsycVault;
   const hasUsyc = typeof rawUsyc === 'number' && Number.isFinite(rawUsyc);
   const animUsyc = useAnimatedNumber(hasUsyc ? rawUsyc : 0);
+  const isLiveMode = import.meta.env.VITE_USE_LIVE_DATA === 'true';
 
   // PolicyWallet 4-stage sequential evaluation state
   const [bayLabels, setBayLabels] = useState<[string, string, string, string]>([
@@ -213,18 +214,26 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
   // Handlers for tactical controls
   const handleSweep = async () => {
     const res = await engine.sweepSurplusYield();
+    if (res && typeof res === 'object' && 'ok' in res && !(res as { ok?: boolean }).ok) {
+      setSubmissionFeedback('READ-ONLY // NO BACKEND ACTION');
+      return;
+    }
     setSubmissionFeedback(
       res.swept
-        ? `SUCCESS: $${res.amount.toFixed(2)} USDC swept into USYC via Circle Gateway.`
+        ? `SUCCESS: $${safeToFixed(res.amount, 2)} USDC swept into USYC via Circle Gateway.`
         : 'BUFFER BALANCED: Liquid reserves within 400,000 floor. Zero sweep needed.'
     );
   };
 
   const handleRedeem = async () => {
     const res = await engine.redeemYield(20000);
+    if (res && typeof res === 'object' && 'ok' in res && !(res as { ok?: boolean }).ok) {
+      setSubmissionFeedback('READ-ONLY // NO BACKEND ACTION');
+      return;
+    }
     setSubmissionFeedback(
       res.success
-        ? `SUCCESS: Redeemed $${res.amountRedeemed.toFixed(2)} USYC -> Liquid Buffer.`
+        ? `SUCCESS: Redeemed $${safeToFixed(res.amountRedeemed, 2)} USYC -> Liquid Buffer.`
         : 'Redemption request completed.'
     );
   };
@@ -290,12 +299,18 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
         isEvaluating: true,
         activeBay: 1,
         bayStatuses: ['passed', 'breached', 'idle', 'idle'],
-        bannerText: 'BREACH DETECTED AT POL-02 // HALTED AT GOVERNANCE DATUM',
+        bannerText: isLiveMode
+          ? '[SIMULATION ONLY // NO ON-CHAIN ACTION] BREACH DETECTED AT POL-02 // HALTED AT GOVERNANCE DATUM'
+          : 'BREACH DETECTED AT POL-02 // HALTED AT GOVERNANCE DATUM',
         bannerType: 'breached'
       });
 
       const res = await engine.processInvoice(payload);
-      setSubmissionFeedback(`EXCEPTION HALTED AT DATUM: ${res.message}`);
+      if (res && typeof res === 'object' && 'ok' in res && !(res as { ok?: boolean }).ok) {
+        setSubmissionFeedback('READ-ONLY // NO BACKEND ACTION');
+      } else {
+        setSubmissionFeedback(`EXCEPTION HALTED AT DATUM: ${res.message}`);
+      }
 
       // Auto-glide down to Viewport 04 after 200ms
       setTimeout(() => {
@@ -381,19 +396,25 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
       isEvaluating: true,
       activeBay: 4,
       bayStatuses: ['passed', 'passed', 'passed', 'passed'],
-      bannerText: 'AUTONOMOUS EXECUTION CLEARED // ZERO HUMAN INTERVENTION',
+      bannerText: isLiveMode
+        ? '[SIMULATION ONLY // NO ON-CHAIN ACTION] AUTONOMOUS EVALUATION SIMULATED'
+        : 'AUTONOMOUS EXECUTION CLEARED // ZERO HUMAN INTERVENTION',
       bannerType: 'cleared'
     });
 
     const res = await engine.processInvoice(payload);
-    setSubmissionFeedback(`STATUS: ${res.status} // ${res.message}`);
+    if (res && typeof res === 'object' && 'ok' in res && !(res as { ok?: boolean }).ok) {
+      setSubmissionFeedback('READ-ONLY // NO BACKEND ACTION');
+    } else {
+      setSubmissionFeedback(`STATUS: ${res.status} // ${res.message}`);
 
-    // Highlight newly inscribed row at the top of Viewport 05
-    window.dispatchEvent(
-      new CustomEvent('sakellarious:new-inscription', {
-        detail: { folio: res.txHash || payload.invoiceRef }
-      })
-    );
+      // Highlight newly inscribed row at the top of Viewport 05
+      window.dispatchEvent(
+        new CustomEvent('sakellarious:new-inscription', {
+          detail: { folio: res.txHash || payload.invoiceRef }
+        })
+      );
+    }
 
     setTimeout(() => {
       setEvalState({
@@ -431,6 +452,10 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
   const handleTestSanctioned = async () => {
     setSubmissionFeedback('Evaluating address against OpenSanctions OFAC database...');
     const verdict = await engine.checkSanctions('0x8576acc5c05d6ce88f4e49bf65bdf0c62f91353c');
+    if (verdict && typeof verdict === 'object' && 'ok' in verdict && !(verdict as { ok?: boolean }).ok) {
+      setSubmissionFeedback('READ-ONLY // NO BACKEND ACTION');
+      return;
+    }
     setSubmissionFeedback(
       `SANCTIONS CHECK: ${verdict.status} // ${verdict.entityName} (HALTED ON-CHAIN)`
     );
@@ -644,7 +669,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
               >
                 SURPLUS: {(() => {
                   const s = safeSurplus(engine.balances.arcLiquidUsdc, engine.forecasting.targetBuffer30D);
-                  return s !== null ? `$${s.toLocaleString()} USDC` : 'UNAVAILABLE';
+                  return s !== null ? `$${safeToLocaleString(s, 'en-US')} USDC` : 'UNAVAILABLE';
                 })()}
               </div>
             </div>
@@ -688,7 +713,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                 }}
               >
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'var(--mineral-ink-muted)', letterSpacing: '0.12em' }}>
-                  7D FORECAST OBLIGATIONS
+                  7D FORECAST OBLIGATIONS {isLiveMode && <span style={{ color: 'var(--signal-amber)', fontWeight: 600 }}>[STATIC]</span>}
                 </div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '18px', fontWeight: 500, marginTop: '4px' }}>
                   68,400 USDC
@@ -862,7 +887,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                   {evalState.bannerText}
                 </span>
                 <span style={{ fontSize: '9px', opacity: 0.85 }}>
-                  {evalState.bannerType === 'cleared' && 'ARC L1 VALIDATED'}
+                  {evalState.bannerType === 'cleared' && (isLiveMode ? '[SIMULATION ONLY // NO ON-CHAIN ACTION]' : 'ARC L1 VALIDATED')}
                   {evalState.bannerType === 'breached' && 'AUTONOMOUS HALT'}
                   {evalState.bannerType === 'checking' && 'PIPELINE ACTIVE'}
                 </span>
@@ -1078,7 +1103,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                   alignItems: 'center'
                 }}
               >
-                <span>// LIVE OBLIGATION INJECTOR</span>
+                <span>// LIVE OBLIGATION INJECTOR {isLiveMode ? '[SIMULATION ONLY // NO ON-CHAIN ACTION]' : ''}</span>
                 <span style={{ color: 'var(--void-text-muted)' }}>ARC L1 ENGINE</span>
               </div>
 
