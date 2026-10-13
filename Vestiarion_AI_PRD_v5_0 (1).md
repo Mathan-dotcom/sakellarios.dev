@@ -38,7 +38,7 @@ These architectural parameter values are authoritative for Version 5.0. The hack
 | **Unit Test Coverage** | **100% Verifiable Foundry Suite** | Complete 21-test Solidity code embedded directly in Section 7 (`PolicyWalletTest.t.sol`) |
 | **Hackathon Platform Fee** | **0%** | 100% of yield and capital flows directly to the business user |
 | **Target Deployment** | **Arc Testnet** | Fully functional deployed smart contracts, agent server, and live UI |
-| **Frontend Design System** | **Kiln Neo-Brutalism (`data-theme="kiln"`)** | Loud Poster Neo-Brutalism: warm raw paper `#fff6e0`, 20px dot-grid, 3px solid ink borders, 0px border-radius, hard zero-blur offset shadows, Bricolage Grotesque ExtraBold display, DM Sans UI, JetBrains Mono data, and flat screen-print role colors |
+| **Frontend Design System** | **[DEPRECATED: Superseded by DESIGN.md in project root]** ~~Kiln Neo-Brutalism (`data-theme="kiln"`)~~ | Loud Poster Neo-Brutalism: warm raw paper `#fff6e0`, 20px dot-grid, 3px solid ink borders, 0px border-radius, hard zero-blur offset shadows, Bricolage Grotesque ExtraBold display, DM Sans UI, JetBrains Mono data, and flat screen-print role colors |
 
 ---
 
@@ -860,6 +860,7 @@ ESCALATION_EXPIRY = 3 days
 PLATFORM_FEE = 0
 SANCTIONS_CHECK = "Live OpenSanctions REST API"
 
+// DEPRECATED: Superseded by DESIGN.md in project root.
 // Kiln Neo-Brutalism Design Guardrails (data-theme="kiln")
 DESIGN_SYSTEM = "Kiln Neo-Brutalism"
 PAGE_SUBSTRATE = "Warm Raw Paper (#fff6e0) with 20px Dot-Grid"
