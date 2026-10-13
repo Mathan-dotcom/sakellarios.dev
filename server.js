@@ -16,31 +16,37 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
-// Serve Sakellarious Byzantine Ledger Editorial UI (v1.0.0) from public/
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve Sakellarious UI from dist/ (Vite React application) or public/
+const distPath = path.join(__dirname, 'dist');
+const publicPath = path.join(__dirname, 'public');
 
-// Root route - Byzantine Ledger Editorial UI
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+if (require('fs').existsSync(path.join(distPath, 'index.html'))) {
+    app.use(express.static(distPath));
+    app.get('/', (req, res) => {
+        res.sendFile(path.join(distPath, 'index.html'));
+    });
+} else if (require('fs').existsSync(path.join(publicPath, 'index.html'))) {
+    app.use(express.static(publicPath));
+    app.get('/', (req, res) => {
+        res.sendFile(path.join(publicPath, 'index.html'));
+    });
+}
 
 // Backward-compatible routes for exploratory Codex & Scrollytelling views
-app.get('/frontend', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend.html'));
-});
+const sendIfFileExists = (res, filePath) => {
+    if (require('fs').existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else if (require('fs').existsSync(path.join(distPath, 'index.html'))) {
+        res.sendFile(path.join(distPath, 'index.html'));
+    } else {
+        res.redirect('/');
+    }
+};
 
-app.get('/codex', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend.html'));
-});
-
-app.get('/landing', (req, res) => {
-    res.sendFile(path.join(__dirname, 'landing.html'));
-});
-
-// Serve 3D Supernova Integrated Scrollytelling Experience
-app.get('/supernova', (req, res) => {
-    res.sendFile(path.join(__dirname, 'supernova_app.html'));
-});
+app.get('/frontend', (req, res) => sendIfFileExists(res, path.join(__dirname, 'frontend.html')));
+app.get('/codex', (req, res) => sendIfFileExists(res, path.join(__dirname, 'frontend.html')));
+app.get('/landing', (req, res) => sendIfFileExists(res, path.join(__dirname, 'landing.html')));
+app.get('/supernova', (req, res) => sendIfFileExists(res, path.join(__dirname, 'supernova_app.html')));
 
 // Initialize the Autonomous Treasury Agent
 const agent = new VestiarionAgent();
