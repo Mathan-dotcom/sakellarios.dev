@@ -761,9 +761,7 @@ export const Viewport04Escalation: React.FC<Viewport04EscalationProps> = React.m
                       textTransform: 'uppercase'
                     }}
                   >
-                    {isLiveMode
-                      ? '[SIMULATION ONLY // NO ON-CHAIN ACTION] PRESS & HOLD (1.20S) TO TEST SEAL PHYSICS'
-                      : 'PRESS & HOLD (1.20S) TO COUNTERSIGN SOVEREIGN SEAL & RELEASE ACROSS DATUM'}
+                    PRESS & HOLD (1.20S) TO COUNTERSIGN SOVEREIGN SEAL & RELEASE ACROSS DATUM
                   </div>
 
                   {/* Live Millisecond Counter */}

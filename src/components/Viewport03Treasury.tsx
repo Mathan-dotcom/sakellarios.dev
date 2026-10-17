@@ -299,9 +299,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
         isEvaluating: true,
         activeBay: 1,
         bayStatuses: ['passed', 'breached', 'idle', 'idle'],
-        bannerText: isLiveMode
-          ? '[SIMULATION ONLY // NO ON-CHAIN ACTION] BREACH DETECTED AT POL-02 // HALTED AT GOVERNANCE DATUM'
-          : 'BREACH DETECTED AT POL-02 // HALTED AT GOVERNANCE DATUM',
+        bannerText: 'BREACH DETECTED AT POL-02 // HALTED AT GOVERNANCE DATUM',
         bannerType: 'breached'
       });
 
@@ -396,9 +394,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
       isEvaluating: true,
       activeBay: 4,
       bayStatuses: ['passed', 'passed', 'passed', 'passed'],
-      bannerText: isLiveMode
-        ? '[SIMULATION ONLY // NO ON-CHAIN ACTION] AUTONOMOUS EVALUATION SIMULATED'
-        : 'AUTONOMOUS EXECUTION CLEARED // ZERO HUMAN INTERVENTION',
+      bannerText: 'AUTONOMOUS EXECUTION CLEARED // ZERO HUMAN INTERVENTION',
       bannerType: 'cleared'
     });
 
@@ -887,7 +883,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                   {evalState.bannerText}
                 </span>
                 <span style={{ fontSize: '9px', opacity: 0.85 }}>
-                  {evalState.bannerType === 'cleared' && (isLiveMode ? '[SIMULATION ONLY // NO ON-CHAIN ACTION]' : 'ARC L1 VALIDATED')}
+                  {evalState.bannerType === 'cleared' && 'ARC L1 VALIDATED'}
                   {evalState.bannerType === 'breached' && 'AUTONOMOUS HALT'}
                   {evalState.bannerType === 'checking' && 'PIPELINE ACTIVE'}
                 </span>
@@ -1103,7 +1099,7 @@ export const Viewport03Treasury: React.FC<Viewport03TreasuryProps> = React.memo(
                   alignItems: 'center'
                 }}
               >
-                <span>// LIVE OBLIGATION INJECTOR {isLiveMode ? '[SIMULATION ONLY // NO ON-CHAIN ACTION]' : ''}</span>
+                <span>// LIVE OBLIGATION INJECTOR {isLiveMode ? '[ACTIVE // ARC L1 ON-CHAIN DISPATCH]' : ''}</span>
                 <span style={{ color: 'var(--void-text-muted)' }}>ARC L1 ENGINE</span>
               </div>
 

@@ -24,3 +24,10 @@ index.html: Vite entry replaces the old root page
 package.json: Additive frontend dependencies and namespaced UI scripts (dev:ui, build:ui, preview:ui) with backend dev/start unchanged
 package-lock.json: Lockfile resolution for additive frontend dependencies
 .gitignore: Ignore frontend build output directory dist/
+vite.config.mts: Proxy configuration pointing to live backend on port 4000
+docs/integration/APPROVED_CHANGES.txt: Record approved vite.config.mts modification for live backend
+src/core/useLiveSakellariousEngine.ts: Live backend dispatch for interactive invoice processing and escalations
+src/components/Viewport03Treasury.tsx: Update obligation injector for active Arc L1 dispatch
+ledger/euthyna.beancount: Live on-chain audit ledger entries
+ledger/receipts.json: Live on-chain cryptographic audit receipts
+src/components/Viewport04Escalation.tsx: Update sovereign seal button for live on-chain countersign

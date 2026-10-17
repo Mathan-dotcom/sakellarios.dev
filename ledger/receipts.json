@@ -1585,5 +1585,121 @@
       "liquidUsdcAvailable": 9700
     },
     "txHash": "0x5baf7796d1b396fcd15391fd8f76648da682c0134b4429f5b8e4a6cb68b2ac91"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-17T07:59:07.195Z",
+    "agentId": "0xa9c97E3D0f95be9Fc990B3686997eC346D96833e",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x3333333333333333333333333333333333333333",
+    "amountUsdc": 0.25,
+    "category": "INFRASTRUCTURE",
+    "invoiceRef": "INV-VERIFY-101",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-17T07:59:04.007Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0xB9087E75D7DDE6138BF5673Ad36f4AcDb1806aD0",
+      "dailyLimitRemaining": 999.65,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 3
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 6.65
+    },
+    "txHash": "0xe0e96ac77cbdd82c6325debce23c62e76eb6f755c599830043d306189cb1c2a1"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-17T08:28:59.082Z",
+    "agentId": "0xa9c97E3D0f95be9Fc990B3686997eC346D96833e",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x151209c550E40b4CA1Cfb7B2C5e68d3C8e9fD40e",
+    "amountUsdc": 0.1,
+    "category": "PAYROLL",
+    "invoiceRef": "INV-USER-TEST-02",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-17T08:28:54.967Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0xB9087E75D7DDE6138BF5673Ad36f4AcDb1806aD0",
+      "dailyLimitRemaining": 999.4,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 4
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 6.300000000000001
+    },
+    "txHash": "0x13291a7412bf32f86515c4e20c4328053ff10872af07b7d505ceb8bc3bfced2e"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-17T09:07:34.993Z",
+    "agentId": "0xa9c97E3D0f95be9Fc990B3686997eC346D96833e",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x151209c550E40b4CA1Cfb7B2C5e68d3C8e9fD40e",
+    "amountUsdc": 0.2,
+    "category": "SAAS",
+    "invoiceRef": "INV-LIVE-001",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-17T09:07:31.704Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0xB9087E75D7DDE6138BF5673Ad36f4AcDb1806aD0",
+      "dailyLimitRemaining": 999.3,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 4
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 6.2
+    },
+    "txHash": "0x65bfe89f8d40a89f3825d3f95da6203bcfb9792153b9df3fd5ad2de32ddf9f51"
+  },
+  {
+    "@context": "https://sakellarious.dev/schemas/audit-v5.jsonld",
+    "type": "AgentExecutionReceipt",
+    "timestamp": "2026-10-17T09:18:38.924Z",
+    "agentId": "0xa9c97E3D0f95be9Fc990B3686997eC346D96833e",
+    "action": "JIT_VENDOR_PAYMENT",
+    "vendorAddress": "0x151209c550E40b4CA1Cfb7B2C5e68d3C8e9fD40e",
+    "amountUsdc": 0.2,
+    "category": "SAAS",
+    "invoiceRef": "INV-LIVE-002",
+    "sanctionsVerification": {
+      "provider": "OpenSanctions API",
+      "status": "CLEAN",
+      "queriedAt": "2026-10-17T09:18:36.586Z"
+    },
+    "smartContractVerification": {
+      "policyContract": "0xB9087E75D7DDE6138BF5673Ad36f4AcDb1806aD0",
+      "dailyLimitRemaining": 999.3,
+      "singleTxCheckPassed": true,
+      "whitelistVerified": true,
+      "reentrancyGuardActive": true,
+      "escalationNonce": 4
+    },
+    "usycYieldImpact": {
+      "redeemedFromUsyc": false,
+      "liquidUsdcAvailable": 6.2
+    },
+    "txHash": "0x206a57dec4c60835e54543385742a3aee9c51f577a727874cb3695cba55ba458"
   }
 ]

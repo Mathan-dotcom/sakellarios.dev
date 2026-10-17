@@ -515,3 +515,39 @@ option "operating_currency" "USDC"
   meta-timestamp: "2026-10-10T07:41:44.942Z"
   Assets:Arc:PolicyWallet:USDC                   -180.00 USDC
   Expenses:SaaS:APIs            180.00 USDC
+
+2026-10-17 * "Circle Paymaster / Vendor Settlement" "Paid INFRASTRUCTURE Invoice #INV-VERIFY-101"
+  meta-agent-id: "0xa9c97E3D0f95be9Fc990B3686997eC346D96833e"
+  meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
+  meta-sanctions-check: "CLEAN"
+  meta-tx-hash: "0xe0e96ac77cbdd82c6325debce23c62e76eb6f755c599830043d306189cb1c2a1"
+  meta-timestamp: "2026-10-17T07:59:07.195Z"
+  Assets:Arc:PolicyWallet:USDC                   -0.25 USDC
+  Expenses:Infrastructure:Hosting            0.25 USDC
+
+2026-10-17 * "Circle Paymaster / Vendor Settlement" "Paid PAYROLL Invoice #INV-USER-TEST-02"
+  meta-agent-id: "0xa9c97E3D0f95be9Fc990B3686997eC346D96833e"
+  meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
+  meta-sanctions-check: "CLEAN"
+  meta-tx-hash: "0x13291a7412bf32f86515c4e20c4328053ff10872af07b7d505ceb8bc3bfced2e"
+  meta-timestamp: "2026-10-17T08:28:59.082Z"
+  Assets:Arc:PolicyWallet:USDC                   -0.10 USDC
+  Expenses:Payroll:Stipends            0.10 USDC
+
+2026-10-17 * "Circle Paymaster / Vendor Settlement" "Paid SAAS Invoice #INV-LIVE-001"
+  meta-agent-id: "0xa9c97E3D0f95be9Fc990B3686997eC346D96833e"
+  meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
+  meta-sanctions-check: "CLEAN"
+  meta-tx-hash: "0x65bfe89f8d40a89f3825d3f95da6203bcfb9792153b9df3fd5ad2de32ddf9f51"
+  meta-timestamp: "2026-10-17T09:07:34.993Z"
+  Assets:Arc:PolicyWallet:USDC                   -0.20 USDC
+  Expenses:SaaS:APIs            0.20 USDC
+
+2026-10-17 * "Circle Paymaster / Vendor Settlement" "Paid SAAS Invoice #INV-LIVE-002"
+  meta-agent-id: "0xa9c97E3D0f95be9Fc990B3686997eC346D96833e"
+  meta-policy-rule-checked: "PolicyWallet.executePayout.passed"
+  meta-sanctions-check: "CLEAN"
+  meta-tx-hash: "0x206a57dec4c60835e54543385742a3aee9c51f577a727874cb3695cba55ba458"
+  meta-timestamp: "2026-10-17T09:18:38.924Z"
+  Assets:Arc:PolicyWallet:USDC                   -0.20 USDC
+  Expenses:SaaS:APIs            0.20 USDC
