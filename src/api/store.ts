@@ -282,6 +282,12 @@ class TreasuryStore {
   public startPolling(): void {
     if (this.isPollingActive) return;
     this.isPollingActive = true;
+    // Trigger immediate initial fetch on start so ledger slabs load without waiting 15-30s
+    this.refreshSummary().catch(() => {});
+    this.refreshReserves().catch(() => {});
+    this.refreshSlabs().catch(() => {});
+    this.refreshEscalations().catch(() => {});
+    this.refreshBeancount().catch(() => {});
     this.resumePolling();
   }
 

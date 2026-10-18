@@ -9,7 +9,7 @@
  * - Mutating action dispatchers return { ok: false, reason: 'READ_ONLY_LIVE' }.
  */
 
-import { useMemo, useCallback, useRef } from 'react';
+import { useMemo, useCallback, useRef, useEffect } from 'react';
 import { useTreasuryStore } from '../api/hooks';
 import { treasuryStore } from '../api/store';
 import {
@@ -24,6 +24,14 @@ import type {
 export function useLiveSakellariousEngine() {
   const storeState = useTreasuryStore();
   const prevStateRef = useRef<LiveEngineState | null>(null);
+
+  // Trigger immediate telemetry and audit receipts sync on mount
+  useEffect(() => {
+    treasuryStore.refreshSummary().catch(() => {});
+    treasuryStore.refreshSlabs().catch(() => {});
+    treasuryStore.refreshEscalations().catch(() => {});
+    treasuryStore.refreshBeancount().catch(() => {});
+  }, []);
 
   const mapped = useMemo(() => {
     const next = mapStoreToEngineState(storeState, prevStateRef.current);

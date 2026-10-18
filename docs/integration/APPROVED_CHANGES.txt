@@ -31,3 +31,4 @@ src/components/Viewport03Treasury.tsx: Update obligation injector for active Arc
 ledger/euthyna.beancount: Live on-chain audit ledger entries
 ledger/receipts.json: Live on-chain cryptographic audit receipts
 src/components/Viewport04Escalation.tsx: Update sovereign seal button for live on-chain countersign
+src/api/store.ts: Trigger immediate initial fetch of telemetry and audit receipts on startPolling
